@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 
-export default function DashboardScreen() {
+export default function RecurringExpensesScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Dashboard</Text>
+      <Text style={styles.text}>Recurring Expenses</Text>
     </View>
   );
 }

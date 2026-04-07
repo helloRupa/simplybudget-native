@@ -5,24 +5,26 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#ffd33d",
+        tabBarActiveTintColor: "#2dd4bf",
         headerStyle: {
-          backgroundColor: "#25292e",
+          backgroundColor: "#0d1117",
         },
         headerShadowVisible: false,
         headerTintColor: "#fff",
         tabBarStyle: {
-          backgroundColor: "#25292e",
+          backgroundColor: "#0d1117",
+          borderTopColor: "#1f2937",
         },
+        tabBarInactiveTintColor: "#6b7280",
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Dashboard",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? "home-sharp" : "home-outline"}
+              name={focused ? "grid" : "grid-outline"}
               color={color}
               size={24}
             />
@@ -30,14 +32,25 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="about"
+        name="expenses"
         options={{
-          title: "About",
+          title: "Expenses",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
+              name={focused ? "receipt" : "receipt-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "settings" : "settings-outline"}
               color={color}
               size={24}
             />

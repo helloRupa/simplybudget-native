@@ -81,12 +81,45 @@ Overlays (no navigator):
    npx expo install expo-sqlite @react-native-async-storage/async-storage
    ```
 2. **Design SQLite schema** — tables to create on first launch:
-   - `expenses` (id, amount, category, date, note, isRecurring, recurringId)
-   - `recurring_expenses` (id, amount, category, description, frequency, nextDue, lastProcessed)
-   - `budget_history` (id, month, weeklyBudget, totalSpent)
-   - `categories` (id, name, colour, icon)
-   - `meta` (key TEXT PRIMARY KEY, value TEXT) — for weeklyBudget scalar
-3. **Rewrite `utils/storage.ts`** — replace `localStorage` wrappers with async SQLite helpers (`getExpenses`, `saveExpense`, `deleteExpense`, etc.) and AsyncStorage wrappers for preferences (locale, currency).
+   ```sql
+   expenses (
+     id TEXT PRIMARY KEY,
+     amount REAL NOT NULL,
+     category TEXT NOT NULL,
+     description TEXT NOT NULL,
+     date TEXT NOT NULL,              -- ISO date YYYY-MM-DD
+     createdAt TEXT NOT NULL,         -- ISO datetime
+     recurringExpenseId TEXT          -- nullable FK to recurring_expenses
+   )
+
+   recurring_expenses (
+     id TEXT PRIMARY KEY,
+     amount REAL NOT NULL,
+     category TEXT NOT NULL,
+     description TEXT NOT NULL,
+     frequency TEXT NOT NULL,         -- 'weekly' | 'monthly' | 'annually'
+     dayOfMonth INTEGER NOT NULL,     -- 1-31
+     dayOfWeek INTEGER,               -- 0-6 (Sunday=0), nullable
+     monthOfYear INTEGER,             -- 0-11 (Jan=0), nullable
+     createdAt TEXT NOT NULL,         -- ISO datetime
+     startDate TEXT NOT NULL,         -- ISO date YYYY-MM-DD
+     endDate TEXT,                    -- ISO date or null (indefinite)
+     lastGeneratedDate TEXT           -- ISO date of most recent generated expense
+   )
+
+   budget_history (
+     startDate TEXT PRIMARY KEY,      -- ISO date (Monday of the budget week)
+     amount REAL NOT NULL
+   )
+
+   categories (
+     name TEXT PRIMARY KEY,
+     color TEXT NOT NULL              -- hex color (e.g. '#f97316')
+   )
+   ```
+   Scalar preferences stored in AsyncStorage: `weeklyBudget`, `firstUseDate`, `locale`, `currency`.
+   Default categories and their colors are seeded on first launch from `DEFAULT_CATEGORIES` + `CATEGORY_COLORS` in `constants.ts`.
+3. **Rewrite `utils/storage.ts`** — replace `localStorage` wrappers with async SQLite helpers (`getExpenses`, `saveExpense`, `deleteExpense`, etc.) and AsyncStorage wrappers for scalar preferences (weeklyBudget, firstUseDate, locale, currency).
 4. **Verify with a simple read/write smoke test** before wiring into context.
 
 **Result:** Storage layer is independently testable; `storage.ts` API surface stays the same so `BudgetContext` changes are isolated to import/call-site updates.

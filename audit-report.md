@@ -21,7 +21,7 @@
 | `components/Toast.tsx` | presentational | `<div>`, `<button>`, `setTimeout`, `useRef` | Low | Direct port; swap div/button → View/Pressable; `setTimeout` works as-is; consider `react-native-toast-message` |
 | `components/AboutModal.tsx` | presentational | `<div>`, `document.addEventListener()` (Escape key), `<img>` | Low | Direct port; swap div → View, img → Image; replace keyboard listener with RN `Modal` component's built-in dismiss handling |
 | `components/AppName.tsx` | presentational | `<h1>`/`<h2>` via `as` prop | Low | Direct port; render as `<Text>` with appropriate style variant |
-| `context/BudgetContext.tsx` | — | `localStorage` (via `storage.ts`), all browser-safe otherwise | Medium | Port as-is; replace `storage.ts` calls with `expo-sqlite` (budget data) or `AsyncStorage` (preferences); `useReducer` pattern transfers unchanged |
+| `context/BudgetContext.tsx` | — | `localStorage` (via `storage.ts`), all browser-safe otherwise | Medium | Port as-is; replace `storage.ts` calls with `expo-sqlite` (all data including preferences); `useReducer` pattern transfers unchanged |
 
 ---
 
@@ -65,7 +65,7 @@ RootStack (Stack)
 ### BudgetContext (`context/BudgetContext.tsx`)
 
 - Uses `useReducer` — transfers to RN unchanged.
-- On mount, hydrates state from `storage.ts` (localStorage). **Migration:** swap `storage.ts` for an `expo-sqlite` layer. All budget data (expenses, recurringExpenses, budgetHistory, categories, weeklyBudget) goes into SQLite tables. Locale and currency preferences (lightweight scalars) can use `AsyncStorage`.
+- On mount, hydrates state from `storage.ts` (localStorage). **Migration:** swap `storage.ts` for an `expo-sqlite` layer. All data goes into SQLite — including budget records (expenses, recurringExpenses, budgetHistory, categories) and preference scalars (weeklyBudget, firstUseDate, locale, currency). AsyncStorage is not used; `weeklyBudget` and `firstUseDate` are load-bearing values that must not be lost to cache eviction or a user clearing app storage.
 - On every state change, persists to storage via `useEffect`. This pattern is identical in RN; only the storage calls change.
 
 ### `utils/storage.ts`

@@ -10,7 +10,7 @@ Target platforms: Android and iOS.
 
 - **Framework:** Expo (managed workflow)
 - **State:** useState / useEffect (same as web — no migration needed)
-- **Storage:** expo-sqlite for all budget data and AsyncStorage for lightweight app preferences (replaces localStorage)
+- **Storage:** expo-sqlite for all data — budget records AND app preferences (replaces localStorage). AsyncStorage is not used.
 - **Styling:** React Native StyleSheet (replaces Tailwind CSS)
 
 ## Key Commands
@@ -33,7 +33,7 @@ npx expo install        # Install Expo-compatible packages (use instead of npm i
 | `<button>`           | `<TouchableOpacity>` or `<Pressable>`    |
 | `<ScrollView>` (web) | `<ScrollView>` ✅ same                   |
 | CSS classes          | `StyleSheet.create({})`                  |
-| `localStorage`       | `SQLite` (expo-sqlite) or `AsyncStorage` |
+| `localStorage`       | `expo-sqlite` (all data including prefs)  |
 | `window.innerWidth`  | `Dimensions.get('window').width`         |
 | `onClick`            | `onPress`                                |
 | `onChange`           | `onChangeText`                           |
@@ -47,7 +47,7 @@ npx expo install        # Install Expo-compatible packages (use instead of npm i
 - Use `onPress` not `onClick`
 - Use `npx expo install <package>` not `npm install` for new dependencies
 - Never use web-only APIs: no `document`, `window` (except Dimensions), `localStorage`
-- AsyncStorage is async — always use await, handle errors
+- AsyncStorage is NOT used — all data (including preferences like locale, currency, weeklyBudget, firstUseDate) lives in expo-sqlite
 - For charts/graphs, use `react-native-gifted-charts` or `victory-native`
 - For data tables, use `react-native-table-component` or a FlatList-based approach
 
@@ -81,3 +81,5 @@ Current tokens: `background`, `surface`, `border`, `teal`, `white`, `textMuted`.
 ## Lessons Learned
 
 <!-- Claude: add new rules here whenever you make a mistake and get corrected -->
+
+- **No AsyncStorage** — all data (records and preferences) goes in expo-sqlite. `weeklyBudget` and `firstUseDate` are load-bearing: losing them to cache eviction or a manual storage clear would corrupt the user's financial history. Preferences use a `preferences` table (`key TEXT PRIMARY KEY, value TEXT`).

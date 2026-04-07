@@ -6,21 +6,21 @@
 
 ## Library Replacement Map
 
-| Web Library / API | Used In | React Native Replacement |
-|---|---|---|
-| `recharts` | `SpendingChart.tsx` | `react-native-gifted-charts` |
-| `localStorage` | `utils/storage.ts` → `BudgetContext` | `expo-sqlite` (structured data) + `AsyncStorage` (prefs) |
-| `next/font` (Google Fonts) | `app/layout.tsx` | `expo-font` |
-| `FileReader`, `URL.createObjectURL()` | `utils/backup.ts` | `expo-file-system` + `expo-sharing` |
-| Programmatic file import | `utils/backup.ts` | `expo-document-picker` |
-| `<select>` | `Header`, `ExpenseForm`, `ExpenseFilters`, `RecurringExpenseManager`, `Settings` | Custom modal picker or `@react-native-picker/picker` |
-| `<input type="date">` | `ExpenseForm`, `ExpenseFilters` | `@react-native-community/datetimepicker` |
-| `document.addEventListener()` (Escape) | `AboutModal.tsx` | RN `Modal` built-in dismiss |
-| `<table>` / `<thead>` / `<td>` etc. | `ExpenseList.tsx` | `FlatList` with card-row renderer |
-| Inline SVG icons | `Header`, `ExpenseFilters` | `@expo/vector-icons` |
-| `next/router`, Next.js tab state | `app/page.tsx` | `@react-navigation/bottom-tabs` + `@react-navigation/stack` |
-| CSS `width %` progress bar | `Dashboard.tsx` | Two `View` components with flex/absolute width |
-| `Intl.NumberFormat` (older Android) | `utils/currency.ts` | `@formatjs/intl-numberformat` polyfill (if needed) |
+| Web Library / API                      | Used In                                                                          | React Native Replacement                                    |
+| -------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `recharts`                             | `SpendingChart.tsx`                                                              | `react-native-gifted-charts`                                |
+| `localStorage`                         | `utils/storage.ts` → `BudgetContext`                                             | `expo-sqlite` (all data — records and preferences)          |
+| `next/font` (Google Fonts)             | `app/layout.tsx`                                                                 | `expo-font`                                                 |
+| `FileReader`, `URL.createObjectURL()`  | `utils/backup.ts`                                                                | `expo-file-system` + `expo-sharing`                         |
+| Programmatic file import               | `utils/backup.ts`                                                                | `expo-document-picker`                                      |
+| `<select>`                             | `Header`, `ExpenseForm`, `ExpenseFilters`, `RecurringExpenseManager`, `Settings` | Custom modal picker or `@react-native-picker/picker`        |
+| `<input type="date">`                  | `ExpenseForm`, `ExpenseFilters`                                                  | `@react-native-community/datetimepicker`                    |
+| `document.addEventListener()` (Escape) | `AboutModal.tsx`                                                                 | RN `Modal` built-in dismiss                                 |
+| `<table>` / `<thead>` / `<td>` etc.    | `ExpenseList.tsx`                                                                | `FlatList` with card-row renderer                           |
+| Inline SVG icons                       | `Header`, `ExpenseFilters`                                                       | `@expo/vector-icons`                                        |
+| `next/router`, Next.js tab state       | `app/page.tsx`                                                                   | `@react-navigation/bottom-tabs` + `@react-navigation/stack` |
+| CSS `width %` progress bar             | `Dashboard.tsx`                                                                  | Two `View` components with flex/absolute width              |
+| `Intl.NumberFormat` (older Android)    | `utils/currency.ts`                                                              | `@formatjs/intl-numberformat` polyfill (if needed)          |
 
 Libraries that transfer unchanged: `date-fns`, `i18n/locales.ts`, `utils/recurring.ts`, `utils/dates.ts`, `utils/currency.ts` (Expo SDK 49+ / Hermes supports `Intl`).
 
@@ -49,12 +49,14 @@ Overlays (no navigator):
 ---
 
 ### Phase 1 — Project Foundation & Navigation Shell
+
 **Goal:** Runnable app with correct tab/stack structure and fonts loaded. No real screens yet — just placeholders.
 
 **Complexity:** Low  
 **Dependencies:** None — this is the prerequisite for every other phase.
 
 #### Tasks
+
 1. **Install navigation packages**
    ```
    npx expo install @react-navigation/native @react-navigation/bottom-tabs @react-navigation/stack
@@ -70,23 +72,27 @@ Overlays (no navigator):
 ---
 
 ### Phase 2 — SQLite Schema & Storage Layer
+
 **Goal:** Establish the data layer before any screen that reads or writes budget data. All other data-dependent phases depend on this.
 
 **Complexity:** Medium  
 **Dependencies:** Phase 1 must be complete (app must boot).
 
 #### Tasks
+
 1. **Install storage packages**
    ```
-   npx expo install expo-sqlite @react-native-async-storage/async-storage
+   npx expo install expo-sqlite
    ```
+   AsyncStorage is not used — all data, including preference scalars, is stored in SQLite. `weeklyBudget` and `firstUseDate` are load-bearing values that must survive cache eviction and manual app storage clears.
 2. **Design SQLite schema** — tables to create on first launch:
+
    ```sql
    expenses (
      id TEXT PRIMARY KEY,
      amount REAL NOT NULL,
      category TEXT NOT NULL,
-     description TEXT NOT NULL,
+     description TEXT,                -- optional, nullable
      date TEXT NOT NULL,              -- ISO date YYYY-MM-DD
      createdAt TEXT NOT NULL,         -- ISO datetime
      recurringExpenseId TEXT          -- nullable FK to recurring_expenses
@@ -96,15 +102,20 @@ Overlays (no navigator):
      id TEXT PRIMARY KEY,
      amount REAL NOT NULL,
      category TEXT NOT NULL,
-     description TEXT NOT NULL,
+     description TEXT,                -- optional, nullable
      frequency TEXT NOT NULL,         -- 'weekly' | 'monthly' | 'annually'
-     dayOfMonth INTEGER NOT NULL,     -- 1-31
-     dayOfWeek INTEGER,               -- 0-6 (Sunday=0), nullable
-     monthOfYear INTEGER,             -- 0-11 (Jan=0), nullable
+     dayOfMonth INTEGER,              -- 1-31; required for monthly/annually, null for weekly
+     dayOfWeek INTEGER,               -- 0-6 (Sunday=0); required for weekly, null otherwise
+     monthOfYear INTEGER,             -- 0-11 (Jan=0); required for annually, null otherwise
      createdAt TEXT NOT NULL,         -- ISO datetime
      startDate TEXT NOT NULL,         -- ISO date YYYY-MM-DD
      endDate TEXT,                    -- ISO date or null (indefinite)
-     lastGeneratedDate TEXT           -- ISO date of most recent generated expense
+     lastGeneratedDate TEXT,          -- ISO date of most recent generated expense
+     CHECK (
+       (frequency = 'weekly'   AND dayOfWeek IS NOT NULL AND dayOfMonth IS NULL     AND monthOfYear IS NULL) OR
+       (frequency = 'monthly'  AND dayOfMonth IS NOT NULL AND dayOfWeek IS NULL     AND monthOfYear IS NULL) OR
+       (frequency = 'annually' AND dayOfMonth IS NOT NULL AND monthOfYear IS NOT NULL AND dayOfWeek IS NULL)
+     )
    )
 
    budget_history (
@@ -116,10 +127,19 @@ Overlays (no navigator):
      name TEXT PRIMARY KEY,
      color TEXT NOT NULL              -- hex color (e.g. '#f97316')
    )
+
+   preferences (
+     id INTEGER PRIMARY KEY DEFAULT 1, -- always a single row; enforce with CHECK (id = 1)
+     weeklyBudget REAL NOT NULL,
+     firstUseDate TEXT NOT NULL,       -- ISO date YYYY-MM-DD
+     locale TEXT NOT NULL,
+     currency TEXT NOT NULL
+   )
    ```
-   Scalar preferences stored in AsyncStorage: `weeklyBudget`, `firstUseDate`, `locale`, `currency`.
+
    Default categories and their colors are seeded on first launch from `DEFAULT_CATEGORIES` + `CATEGORY_COLORS` in `constants.ts`.
-3. **Rewrite `utils/storage.ts`** — replace `localStorage` wrappers with async SQLite helpers (`getExpenses`, `saveExpense`, `deleteExpense`, etc.) and AsyncStorage wrappers for scalar preferences (weeklyBudget, firstUseDate, locale, currency).
+
+3. **Rewrite `utils/storage.ts`** — replace `localStorage` wrappers with async SQLite helpers for all data: `getExpenses`, `saveExpense`, `deleteExpense`, etc. for records; `getPreferences`, `setPreferences` for the single-row `preferences` table (weeklyBudget, firstUseDate, locale, currency).
 4. **Verify with a simple read/write smoke test** before wiring into context.
 
 **Result:** Storage layer is independently testable; `storage.ts` API surface stays the same so `BudgetContext` changes are isolated to import/call-site updates.
@@ -127,13 +147,15 @@ Overlays (no navigator):
 ---
 
 ### Phase 3 — Global State (BudgetContext)
+
 **Goal:** Port `BudgetContext` so all screens share live budget state backed by SQLite.
 
 **Complexity:** Medium  
 **Dependencies:** Phase 2 (storage layer) must be complete.
 
 #### Tasks
-1. **Update `context/BudgetContext.tsx`** — swap all `storage.ts` calls (formerly `localStorage`) for the new async SQLite/AsyncStorage helpers from Phase 2. `useReducer` pattern is unchanged.
+
+1. **Update `context/BudgetContext.tsx`** — swap all `storage.ts` calls (formerly `localStorage`) for the new async SQLite helpers from Phase 2. `useReducer` pattern is unchanged.
 2. **Hydrate on mount** — `useEffect` reads from SQLite into state (replaces the synchronous `localStorage.getItem` pattern with `await`).
 3. **Persist on change** — existing `useEffect` write-back pattern is unchanged; only the storage calls differ.
 4. **Carry over unchanged:** `utils/recurring.ts`, `utils/currency.ts`, `utils/dates.ts`, `i18n/locales.ts`, all `t()` / `tc()` / `fc()` / `fd()` helpers.
@@ -144,6 +166,7 @@ Overlays (no navigator):
 ---
 
 ### Phase 4 — Low-Complexity UI Components
+
 **Goal:** Port all stateless / nearly-stateless presentational components that have no chart or form complexity.
 
 **Complexity:** Low  
@@ -151,23 +174,25 @@ Overlays (no navigator):
 
 #### Components (ordered)
 
-| Component | Notes |
-|---|---|
-| `Toast.tsx` | `div`/`button` → `View`/`Pressable`; `setTimeout` unchanged; or adopt `react-native-toast-message` |
+| Component        | Notes                                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `Toast.tsx`      | `div`/`button` → `View`/`Pressable`; `setTimeout` unchanged; or adopt `react-native-toast-message`      |
 | `AboutModal.tsx` | `div` → `View`; `img` → `Image`; drop `document.addEventListener` — RN `Modal` handles dismiss natively |
-| `Header.tsx` | `<select>` → modal picker; inline SVG icons → `@expo/vector-icons`; `<button>` → `Pressable` |
+| `Header.tsx`     | `<select>` → modal picker; inline SVG icons → `@expo/vector-icons`; `<button>` → `Pressable`            |
 
 **Result:** App shell has a working header, toast notifications, and about modal.
 
 ---
 
 ### Phase 5 — Medium-Complexity Screens
+
 **Goal:** Port the three interactive form/list screens. These require working context (Phase 3) and pickers/date inputs.
 
 **Complexity:** Medium  
 **Dependencies:** Phase 3 (BudgetContext), Phase 4 (Header, Toast).
 
 #### Install dependencies first
+
 ```
 npx expo install @react-native-community/datetimepicker @react-native-picker/picker
 ```
@@ -198,12 +223,14 @@ npx expo install @react-native-community/datetimepicker @react-native-picker/pic
 ---
 
 ### Phase 6 — High-Complexity Screens (Charts & File I/O)
+
 **Goal:** Port the two most complex components — the dashboard with chart and the settings screen with backup/restore.
 
 **Complexity:** High  
 **Dependencies:** Phase 3 (BudgetContext), Phase 5 (ExpenseForm, RecurringExpensesScreen must exist to link from Settings).
 
 #### Install dependencies first
+
 ```
 npx expo install react-native-gifted-charts
 npx expo install expo-file-system expo-sharing expo-document-picker
@@ -235,12 +262,14 @@ npx expo install expo-file-system expo-sharing expo-document-picker
 ---
 
 ### Phase 7 — Polish & Cross-Platform QA
+
 **Goal:** Ensure correct behaviour on both iOS and Android; handle edge cases.
 
 **Complexity:** Low–Medium  
 **Dependencies:** All previous phases complete.
 
 #### Tasks
+
 1. **`Intl.NumberFormat` polyfill** — test currency formatting on older Android (Hermes). Add `@formatjs/intl-numberformat` if needed.
 2. **Safe area insets** — audit all screens for `SafeAreaView` / `useSafeAreaInsets` usage (notch, home indicator, dynamic island).
 3. **Keyboard avoiding** — wrap forms in `KeyboardAvoidingView` with correct `behavior` per platform (`padding` on iOS, `height` on Android).
@@ -274,7 +303,7 @@ No phase can begin until all phases it depends on (directly or transitively) are
 These files can be copied directly from `../simplyBudget/src` with zero modifications:
 
 - `utils/recurring.ts`
-- `utils/currency.ts` *(may need `Intl` polyfill — see Phase 7)*
+- `utils/currency.ts` _(may need `Intl` polyfill — see Phase 7)_
 - `utils/dates.ts`
 - `i18n/locales.ts`
 - All TypeScript interfaces / types (if defined separately)

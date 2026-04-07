@@ -64,6 +64,20 @@ npx expo install        # Install Expo-compatible packages (use instead of npm i
 - Responsive layout: use Flexbox (already how RN works) + Dimensions API for breakpoints
 - Scrollable dashboard sections: wrap in ScrollView or use FlatList for long data lists
 
+## Theming
+
+All colors are defined in `constants/colors.ts` and imported into each `StyleSheet.create()`. Never hardcode color hex values directly in style objects — always reference a named token from `colors`.
+
+```ts
+import { colors } from "@/constants/colors";
+
+const styles = StyleSheet.create({
+  container: { backgroundColor: colors.background },
+});
+```
+
+Current tokens: `background`, `surface`, `border`, `teal`, `white`, `textMuted`.
+
 ## Lessons Learned
 
 <!-- Claude: add new rules here whenever you make a mistake and get corrected -->

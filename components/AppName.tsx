@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
+import { colors } from "@/constants/colors";
+
 interface AppNameProps {
   size?: "large" | "small";
 }
@@ -31,9 +33,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   white: {
-    color: "#ffffff",
+    color: colors.white,
   },
   teal: {
-    color: "#2dd4bf",
+    color: colors.teal,
   },
 });

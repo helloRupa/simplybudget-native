@@ -88,6 +88,7 @@ const en = {
   // Validation
   amountRequired: "Amount is required.",
   amountPositive: "Amount must be greater than zero.",
+  amountNonZero: "Amount cannot be zero.",
   categoryRequired: "Please select a category.",
   dateRequired: "Date is required.",
   dateBeforeStart: "Date cannot be before budget start date.",
@@ -228,6 +229,7 @@ const es: typeof en = {
   importConfirm: "Esto reemplazará todos tus datos actuales. ¿Estás seguro?",
   amountRequired: "El monto es requerido.",
   amountPositive: "El monto debe ser mayor que cero.",
+  amountNonZero: "El monto no puede ser cero.",
   categoryRequired: "Por favor selecciona una categoría.",
   dateRequired: "La fecha es requerida.",
   dateBeforeStart:
@@ -364,6 +366,7 @@ const fr: typeof en = {
   importConfirm: "Cela remplacera toutes vos données actuelles. Êtes-vous sûr?",
   amountRequired: "Le montant est requis.",
   amountPositive: "Le montant doit être supérieur à zéro.",
+  amountNonZero: "Le montant ne peut pas être zéro.",
   categoryRequired: "Veuillez sélectionner une catégorie.",
   dateRequired: "La date est requise.",
   dateBeforeStart:

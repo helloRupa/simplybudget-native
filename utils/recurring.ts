@@ -1,6 +1,6 @@
 import { Expense, RecurringExpense } from "@/types";
 import { toISODate } from "./dates";
-import { v4 as uuidv4 } from "uuid";
+import * as Crypto from "expo-crypto";
 import {
   getDaysInMonth,
   parseISO,
@@ -26,7 +26,7 @@ function buildDate(year: number, month: number, day: number): string {
 
 function buildExpense(re: RecurringExpense, date: string): Expense {
   return {
-    id: uuidv4(),
+    id: Crypto.randomUUID(),
     amount: re.amount,
     category: re.category,
     description: re.description,

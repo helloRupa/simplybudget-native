@@ -2,8 +2,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
 
 import { colors } from "@/constants/colors";
+import { useBudget } from "@/context/BudgetContext";
 
 export default function TabLayout() {
+  const { t } = useBudget();
+
   return (
     <Tabs
       screenOptions={{
@@ -23,7 +26,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Dashboard",
+          title: t("dashboard"),
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "grid" : "grid-outline"}
@@ -36,7 +39,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="expenses"
         options={{
-          title: "Expenses",
+          title: t("expenses"),
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "receipt" : "receipt-outline"}
@@ -49,7 +52,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
+          title: t("settings"),
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "settings" : "settings-outline"}

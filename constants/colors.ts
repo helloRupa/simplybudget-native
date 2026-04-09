@@ -15,6 +15,9 @@ export const colors = {
   toastSuccess: "#22c55e",
   toastError: "#ef4444",
   toastInfo: "#3b82f6",
+  amber: "#fcd34d",
+  dangerText: "#f87171",
+  dangerSubtle: "rgba(239,68,68,0.2)",
 };
 
 export const CUSTOM_CATEGORY_COLORS = [

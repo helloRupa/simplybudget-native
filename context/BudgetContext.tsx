@@ -16,7 +16,7 @@ import {
   TranslationKey,
   categoryTranslations,
 } from "@/i18n/locales";
-import { v4 as uuidv4 } from "uuid";
+import * as Crypto from "expo-crypto";
 import { getDatabase } from "@/utils/database";
 import { CUSTOM_CATEGORY_COLORS } from "@/constants/colors";
 import {
@@ -284,7 +284,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     (expense: Omit<Expense, "id" | "createdAt">) => {
       const newExpense: Expense = {
         ...expense,
-        id: uuidv4(),
+        id: Crypto.randomUUID(),
         createdAt: new Date().toISOString(),
       };
       saveExpense(db, newExpense);
@@ -386,7 +386,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     ) => {
       const newRecurring: RecurringExpense = {
         ...expense,
-        id: uuidv4(),
+        id: Crypto.randomUUID(),
         createdAt: new Date().toISOString(),
         lastGeneratedDate: null,
       };

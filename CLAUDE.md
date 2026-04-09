@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-Current tokens: `background`, `surface`, `border`, `teal`, `tealSubtle`, `tealFaint`, `tealBorder`, `white`, `whiteMuted`, `textMuted`, `textSecondary`, `surfaceSubtle`, `overlay`, `toastSuccess`, `toastError`, `toastInfo`.
+Current tokens: `background`, `surface`, `border`, `teal`, `tealSubtle`, `tealFaint`, `tealBorder`, `white`, `whiteMuted`, `textMuted`, `textSecondary`, `surfaceSubtle`, `overlay`, `toastSuccess`, `toastError`, `toastInfo`, `amber`, `dangerText`, `dangerSubtle`.
 
 ## Lessons Learned
 

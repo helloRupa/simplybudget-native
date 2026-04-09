@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { BudgetProvider } from "@/context/BudgetContext";
+import { colors } from "@/constants/colors";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,7 +25,14 @@ export default function RootLayout() {
 
   return (
     <BudgetProvider>
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.white,
+          contentStyle: { backgroundColor: colors.background },
+          animation: "fade",
+        }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="expense-form" options={{ title: "Expense" }} />
         <Stack.Screen

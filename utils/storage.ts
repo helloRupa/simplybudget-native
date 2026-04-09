@@ -5,6 +5,7 @@ import type {
   Preferences,
   RecurringExpense,
 } from "@/types";
+import { getWeekRange, toISODate } from "@/utils/dates";
 
 // ---------------------------------------------------------------------------
 // Expenses
@@ -159,7 +160,7 @@ export function getBudgetHistory(
   db: SQLiteDatabase
 ): { startDate: string; amount: number }[] {
   return db.getAllSync<{ startDate: string; amount: number }>(
-    "SELECT * FROM budget_history ORDER BY startDate DESC"
+    "SELECT * FROM budget_history ORDER BY startDate ASC"
   );
 }
 
@@ -201,7 +202,7 @@ export function deleteCategory(db: SQLiteDatabase, name: string): void {
 
 const PREFERENCES_DEFAULTS: Preferences = {
   weeklyBudget: 500,
-  firstUseDate: new Date().toISOString().slice(0, 10),
+  firstUseDate: toISODate(getWeekRange().start),
   locale: "en-US",
   currency: "USD",
 };

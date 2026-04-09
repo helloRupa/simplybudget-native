@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(npx jest:*)",
-      "Bash(cat /Users/rupa/Desktop/codeProjects/simplyBudget/src/types/*.ts)"
+      "Bash(cat /Users/rupa/Desktop/codeProjects/simplyBudget/src/types/*.ts)",
+      "Bash(npx tsc:*)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(npx expo:*)"
     ]
   }
 }

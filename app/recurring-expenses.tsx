@@ -13,6 +13,7 @@ import {
 import { useBudget } from "@/context/BudgetContext";
 import { RecurringExpense, RecurringFrequency } from "@/types";
 import { toISODate } from "@/utils/dates";
+import { parseISO } from "date-fns";
 import { TranslationKey } from "@/i18n/locales";
 import FieldPicker, { PickerOption } from "@/components/FieldPicker";
 import DateField from "@/components/DateField";
@@ -59,6 +60,8 @@ export default function RecurringExpensesScreen() {
     tc,
     fc,
   } = useBudget();
+
+  const firstUseDateObj = parseISO(state.firstUseDate);
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -314,6 +317,7 @@ export default function RecurringExpensesScreen() {
               label={t("startDate")}
               value={startDate}
               onChange={setStartDate}
+              minimumDate={firstUseDateObj}
               error={errors.startDate}
             />
 
@@ -323,6 +327,7 @@ export default function RecurringExpensesScreen() {
                 label={t("endDate")}
                 value={endDate}
                 onChange={setEndDate}
+                minimumDate={firstUseDateObj}
                 placeholder={t("noEndDate")}
               />
               {endDate ? (

@@ -9,7 +9,7 @@ interface AppNameProps {
 export default function AppName({ size = "large" }: AppNameProps) {
   return (
     <View style={styles.row}>
-      <Text style={[styles.text, size === "small" ? styles.small : styles.large]}>
+      <Text testID="appname-text" style={[styles.text, size === "small" ? styles.small : styles.large]}>
         <Text style={styles.white}>Simply</Text>
         <Text style={styles.teal}>Budget</Text>
       </Text>

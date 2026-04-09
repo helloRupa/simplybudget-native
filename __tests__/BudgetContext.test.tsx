@@ -184,7 +184,7 @@ describe("BudgetProvider — categories", () => {
 
     let added: boolean = false;
     act(() => {
-      added = result.current.addCategory({ name: "Pets", color: "#84cc16" });
+      added = result.current.addCategory("Pets");
     });
 
     expect(added).toBe(true);
@@ -192,12 +192,25 @@ describe("BudgetProvider — categories", () => {
     expect(names).toContain("Pets");
   });
 
+  it("addCategory assigns a color from the palette", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+
+    act(() => {
+      result.current.addCategory("Pets");
+    });
+
+    const pets = result.current.state.categories.find(
+      (c: Category) => c.name === "Pets",
+    );
+    expect(pets?.color).toMatch(/^#[0-9a-f]{6}$/i);
+  });
+
   it("addCategory returns false for duplicate (case-insensitive)", () => {
     const { result } = renderHook(() => useBudget(), { wrapper });
 
     let added: boolean = false;
     act(() => {
-      added = result.current.addCategory({ name: "food", color: "#000" });
+      added = result.current.addCategory("food");
     });
 
     expect(added).toBe(false);
@@ -208,7 +221,7 @@ describe("BudgetProvider — categories", () => {
 
     let added: boolean = false;
     act(() => {
-      added = result.current.addCategory({ name: "  ", color: "#000" });
+      added = result.current.addCategory("  ");
     });
 
     expect(added).toBe(false);
@@ -231,7 +244,7 @@ describe("BudgetProvider — categories", () => {
     const { result } = renderHook(() => useBudget(), { wrapper });
 
     act(() => {
-      result.current.addCategory({ name: "Pets", color: "#84cc16" });
+      result.current.addCategory("Pets");
     });
 
     act(() => {

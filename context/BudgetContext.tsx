@@ -18,6 +18,7 @@ import {
 } from "@/i18n/locales";
 import { v4 as uuidv4 } from "uuid";
 import { getDatabase } from "@/utils/database";
+import { CUSTOM_CATEGORY_COLORS } from "@/constants/colors";
 import {
   getExpenses,
   saveExpense,
@@ -151,7 +152,7 @@ interface BudgetContextValue {
   updateExpense: (expense: Expense) => void;
   deleteExpense: (id: string) => void;
   setWeeklyBudget: (amount: number) => void;
-  addCategory: (category: Category) => boolean;
+  addCategory: (name: string) => boolean;
   updateCategory: (category: Category) => void;
   deleteCategory: (name: string) => void;
   setLocale: (locale: LocaleKey) => void;
@@ -321,8 +322,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
   );
 
   const addCategory = useCallback(
-    (category: Category): boolean => {
-      const trimmed = category.name.trim();
+    (name: string): boolean => {
+      const trimmed = name.trim();
       if (!trimmed) return false;
 
       if (
@@ -333,7 +334,11 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
 
-      const cat: Category = { ...category, name: trimmed };
+      const color =
+        CUSTOM_CATEGORY_COLORS[
+          Math.floor(Math.random() * CUSTOM_CATEGORY_COLORS.length)
+        ];
+      const cat: Category = { name: trimmed, color };
       saveCategory(db, cat);
       dispatch({ type: "ADD_CATEGORY", payload: cat });
       return true;

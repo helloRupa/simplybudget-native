@@ -1,5 +1,13 @@
-import { useMemo, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useMemo, useRef, useState } from "react";
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { parseISO, isWithinInterval } from "date-fns";
 import { useBudget } from "@/context/BudgetContext";
@@ -103,6 +111,9 @@ interface SummaryCardProps {
   tooltip?: string;
 }
 
+const TOOLTIP_WIDTH = 220;
+const TOOLTIP_PADDING = 8;
+
 function SummaryCard({
   title,
   value,
@@ -111,8 +122,25 @@ function SummaryCard({
   color,
   tooltip,
 }: SummaryCardProps) {
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+  const infoRef = useRef<Text>(null);
+  const { width: screenWidth } = useWindowDimensions();
   const c = cardColors[color];
+
+  function handleInfoPress() {
+    if (tooltipPos) {
+      setTooltipPos(null);
+      return;
+    }
+    infoRef.current?.measureInWindow((x, y, w, h) => {
+      const left = Math.min(
+        Math.max(TOOLTIP_PADDING, x + w / 2 - TOOLTIP_WIDTH / 2),
+        screenWidth - TOOLTIP_WIDTH - TOOLTIP_PADDING
+      );
+      // Place tooltip just below the ⓘ icon
+      setTooltipPos({ x: left, y: y + h + 4 });
+    });
+  }
 
   return (
     <View style={[styles.card, { borderColor: c.border }]}>
@@ -125,20 +153,39 @@ function SummaryCard({
           <Text style={styles.cardSubtitle}>{subtitle}</Text>
           {tooltip && (
             <Text
+              ref={infoRef}
               style={[styles.tooltipToggle, { color: c.text }]}
-              onPress={() => setShowTooltip((v) => !v)}
+              onPress={handleInfoPress}
             >
               ⓘ
             </Text>
           )}
-          {showTooltip && tooltip ? (
-            <Text style={styles.tooltipText}>{tooltip}</Text>
-          ) : null}
         </View>
         <View style={[styles.cardIcon, { backgroundColor: c.subtle }]}>
           <Ionicons name={iconName} size={20} color={c.icon} />
         </View>
       </View>
+
+      {tooltip && tooltipPos && (
+        <Modal
+          visible
+          transparent
+          animationType="none"
+          onRequestClose={() => setTooltipPos(null)}
+          statusBarTranslucent
+        >
+          <Pressable style={styles.tooltipBackdrop} onPress={() => setTooltipPos(null)}>
+            <View
+              style={[
+                styles.tooltipBox,
+                { left: tooltipPos.x, top: tooltipPos.y },
+              ]}
+            >
+              <Text style={styles.tooltipText}>{tooltip}</Text>
+            </View>
+          </Pressable>
+        </Modal>
+      )}
     </View>
   );
 }
@@ -534,14 +581,28 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 4,
   },
+  tooltipBackdrop: {
+    flex: 1,
+    backgroundColor: "transparent",
+  },
+  tooltipBox: {
+    position: "absolute",
+    width: TOOLTIP_WIDTH,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 10,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 8,
+  },
   tooltipText: {
     color: colors.textSecondary,
-    fontSize: 11,
-    lineHeight: 16,
-    marginTop: 6,
-    backgroundColor: colors.surfaceSubtle,
-    padding: 8,
-    borderRadius: 8,
+    fontSize: 12,
+    lineHeight: 18,
   },
   // Progress bar
   section: {

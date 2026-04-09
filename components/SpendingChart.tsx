@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
   },
   modalBackdrop: {
     flex: 1,
+    backgroundColor: "transparent",
   },
   tooltip: {
     position: "absolute",

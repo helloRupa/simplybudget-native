@@ -66,7 +66,7 @@ npx expo install        # Install Expo-compatible packages (use instead of npm i
 
 ## Theming
 
-All colors are defined in `constants/colors.ts` and imported into each `StyleSheet.create()`. Never hardcode color hex values directly in style objects — always reference a named token from `colors`.
+All colors are defined in `constants/colors.ts` and imported into each `StyleSheet.create()`. Never hardcode color hex values or rgba values directly in style objects — always reference a named token from `colors`. If a color you need doesn't exist as a token yet, add it to `constants/colors.ts` first, then reference it.
 
 ```ts
 import { colors } from "@/constants/colors";
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-Current tokens: `background`, `surface`, `border`, `teal`, `white`, `textMuted`.
+Current tokens: `background`, `surface`, `border`, `teal`, `tealSubtle`, `tealFaint`, `tealBorder`, `white`, `whiteMuted`, `textMuted`, `textSecondary`, `surfaceSubtle`, `overlay`, `toastSuccess`, `toastError`, `toastInfo`.
 
 ## Lessons Learned
 

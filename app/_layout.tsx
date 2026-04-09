@@ -2,6 +2,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { BudgetProvider } from "@/context/BudgetContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,13 +23,15 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="expense-form" options={{ title: "Expense" }} />
-      <Stack.Screen
-        name="recurring-expenses"
-        options={{ title: "Recurring Expenses" }}
-      />
-    </Stack>
+    <BudgetProvider>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="expense-form" options={{ title: "Expense" }} />
+        <Stack.Screen
+          name="recurring-expenses"
+          options={{ title: "Recurring Expenses" }}
+        />
+      </Stack>
+    </BudgetProvider>
   );
 }

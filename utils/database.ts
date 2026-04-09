@@ -14,6 +14,7 @@ let _db: SQLite.SQLiteDatabase | null = null;
 export function getDatabase(): SQLite.SQLiteDatabase {
   if (!_db) {
     _db = SQLite.openDatabaseSync("simplybudget.db");
+    initDatabase(_db);
   }
   return _db;
 }

@@ -155,7 +155,12 @@ export default function SettingsScreen() {
                 onSubmitEditing={handleSaveBudget}
               />
             </View>
-            <Pressable style={styles.saveButton} onPress={handleSaveBudget}>
+            <Pressable
+              style={styles.saveButton}
+              onPress={handleSaveBudget}
+              accessibilityLabel={t("save")}
+              accessibilityRole="button"
+            >
               <Text style={styles.saveButtonText}>{t("save")}</Text>
             </Pressable>
           </View>
@@ -218,7 +223,12 @@ export default function SettingsScreen() {
               returnKeyType="done"
               onSubmitEditing={handleAddCategory}
             />
-            <Pressable style={styles.addButton} onPress={handleAddCategory}>
+            <Pressable
+              style={styles.addButton}
+              onPress={handleAddCategory}
+              accessibilityLabel={t("addCategory")}
+              accessibilityRole="button"
+            >
               <Text style={styles.addButtonText}>{t("addCategory")}</Text>
             </Pressable>
           </View>
@@ -251,13 +261,20 @@ export default function SettingsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("exportData")}</Text>
           <View style={styles.buttonGroup}>
-            <Pressable style={styles.exportButton} onPress={handleExportCSV}>
+            <Pressable
+              style={styles.exportButton}
+              onPress={handleExportCSV}
+              accessibilityLabel={t("exportCSV")}
+              accessibilityRole="button"
+            >
               <Ionicons name="document-text-outline" size={16} color={colors.background} />
               <Text style={styles.exportButtonText}>{t("exportCSV")}</Text>
             </Pressable>
             <Pressable
               style={[styles.exportButton, styles.exportButtonIndigo]}
               onPress={handleExportBackup}
+              accessibilityLabel={t("exportBackup")}
+              accessibilityRole="button"
             >
               <Ionicons name="cloud-download-outline" size={16} color={colors.white} />
               <Text style={[styles.exportButtonText, styles.exportTextWhite]}>
@@ -267,6 +284,8 @@ export default function SettingsScreen() {
             <Pressable
               style={[styles.exportButton, styles.exportButtonAmber]}
               onPress={handleImportBackup}
+              accessibilityLabel={t("importBackup")}
+              accessibilityRole="button"
             >
               <Ionicons name="cloud-upload-outline" size={16} color={colors.background} />
               <Text style={styles.exportButtonText}>{t("importBackup")}</Text>
@@ -467,7 +486,7 @@ const styles = StyleSheet.create({
     paddingVertical: 11,
   },
   exportButtonIndigo: {
-    backgroundColor: "#6366f1",
+    backgroundColor: colors.indigo,
   },
   exportButtonAmber: {
     backgroundColor: colors.amber,

@@ -106,6 +106,7 @@ const en = {
   edit: "Edit",
   delete: "Delete",
   close: "Close",
+  done: "Done",
   perWeek: "/ week",
 
   // Recurring Expenses
@@ -248,6 +249,7 @@ const es: typeof en = {
   edit: "Editar",
   delete: "Eliminar",
   close: "Cerrar",
+  done: "Hecho",
   perWeek: "/ semana",
   recurringExpenses: "Gastos Recurrentes",
   addRecurringExpense: "Agregar Gasto Recurrente",
@@ -387,6 +389,7 @@ const fr: typeof en = {
   edit: "Modifier",
   delete: "Supprimer",
   close: "Fermer",
+  done: "Terminé",
   perWeek: "/ semaine",
   recurringExpenses: "Dépenses Récurrentes",
   addRecurringExpense: "Ajouter une Dépense Récurrente",

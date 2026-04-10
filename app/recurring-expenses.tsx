@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBudget } from "@/context/BudgetContext";
 import { RecurringExpense, RecurringFrequency } from "@/types";
 import { toISODate } from "@/utils/dates";
@@ -60,6 +61,7 @@ export default function RecurringExpensesScreen() {
     tc,
     fc,
   } = useBudget();
+  const insets = useSafeAreaInsets();
 
   const firstUseDateObj = parseISO(state.firstUseDate);
 
@@ -210,6 +212,8 @@ export default function RecurringExpensesScreen() {
           <Pressable
             style={styles.addButton}
             onPress={() => setShowForm(true)}
+            accessibilityLabel={t("addRecurringExpense")}
+            accessibilityRole="button"
           >
             <Text style={styles.addButtonText}>{t("addRecurringExpense")}</Text>
           </Pressable>
@@ -219,7 +223,7 @@ export default function RecurringExpensesScreen() {
         {showForm && (
           <ScrollView
             style={styles.formScroll}
-            contentContainerStyle={styles.formContent}
+            contentContainerStyle={[styles.formContent, { paddingBottom: insets.bottom + 16 }]}
             keyboardShouldPersistTaps="handled"
           >
             <Text style={styles.formTitle}>
@@ -339,10 +343,20 @@ export default function RecurringExpensesScreen() {
 
             {/* Buttons */}
             <View style={styles.buttonRow}>
-              <Pressable style={styles.cancelButton} onPress={resetForm}>
+              <Pressable
+                style={styles.cancelButton}
+                onPress={resetForm}
+                accessibilityLabel={t("cancel")}
+                accessibilityRole="button"
+              >
                 <Text style={styles.cancelText}>{t("cancel")}</Text>
               </Pressable>
-              <Pressable style={styles.submitButton} onPress={handleSubmit}>
+              <Pressable
+                style={styles.submitButton}
+                onPress={handleSubmit}
+                accessibilityLabel={editingId ? t("update") : t("save")}
+                accessibilityRole="button"
+              >
                 <Text style={styles.submitText}>
                   {editingId ? t("update") : t("save")}
                 </Text>
@@ -356,7 +370,9 @@ export default function RecurringExpensesScreen() {
           <FlatList
             data={state.recurringExpenses}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContent}
+            contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 16 }]}
+            initialNumToRender={10}
+            removeClippedSubviews
             ListEmptyComponent={
               <Text style={styles.emptyText}>{t("noRecurringExpenses")}</Text>
             }

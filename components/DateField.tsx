@@ -11,6 +11,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import { parseISO } from "date-fns";
 import { toISODate } from "@/utils/dates";
+import { useBudget } from "@/context/BudgetContext";
 import { colors } from "@/constants/colors";
 
 interface DateFieldProps {
@@ -30,6 +31,7 @@ export default function DateField({
   error,
   placeholder,
 }: DateFieldProps) {
+  const { t } = useBudget();
   const [showPicker, setShowPicker] = useState(false);
   const dateValue = value ? parseISO(value) : new Date();
 
@@ -81,8 +83,12 @@ export default function DateField({
           >
             <View style={styles.iosSheet}>
               <View style={styles.iosHeader}>
-                <Pressable onPress={() => setShowPicker(false)}>
-                  <Text style={styles.iosDone}>Done</Text>
+                <Pressable
+                  onPress={() => setShowPicker(false)}
+                  accessibilityLabel={t("done")}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.iosDone}>{t("done")}</Text>
                 </Pressable>
               </View>
               <DateTimePicker
@@ -91,7 +97,7 @@ export default function DateField({
                 display="spinner"
                 onChange={handleChange}
                 minimumDate={minimumDate}
-                themeVariant="light"
+                themeVariant="dark"
                 style={styles.iosPicker}
               />
             </View>
@@ -142,9 +148,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   iosSheet: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
+    borderTopWidth: 1,
+    borderColor: colors.border,
   },
   iosHeader: {
     flexDirection: "row",

@@ -158,6 +158,8 @@ function SummaryCard({
               ref={infoRef}
               style={[styles.tooltipToggle, { color: c.text }]}
               onPress={handleInfoPress}
+              accessibilityRole="button"
+              accessibilityLabel={title}
             >
               ⓘ
             </Text>

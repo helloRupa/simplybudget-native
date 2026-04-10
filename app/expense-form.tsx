@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useBudget } from "@/context/BudgetContext";
 import { toISODate } from "@/utils/dates";
@@ -22,6 +23,7 @@ export default function ExpenseFormScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const { state, addExpense, updateExpense, t, tc, currencySymbol } =
     useBudget();
+  const insets = useSafeAreaInsets();
 
   const editingExpense = id
     ? state.expenses.find((e) => e.id === id) ?? null
@@ -99,7 +101,7 @@ export default function ExpenseFormScreen() {
     >
       <ScrollView
         style={styles.container}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 16 }]}
         keyboardShouldPersistTaps="handled"
       >
         {/* Amount */}
@@ -164,11 +166,21 @@ export default function ExpenseFormScreen() {
         {/* Buttons */}
         <View style={styles.buttonRow}>
           {editingExpense && (
-            <Pressable style={styles.cancelButton} onPress={() => router.back()}>
+            <Pressable
+              style={styles.cancelButton}
+              onPress={() => router.back()}
+              accessibilityLabel={t("cancel")}
+              accessibilityRole="button"
+            >
               <Text style={styles.cancelText}>{t("cancel")}</Text>
             </Pressable>
           )}
-          <Pressable style={styles.submitButton} onPress={handleSubmit}>
+          <Pressable
+            style={styles.submitButton}
+            onPress={handleSubmit}
+            accessibilityLabel={editingExpense ? t("update") : t("addExpense")}
+            accessibilityRole="button"
+          >
             <Text style={styles.submitText}>
               {editingExpense ? t("update") : t("addExpense")}
             </Text>
@@ -190,6 +202,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
+    paddingBottom: 16,
     gap: 16,
   },
   field: {

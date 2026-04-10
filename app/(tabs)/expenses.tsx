@@ -212,6 +212,9 @@ export default function ExpensesScreen() {
         data={filteredExpenses}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
+        initialNumToRender={15}
+        maxToRenderPerBatch={10}
+        removeClippedSubviews
         ListHeaderComponent={
           <>
             <ExpenseFilters

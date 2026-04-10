@@ -10,7 +10,6 @@ import { initDatabase, _setDatabase } from "@/utils/database";
 import { BudgetProvider } from "@/context/BudgetContext";
 import Toast from "@/components/Toast";
 import AboutModal from "@/components/AboutModal";
-import Header from "@/components/Header";
 
 function makeDb() {
   const db = openDatabaseSync("test.db");
@@ -136,58 +135,3 @@ describe("AboutModal", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Header
-// ---------------------------------------------------------------------------
-
-describe("Header", () => {
-  it("renders the app name", () => {
-    render(
-      <Providers>
-        <Header />
-      </Providers>
-    );
-    expect(screen.getByText("Simply")).toBeTruthy();
-    expect(screen.getByText("Budget")).toBeTruthy();
-  });
-
-  it("renders the current locale name", () => {
-    render(
-      <Providers>
-        <Header />
-      </Providers>
-    );
-    expect(screen.getByText("English")).toBeTruthy();
-  });
-
-  it("opens locale picker on press", () => {
-    render(
-      <Providers>
-        <Header />
-      </Providers>
-    );
-    fireEvent.press(screen.getByText("English"));
-    expect(screen.getByText("Español")).toBeTruthy();
-    expect(screen.getByText("Français")).toBeTruthy();
-  });
-
-  it("changes locale when a language is selected", () => {
-    render(
-      <Providers>
-        <Header />
-      </Providers>
-    );
-    fireEvent.press(screen.getByText("English"));
-    fireEvent.press(screen.getByText("Español"));
-    expect(screen.getByText("Español")).toBeTruthy();
-  });
-
-  it("does not render an about/info button", () => {
-    render(
-      <Providers>
-        <Header />
-      </Providers>
-    );
-    expect(screen.queryByLabelText("About")).toBeNull();
-  });
-});

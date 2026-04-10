@@ -160,7 +160,7 @@ export function getBudgetHistory(
   db: SQLiteDatabase
 ): { startDate: string; amount: number }[] {
   return db.getAllSync<{ startDate: string; amount: number }>(
-    "SELECT * FROM budget_history ORDER BY startDate ASC"
+    "SELECT * FROM budget_history ORDER BY startDate DESC"
   );
 }
 

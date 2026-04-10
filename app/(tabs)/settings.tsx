@@ -70,8 +70,13 @@ export default function SettingsScreen() {
   }
 
   function handleAddCategory() {
-    if (!newCategory.trim()) return;
-    const success = addCategory(newCategory.trim());
+    const trimmed = newCategory.trim();
+    if (!trimmed) return;
+    if (trimmed.length > 30) {
+      setToast({ message: t("categoryTooLong"), type: "error" });
+      return;
+    }
+    const success = addCategory(trimmed);
     if (success) {
       setNewCategory("");
       setToast({ message: t("categoryAdded"), type: "success" });
@@ -220,6 +225,7 @@ export default function SettingsScreen() {
               onChangeText={setNewCategory}
               placeholder={t("newCategoryPlaceholder")}
               placeholderTextColor={colors.textMuted}
+              maxLength={30}
               returnKeyType="done"
               onSubmitEditing={handleAddCategory}
             />

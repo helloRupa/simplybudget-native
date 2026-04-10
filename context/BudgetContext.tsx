@@ -325,6 +325,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     (name: string): boolean => {
       const trimmed = name.trim();
       if (!trimmed) return false;
+      if (trimmed.length > 30) return false;
 
       if (
         state.categories.some(

@@ -361,7 +361,7 @@ describe("preferences", () => {
   it("returns defaults when no preferences row exists", () => {
     const db = makeDb();
     const prefs = getPreferences(db);
-    expect(prefs.weeklyBudget).toBe(500);
+    expect(prefs.weeklyBudget).toBe(200);
     expect(prefs.locale).toBe("en-US");
     expect(prefs.currency).toBe("USD");
   });

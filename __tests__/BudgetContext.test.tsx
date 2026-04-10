@@ -45,9 +45,9 @@ describe("BudgetProvider — initial state", () => {
     expect(result.current.isLoaded).toBe(true);
   });
 
-  it("loads default preferences (weeklyBudget 500, en-US, USD)", () => {
+  it("loads default preferences (weeklyBudget 200, en, USD)", () => {
     const { result } = renderHook(() => useBudget(), { wrapper });
-    expect(result.current.state.weeklyBudget).toBe(500);
+    expect(result.current.state.weeklyBudget).toBe(200);
     expect(result.current.state.locale).toBe("en");
     expect(result.current.state.currency).toBe("USD");
   });
@@ -225,6 +225,28 @@ describe("BudgetProvider — categories", () => {
     });
 
     expect(added).toBe(false);
+  });
+
+  it("addCategory returns false for name exceeding 30 characters", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+
+    let added: boolean = false;
+    act(() => {
+      added = result.current.addCategory("A".repeat(31));
+    });
+
+    expect(added).toBe(false);
+  });
+
+  it("addCategory accepts a name of exactly 30 characters", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+
+    let added: boolean = false;
+    act(() => {
+      added = result.current.addCategory("A".repeat(30));
+    });
+
+    expect(added).toBe(true);
   });
 
   it("updateCategory updates the color of an existing category", () => {

@@ -391,7 +391,7 @@ export default function DashboardScreen() {
             }
             value={fc(Math.abs(stats.totalSavedAllTime))}
             subtitle={t("allTime")}
-            iconName="home-outline"
+            iconName="calculator-outline"
             color={stats.totalSavedAllTime >= 0 ? "green" : "red"}
             tooltip={tooltipText}
           />

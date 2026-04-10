@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useBudget } from "@/context/BudgetContext";
 import { DEFAULT_CATEGORY_NAMES, SUPPORTED_CURRENCIES, CurrencyCode } from "@/utils/constants";
+import { LOCALE_NAMES, LocaleKey } from "@/i18n/locales";
 import { exportBackup, pickAndParseBackup } from "@/utils/backup";
 import { exportToCSV } from "@/utils/csv";
 import FieldPicker, { PickerOption } from "@/components/FieldPicker";
@@ -29,6 +30,7 @@ export default function SettingsScreen() {
     addCategory,
     deleteCategory,
     setCurrency,
+    setLocale,
     importData,
     t,
     tc,
@@ -47,6 +49,10 @@ export default function SettingsScreen() {
 
   const currencyOptions: PickerOption[] = Object.entries(SUPPORTED_CURRENCIES).map(
     ([code, label]) => ({ value: code, label })
+  );
+
+  const localeOptions: PickerOption[] = (Object.entries(LOCALE_NAMES) as [LocaleKey, string][]).map(
+    ([key, name]) => ({ value: key, label: name })
   );
 
   const isDefaultCategory = (cat: string) =>
@@ -169,6 +175,17 @@ export default function SettingsScreen() {
             value={state.currency}
             options={currencyOptions}
             onChange={(v) => setCurrency(v as CurrencyCode)}
+          />
+        </View>
+
+        {/* Language */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t("language")}</Text>
+          <FieldPicker
+            label=""
+            value={state.locale}
+            options={localeOptions}
+            onChange={(v) => setLocale(v as LocaleKey)}
           />
         </View>
 

@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   closeText: {
-    color: colors.teal,
+    color: colors.white,
     fontSize: 14,
     fontWeight: "600",
   },

@@ -11,10 +11,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, subDays } from "date-fns";
 import { useBudget } from "@/context/BudgetContext";
 import { Expense, FilterState, SortState } from "@/types";
-import { isInRange } from "@/utils/dates";
+import { isInRange, toISODate } from "@/utils/dates";
 import ExpenseFilters from "@/components/ExpenseFilters";
 import Toast from "@/components/Toast";
 import { colors } from "@/constants/colors";
+
+const TODAY = toISODate(new Date());
 
 function getDefaultFilters(): FilterState {
   return {
@@ -62,12 +64,28 @@ function ExpenseCard({
 }: ExpenseCardProps) {
   const { t, fc, fd } = useBudget();
   const isDeleting = deletingId === expense.id;
+  const isFuture = expense.date > TODAY;
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, isFuture && styles.cardFuture]}>
       <View style={styles.cardTop}>
         <View style={styles.cardLeft}>
-          <CategoryBadge category={expense.category} />
+          <View style={styles.badgeRow}>
+            <CategoryBadge category={expense.category} />
+            {expense.recurringExpenseId && (
+              <Ionicons
+                name="repeat-outline"
+                size={14}
+                color={colors.teal}
+                style={styles.recurringIcon}
+              />
+            )}
+            {isFuture && (
+              <View style={styles.upcomingBadge}>
+                <Text style={styles.upcomingBadgeText}>{t("upcoming")}</Text>
+              </View>
+            )}
+          </View>
           <Text style={styles.cardDate}>{fd(expense.date)}</Text>
         </View>
         <Text
@@ -80,19 +98,9 @@ function ExpenseCard({
         </Text>
       </View>
 
-      {(expense.description || expense.recurringExpenseId) && (
-        <View style={styles.cardDescRow}>
-          <Text style={styles.cardDescription}>{expense.description}</Text>
-          {expense.recurringExpenseId && (
-            <Ionicons
-              name="repeat-outline"
-              size={14}
-              color={colors.teal}
-              style={styles.recurringIcon}
-            />
-          )}
-        </View>
-      )}
+      {expense.description ? (
+        <Text style={styles.cardDescription}>{expense.description}</Text>
+      ) : null}
 
       <View style={styles.cardActions}>
         {isDeleting ? (
@@ -334,6 +342,30 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     gap: 8,
   },
+  cardFuture: {
+    backgroundColor: colors.surfaceDim,
+  },
+  badgeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    flexWrap: "wrap",
+  },
+  upcomingBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 20,
+    backgroundColor: colors.toastInfoSubtle,
+    borderWidth: 1,
+    borderColor: colors.toastInfoBorder,
+  },
+  upcomingBadgeText: {
+    color: colors.toastInfo,
+    fontSize: 11,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+  },
   cardTop: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -376,15 +408,9 @@ const styles = StyleSheet.create({
   amountPositive: {
     color: colors.teal,
   },
-  cardDescRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
   cardDescription: {
     color: colors.textSecondary,
     fontSize: 13,
-    flex: 1,
   },
   recurringIcon: {
     opacity: 0.7,

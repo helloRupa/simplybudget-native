@@ -1,6 +1,7 @@
 export const colors = {
   background: "#0d1117",
   surface: "#1f2937",
+  surfaceDim: "#141a22",
   border: "#1f2937",
   teal: "#2dd4bf",
   tealSubtle: "rgba(45,212,191,0.1)",
@@ -15,6 +16,8 @@ export const colors = {
   toastSuccess: "#22c55e",
   toastError: "#ef4444",
   toastInfo: "#3b82f6",
+  toastInfoSubtle: "rgba(59,130,246,0.1)",
+  toastInfoBorder: "rgba(59,130,246,0.3)",
   amber: "#fcd34d",
   dangerText: "#f87171",
   dangerSubtle: "rgba(239,68,68,0.2)",

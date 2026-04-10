@@ -52,6 +52,7 @@ const en = {
   expenseUpdated: "Expense updated successfully!",
   expenseDeleted: "Expense deleted.",
   noExpenses: "No expenses found.",
+  upcoming: "Upcoming",
 
   // Filters
   filters: "Filters",
@@ -199,6 +200,7 @@ const es: typeof en = {
   expenseUpdated: "¡Gasto actualizado exitosamente!",
   expenseDeleted: "Gasto eliminado.",
   noExpenses: "No se encontraron gastos.",
+  upcoming: "Próximo",
   filters: "Filtros",
   search: "Buscar",
   searchPlaceholder: "Buscar gastos...",
@@ -336,6 +338,7 @@ const fr: typeof en = {
   expenseUpdated: "Dépense mise à jour avec succès!",
   expenseDeleted: "Dépense supprimée.",
   noExpenses: "Aucune dépense trouvée.",
+  upcoming: "À venir",
   filters: "Filtres",
   search: "Rechercher",
   searchPlaceholder: "Rechercher des dépenses...",

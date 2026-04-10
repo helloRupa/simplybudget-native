@@ -190,7 +190,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
   const [state, dispatch] = useReducer(reducer, {
     expenses: [],
-    weeklyBudget: 500,
+    weeklyBudget: 200,
     categories: [],
     firstUseDate: toISODate(getWeekRange().start),
     locale: "en",

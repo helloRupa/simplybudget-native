@@ -10,13 +10,15 @@ export function formatCurrency(
 }
 
 export function getCurrencySymbol(currency: string, locale = "en-US"): string {
-  return (
-    new Intl.NumberFormat(locale, {
+  try {
+    const formatted = new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
       currencyDisplay: "narrowSymbol",
-    })
-      .formatToParts(0)
-      .find((p) => p.type === "currency")?.value ?? currency
-  );
+    }).format(0);
+    // Strip digits, decimal separators, and whitespace to isolate the symbol
+    return formatted.replace(/[\d,.\s]/g, "").trim() || currency;
+  } catch {
+    return currency;
+  }
 }

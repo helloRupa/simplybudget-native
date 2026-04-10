@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SimplyBudgetNative",
-    "slug": "SimplyBudgetNative",
+    "name": "SimplyBudget",
+    "slug": "SimplyBudget",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.SimplyBudget"
     },
     "android": {
       "backgroundColor": "#0d1117",
@@ -34,9 +35,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#0d1117",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#0d1117"
           }
         }
       ],

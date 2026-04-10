@@ -91,6 +91,7 @@ export default function DateField({
                 display="spinner"
                 onChange={handleChange}
                 minimumDate={minimumDate}
+                themeVariant="light"
                 style={styles.iosPicker}
               />
             </View>
@@ -141,11 +142,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   iosSheet: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.white,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   iosHeader: {
     flexDirection: "row",

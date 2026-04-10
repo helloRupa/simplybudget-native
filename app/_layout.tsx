@@ -1,45 +1,62 @@
-import { useFonts } from "expo-font";
+import AppName from "@/components/AppName";
+import { colors } from "@/constants/colors";
+import { BudgetProvider, useBudget } from "@/context/BudgetContext";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { BudgetProvider } from "@/context/BudgetContext";
-import { colors } from "@/constants/colors";
+import { StyleSheet, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const [loaded] = useFonts({
-    // Custom fonts can be added here, e.g.:
-    // GeistSans: require("../assets/fonts/GeistVF.woff2"),
-  });
+function RootLayoutNav() {
+  const { isLoaded } = useBudget();
 
   useEffect(() => {
-    if (loaded) {
+    if (isLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [isLoaded]);
 
-  if (!loaded) {
-    return null;
+  if (!isLoaded) {
+    return (
+      <View style={styles.splash}>
+        <AppName size="large" />
+      </View>
+    );
   }
 
   return (
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.background },
+        headerTintColor: colors.white,
+        contentStyle: { backgroundColor: colors.background },
+        animation: "fade",
+      }}
+    >
+      <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "" }} />
+      <Stack.Screen name="expense-form" options={{ title: "Expense" }} />
+      <Stack.Screen
+        name="recurring-expenses"
+        options={{ title: "Recurring Expenses" }}
+      />
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
     <BudgetProvider>
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: colors.background },
-          headerTintColor: colors.white,
-          contentStyle: { backgroundColor: colors.background },
-          animation: "fade",
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="expense-form" options={{ title: "Expense" }} />
-        <Stack.Screen
-          name="recurring-expenses"
-          options={{ title: "Recurring Expenses" }}
-        />
-      </Stack>
+      <RootLayoutNav />
     </BudgetProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  splash: {
+    flex: 1,
+    backgroundColor: colors.background,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

@@ -201,7 +201,7 @@ export function deleteCategory(db: SQLiteDatabase, name: string): void {
 // ---------------------------------------------------------------------------
 
 const PREFERENCES_DEFAULTS: Preferences = {
-  weeklyBudget: 500,
+  weeklyBudget: 200,
   firstUseDate: toISODate(getWeekRange().start),
   locale: "en-US",
   currency: "USD",

@@ -9,6 +9,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { parseISO, isWithinInterval } from "date-fns";
 import { useBudget } from "@/context/BudgetContext";
@@ -331,12 +332,12 @@ export default function DashboardScreen() {
   const budgetColor: CardColor =
     budgetPct > 90 ? "red" : budgetPct > 70 ? "amber" : "teal";
 
-  const progressFillColor =
+  const progressGradient: [string, string] =
     budgetPct > 90
-      ? colors.dangerText
+      ? [colors.chartRed, colors.chartRedGrad]
       : budgetPct > 70
-        ? colors.amber
-        : colors.teal;
+        ? [colors.amber, colors.chartAmberGrad]
+        : [colors.chartTeal, colors.chartBlue];
 
   const tooltipText = t("totalSavedTooltip")
     .replace("{startDate}", fd(state.firstUseDate))
@@ -407,14 +408,11 @@ export default function DashboardScreen() {
           </Text>
         </View>
         <View style={styles.progressTrack}>
-          <View
-            style={[
-              styles.progressFill,
-              {
-                width: `${budgetPct}%` as `${number}%`,
-                backgroundColor: progressFillColor,
-              },
-            ]}
+          <LinearGradient
+            colors={progressGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.progressFill, { width: `${budgetPct}%` as `${number}%` }]}
           />
         </View>
       </View>

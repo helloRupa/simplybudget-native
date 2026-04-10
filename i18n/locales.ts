@@ -159,6 +159,7 @@ const en = {
   aboutBuiltWith: "Built with",
   aboutVersion: "Version",
   noChartData: "No data to display",
+  everythingElse: "Everything else",
 };
 
 const es: typeof en = {
@@ -296,6 +297,7 @@ const es: typeof en = {
   aboutBuiltWith: "Construido con",
   aboutVersion: "Versión",
   noChartData: "No hay datos para mostrar",
+  everythingElse: "Todo lo demás",
 };
 
 const fr: typeof en = {
@@ -434,6 +436,7 @@ const fr: typeof en = {
   aboutBuiltWith: "Construit avec",
   aboutVersion: "Version",
   noChartData: "Aucune donnée à afficher",
+  everythingElse: "Tout le reste",
 };
 
 export const locales: Record<LocaleKey, typeof en> = { en, es, fr };

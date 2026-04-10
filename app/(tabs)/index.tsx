@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import { PieChart } from "react-native-gifted-charts";
 import {
   Modal,
   Pressable,
@@ -284,6 +285,45 @@ export default function DashboardScreen() {
     };
   }, [state, intlLocale]);
 
+  const pieData = useMemo(() => {
+    const entries = Object.entries(stats.monthlyCategoryTotals)
+      .map(([cat, { current }]) => ({ cat, value: current }))
+      .filter(({ value }) => value > 0);
+
+    const total = entries.reduce((s, e) => s + e.value, 0);
+    if (total === 0) return { slices: [], total: 0 };
+
+    const main: typeof entries = [];
+    const small: typeof entries = [];
+    entries.forEach((e) => {
+      if (e.value / total >= 0.03) main.push(e);
+      else small.push(e);
+    });
+    main.sort((a, b) => b.value - a.value);
+
+    const slices = main.map(({ cat, value }) => ({
+      value,
+      color: getCatColor(state.categories, cat),
+      label: tc(cat),
+    }));
+
+    if (small.length > 1) {
+      slices.push({
+        value: small.reduce((s, e) => s + e.value, 0),
+        color: colors.textMuted,
+        label: t("everythingElse"),
+      });
+    } else if (small.length === 1) {
+      slices.push({
+        value: small[0].value,
+        color: getCatColor(state.categories, small[0].cat),
+        label: tc(small[0].cat),
+      });
+    }
+
+    return { slices, total };
+  }, [stats.monthlyCategoryTotals, state.categories, tc, t]);
+
   const budgetPct = Math.min(
     100,
     stats.weeklyBudget > 0 ? (stats.spentThisWeek / stats.weeklyBudget) * 100 : 0
@@ -453,58 +493,48 @@ export default function DashboardScreen() {
           {/* Monthly Spending by Category */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t("monthlySpending")}</Text>
-            <View style={styles.monthlyGrid}>
-              {Object.entries(stats.monthlyCategoryTotals)
-                .sort(
-                  ([, a], [, b]) =>
-                    b.current + b.future - (a.current + a.future)
-                )
-                .map(([category, { current, future }]) => {
-                  const isAllFuture = current === 0 && future > 0;
-                  const catColor = getCatColor(state.categories, category);
-                  return (
-                    <View
-                      key={category}
-                      style={[
-                        styles.monthlyCard,
-                        isAllFuture && styles.monthlyCardFuture,
-                      ]}
-                    >
+            {pieData.slices.length === 0 ? (
+              <Text style={styles.emptyText}>{t("noExpenses")}</Text>
+            ) : (
+              <View style={styles.pieWrapper}>
+                <PieChart
+                  data={pieData.slices}
+                  donut
+                  radius={110}
+                  innerRadius={68}
+                  innerCircleColor={colors.surface}
+                  isAnimated
+                  centerLabelComponent={() => (
+                    <View style={styles.pieCenterLabel}>
+                      <Text style={styles.pieCenterName}>{t("total")}</Text>
+                      <Text style={styles.pieCenterAmount}>
+                        {fc(pieData.total)}
+                      </Text>
+                    </View>
+                  )}
+                />
+                <View style={styles.pieLegend}>
+                  {pieData.slices.map((slice, i) => (
+                    <View key={i} style={styles.pieLegendItem}>
                       <View
                         style={[
-                          styles.monthlyAvatar,
-                          {
-                            backgroundColor: catColor + "25",
-                            borderColor: catColor + "40",
-                          },
+                          styles.pieLegendDot,
+                          { backgroundColor: slice.color },
                         ]}
-                      >
-                        <Text style={[styles.monthlyInitial, { color: catColor }]}>
-                          {tc(category)[0]}
+                      />
+                      <View style={styles.pieLegendText}>
+                        <Text style={styles.pieLegendName} numberOfLines={1}>
+                          {slice.label}
+                        </Text>
+                        <Text style={styles.pieLegendAmount}>
+                          {fc(slice.value)}
                         </Text>
                       </View>
-                      <Text style={styles.monthlyCatName} numberOfLines={1}>
-                        {tc(category)}
-                      </Text>
-                      {future > 0 && current > 0 ? (
-                        <Text style={styles.monthlyAmount}>
-                          {fc(current)}{" "}
-                          <Text style={styles.monthlyAmountFuture}>
-                            + {fc(future)}
-                          </Text>
-                        </Text>
-                      ) : (
-                        <Text style={styles.monthlyAmount}>
-                          {fc(current + future)}
-                        </Text>
-                      )}
                     </View>
-                  );
-                })}
-              {Object.keys(stats.monthlyCategoryTotals).length === 0 && (
-                <Text style={styles.emptyText}>{t("noExpenses")}</Text>
-              )}
-            </View>
+                  ))}
+                </View>
+              </View>
+            )}
           </View>
         </>
       )}
@@ -718,52 +748,58 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 2,
   },
-  // Monthly grid
-  monthlyGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  monthlyCard: {
-    width: "30%",
-    backgroundColor: colors.surfaceSubtle,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 10,
+  // Monthly spending donut
+  pieWrapper: {
     alignItems: "center",
-    gap: 4,
+    gap: 20,
   },
-  monthlyCardFuture: {
-    opacity: 0.5,
-    borderStyle: "dashed",
-  },
-  monthlyAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1,
+  pieCenterLabel: {
     alignItems: "center",
-    justifyContent: "center",
+    paddingHorizontal: 8,
   },
-  monthlyInitial: {
-    fontSize: 13,
-    fontWeight: "700",
-  },
-  monthlyCatName: {
+  pieCenterName: {
     color: colors.textMuted,
-    fontSize: 10,
+    fontSize: 11,
+    fontWeight: "600",
     textTransform: "uppercase",
-    letterSpacing: 0.3,
-  },
-  monthlyAmount: {
-    color: colors.white,
-    fontSize: 12,
-    fontWeight: "700",
+    letterSpacing: 0.4,
     textAlign: "center",
   },
-  monthlyAmountFuture: {
+  pieCenterAmount: {
+    color: colors.white,
+    fontSize: 18,
+    fontWeight: "700",
+    textAlign: "center",
+    marginTop: 2,
+  },
+  pieLegend: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    alignSelf: "stretch",
+  },
+  pieLegendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    width: "47%",
+  },
+  pieLegendDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    flexShrink: 0,
+  },
+  pieLegendText: {
+    flex: 1,
+  },
+  pieLegendName: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  pieLegendAmount: {
     color: colors.textMuted,
-    fontWeight: "400",
+    fontSize: 11,
   },
 });

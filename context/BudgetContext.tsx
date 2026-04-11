@@ -37,8 +37,8 @@ import React, {
   useState,
 } from "react";
 
-// Set to true to load pre-populated mock data instead of the real database.
-const USE_MOCK_DATA = true;
+// Load pre-populated mock data in dev builds. Always false in production.
+const USE_MOCK_DATA = __DEV__ && true;
 
 // ---------------------------------------------------------------------------
 // State shape

@@ -83,3 +83,4 @@ Current tokens: `background`, `surface`, `border`, `teal`, `tealSubtle`, `tealFa
 <!-- Claude: add new rules here whenever you make a mistake and get corrected -->
 
 - **No AsyncStorage** — all data (records and preferences) goes in expo-sqlite. `weeklyBudget` and `firstUseDate` are load-bearing: losing them to cache eviction or a manual storage clear would corrupt the user's financial history. Preferences use a `preferences` table (`key TEXT PRIMARY KEY, value TEXT`).
+- **Negative expense amounts are intentional** — a one-off `Expense` can have a negative amount to represent a refund or cancellation. The expense form validates `parsed === 0` (zero not allowed) but permits negatives. `RecurringExpense` amounts must be positive (`> 0`) because a recurring refund is not a meaningful concept. Do not "fix" this asymmetry.

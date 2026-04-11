@@ -38,7 +38,7 @@ import React, {
 } from "react";
 
 // Load pre-populated mock data in dev builds. Always false in production.
-const USE_MOCK_DATA = __DEV__ && true;
+const USE_MOCK_DATA = __DEV__ && process.env.NODE_ENV !== "test" && true;
 
 // ---------------------------------------------------------------------------
 // State shape

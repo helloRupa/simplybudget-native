@@ -34,6 +34,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState,
 } from "react";
@@ -194,7 +195,7 @@ const BudgetContext = createContext<BudgetContextValue | null>(null);
 // ---------------------------------------------------------------------------
 
 export function BudgetProvider({ children }: { children: React.ReactNode }) {
-  const db = getDatabase();
+  const db = useMemo(() => getDatabase(), []);
 
   const [state, dispatch] = useReducer(reducer, {
     expenses: [],

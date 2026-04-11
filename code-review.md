@@ -38,7 +38,7 @@
 
 ## Design / Correctness
 
-### 5. `getDatabase()` called in component body (`BudgetContext.tsx:189`)
+### ~~5. `getDatabase()` called in component body (`BudgetContext.tsx:189`)~~ ✅ Fixed
 
 ```ts
 const db = getDatabase();
@@ -92,7 +92,7 @@ The edit/delete `Pressable` elements in the list items don't have `accessibility
 | ~~High~~ | ~~`importData` doesn't clear before import~~ ✅ | ~~`context/BudgetContext.tsx`~~ |
 | ~~Medium~~ | ~~Hardcoded `rgba` color literal~~ ✅ | ~~`app/(tabs)/index.tsx:94`~~ |
 | ~~Medium~~ | ~~Unused AsyncStorage dependency~~ ✅ | ~~`package.json`~~ |
-| Medium | `getDatabase()` called in component body | `context/BudgetContext.tsx:189` |
+| ~~Medium~~ | ~~`getDatabase()` called in component body~~ ✅ | ~~`context/BudgetContext.tsx:189`~~ |
 | Medium | CSV export uses identity date formatter | `app/(tabs)/settings.tsx:94` |
 | Low | `isInRange` returns `true` on parse error | `utils/dates.ts` |
 | Low | `RecurringExpensesScreen` too large (620 lines) | `app/recurring-expenses.tsx` |

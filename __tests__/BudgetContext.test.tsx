@@ -465,6 +465,48 @@ describe("BudgetProvider — importData", () => {
     expect(result.current.state.currency).toBe("EUR");
     expect(result.current.state.weeklyBudget).toBe(300);
   });
+
+  it("clears pre-existing expenses that are absent from the backup", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+
+    // Add a local expense that won't be in the backup
+    act(() => {
+      result.current.addExpense({
+        amount: 50,
+        category: "Food",
+        description: "Local only",
+        date: "2026-04-01",
+      });
+    });
+    expect(result.current.state.expenses).toHaveLength(1);
+
+    // Import a backup that contains a different expense
+    act(() => {
+      result.current.importData({
+        expenses: [
+          {
+            id: "imported-1",
+            amount: 999,
+            category: "Other",
+            description: "From backup",
+            date: "2026-03-01",
+            createdAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+        recurringExpenses: [],
+        categories: [{ name: "Other", color: "#6b7280" }],
+        budgetHistory: [{ startDate: "2026-03-30", amount: 300 }],
+        weeklyBudget: 300,
+        firstUseDate: "2026-03-30",
+        locale: "en",
+        currency: "USD",
+      });
+    });
+
+    // Only the imported expense should survive — the local one must be gone
+    expect(result.current.state.expenses).toHaveLength(1);
+    expect(result.current.state.expenses[0].id).toBe("imported-1");
+  });
 });
 
 // ---------------------------------------------------------------------------

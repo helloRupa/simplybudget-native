@@ -29,6 +29,10 @@ export class SQLiteDatabase {
     const row = this._db.prepare(sql).get(...params);
     return (row as T) ?? null;
   }
+
+  withTransactionSync(task: () => void): void {
+    this._db.transaction(task)();
+  }
 }
 
 export function openDatabaseSync(_name: string): SQLiteDatabase {

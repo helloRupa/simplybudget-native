@@ -196,6 +196,13 @@ export function deleteCategory(db: SQLiteDatabase, name: string): void {
   db.runSync("DELETE FROM categories WHERE name = ?", name);
 }
 
+export function clearAllData(db: SQLiteDatabase): void {
+  db.runSync("DELETE FROM expenses");
+  db.runSync("DELETE FROM recurring_expenses");
+  db.runSync("DELETE FROM categories");
+  db.runSync("DELETE FROM budget_history");
+}
+
 // ---------------------------------------------------------------------------
 // Preferences (single-row table)
 // ---------------------------------------------------------------------------

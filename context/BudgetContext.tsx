@@ -12,6 +12,7 @@ import { formatDate, getWeekRange, toISODate } from "@/utils/dates";
 import { MOCK_STATE } from "@/utils/mockData";
 import { generatePendingExpenses } from "@/utils/recurring";
 import {
+  clearAllData,
   deleteCategory as dbDeleteCategory,
   deleteExpense as dbDeleteExpense,
   deleteRecurringExpense as dbDeleteRecurringExpense,
@@ -38,7 +39,7 @@ import React, {
 } from "react";
 
 // Load pre-populated mock data in dev builds. Always false in production.
-const USE_MOCK_DATA = __DEV__ && process.env.NODE_ENV !== "test" && true;
+const USE_MOCK_DATA = __DEV__ && process.env.NODE_ENV !== "test" && false;
 
 // ---------------------------------------------------------------------------
 // State shape
@@ -452,18 +453,22 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
   const importData = useCallback(
     (data: State) => {
-      // Write all imported data to DB
-      data.expenses.forEach((e) => saveExpense(db, e));
-      data.recurringExpenses.forEach((r) => saveRecurringExpense(db, r));
-      data.categories.forEach((c) => saveCategory(db, c));
-      data.budgetHistory.forEach((b) =>
-        saveBudgetHistory(db, b.startDate, b.amount),
-      );
-      setPreferences(db, {
-        weeklyBudget: data.weeklyBudget,
-        firstUseDate: data.firstUseDate,
-        locale: LOCALE_TO_INTL[data.locale],
-        currency: data.currency,
+      // Run clear + all writes in one transaction so a mid-import failure
+      // rolls back automatically and leaves the original data intact.
+      db.withTransactionSync(() => {
+        clearAllData(db);
+        data.expenses.forEach((e) => saveExpense(db, e));
+        data.recurringExpenses.forEach((r) => saveRecurringExpense(db, r));
+        data.categories.forEach((c) => saveCategory(db, c));
+        data.budgetHistory.forEach((b) =>
+          saveBudgetHistory(db, b.startDate, b.amount),
+        );
+        setPreferences(db, {
+          weeklyBudget: data.weeklyBudget,
+          firstUseDate: data.firstUseDate,
+          locale: LOCALE_TO_INTL[data.locale],
+          currency: data.currency,
+        });
       });
       dispatch({ type: "SET_INITIAL", payload: data });
     },

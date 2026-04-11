@@ -91,7 +91,7 @@ const cardColors: Record<
   red: {
     text: colors.dangerText,
     subtle: colors.dangerSubtle,
-    border: "rgba(248,113,113,0.3)",
+    border: colors.dangerBorder,
     icon: colors.dangerText,
     cents: colors.dangerFaint,
   },

@@ -22,18 +22,17 @@
 
 ## Violations of CLAUDE.md Rules
 
-### 3. Hardcoded color literal (`app/(tabs)/index.tsx:94`)
+### ~~3. Hardcoded color literal (`app/(tabs)/index.tsx:94`)~~ ✅ Fixed
 
-```ts
-red: {
-  border: "rgba(248,113,113,0.3)",  // ← hardcoded
-```
+~~CLAUDE.md says never hardcode rgba values. This should be a named token — something like `dangerBorder`, analogous to the existing `tealBorder`, `greenBorder`, `amberBorder`.~~
 
-CLAUDE.md says never hardcode rgba values. This should be a named token — something like `dangerBorder`, analogous to the existing `tealBorder`, `greenBorder`, `amberBorder`.
+**Fix applied:** Added `dangerBorder: "rgba(248,113,113,0.3)"` token to `constants/colors.ts` and replaced the hardcoded literal in `app/(tabs)/index.tsx:94`.
 
-### 4. Unused dependency (`package.json:17`)
+### ~~4. Unused dependency (`package.json:17`)~~ ✅ Fixed
 
-`@react-native-async-storage/async-storage` is listed as a dependency, but CLAUDE.md explicitly says AsyncStorage is not used and all data lives in expo-sqlite. This should be removed.
+~~`@react-native-async-storage/async-storage` is listed as a dependency, but CLAUDE.md explicitly says AsyncStorage is not used and all data lives in expo-sqlite. This should be removed.~~
+
+**Fix applied:** Removed `@react-native-async-storage/async-storage` from `package.json`.
 
 ---
 
@@ -91,8 +90,8 @@ The edit/delete `Pressable` elements in the list items don't have `accessibility
 |---|---|---|
 | ~~High~~ | ~~`getBudgetForWeek` sort mismatch~~ ✅ | ~~`utils/dates.ts`, `utils/storage.ts`~~ |
 | ~~High~~ | ~~`importData` doesn't clear before import~~ ✅ | ~~`context/BudgetContext.tsx`~~ |
-| Medium | Hardcoded `rgba` color literal | `app/(tabs)/index.tsx:94` |
-| Medium | Unused AsyncStorage dependency | `package.json` |
+| ~~Medium~~ | ~~Hardcoded `rgba` color literal~~ ✅ | ~~`app/(tabs)/index.tsx:94`~~ |
+| ~~Medium~~ | ~~Unused AsyncStorage dependency~~ ✅ | ~~`package.json`~~ |
 | Medium | `getDatabase()` called in component body | `context/BudgetContext.tsx:189` |
 | Medium | CSV export uses identity date formatter | `app/(tabs)/settings.tsx:94` |
 | Low | `isInRange` returns `true` on parse error | `utils/dates.ts` |

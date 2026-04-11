@@ -29,6 +29,7 @@ export const colors = {
   amberSubtle: "rgba(252,211,77,0.1)",
   amberFaint: "rgba(252,211,77,0.6)",
   amberBorder: "rgba(252,211,77,0.2)",
+  dangerBorder: "rgba(248,113,113,0.3)",
   dangerFaint: "rgba(239,68,68,0.6)",
   indigo: "#6366f1",
   // Chart bar gradient colors

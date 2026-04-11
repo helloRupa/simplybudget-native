@@ -12,9 +12,11 @@
 
 **Fix applied in `utils/dates.ts`:** With DESC ordering, the first entry where `startDate <= weekStartStr` is the most recent active budget — return it immediately instead of walking and overwriting.
 
-### 2. `importData` doesn't clear existing data before import (`BudgetContext.tsx:434–449`)
+### ~~2. `importData` doesn't clear existing data before import (`BudgetContext.tsx:434–449`)~~ ✅ Fixed
 
-`saveExpense` / `saveCategory` etc. are all upserts. Importing a backup doesn't delete expenses or recurring entries that exist locally but aren't in the backup — they survive alongside the imported data. Users who import a backup expecting a clean restore will end up with a mixed dataset.
+~~`saveExpense` / `saveCategory` etc. are all upserts. Importing a backup doesn't delete expenses or recurring entries that exist locally but aren't in the backup — they survive alongside the imported data. Users who import a backup expecting a clean restore will end up with a mixed dataset.~~
+
+**Fix applied in `context/BudgetContext.tsx`:** `importData` now runs the entire clear + write sequence inside `db.withTransactionSync`, so all four data tables are wiped and repopulated atomically. If any write fails mid-import, SQLite rolls back and the original data is preserved.
 
 ---
 
@@ -88,7 +90,7 @@ The edit/delete `Pressable` elements in the list items don't have `accessibility
 | Priority | Issue | File(s) |
 |---|---|---|
 | ~~High~~ | ~~`getBudgetForWeek` sort mismatch~~ ✅ | ~~`utils/dates.ts`, `utils/storage.ts`~~ |
-| High | `importData` doesn't clear before import | `context/BudgetContext.tsx` |
+| ~~High~~ | ~~`importData` doesn't clear before import~~ ✅ | ~~`context/BudgetContext.tsx`~~ |
 | Medium | Hardcoded `rgba` color literal | `app/(tabs)/index.tsx:94` |
 | Medium | Unused AsyncStorage dependency | `package.json` |
 | Medium | `getDatabase()` called in component body | `context/BudgetContext.tsx:189` |

@@ -6,11 +6,11 @@
 
 ## Bugs
 
-### 1. `getBudgetForWeek` has a sort-order mismatch (affects chart accuracy)
+### ~~1. `getBudgetForWeek` has a sort-order mismatch (affects chart accuracy)~~ ✅ Fixed
 
-`getBudgetHistory` returns rows `ORDER BY startDate DESC`, but `getBudgetForWeek` (`utils/dates.ts:62–77`) is designed for ASC ordering: it walks forward, updating `activeBudget` while entries are ≤ the target week, then `break`s on the first entry that's past it. With DESC input it breaks immediately when the first (most recent) entry is after the target, falling back to `budgetHistory[0].amount` — the newest budget rather than the one active at that week. The `getTotalBudgeted` totals and the weekly spending chart will show wrong budget bars for any user who has ever changed their weekly budget.
+~~`getBudgetHistory` returns rows `ORDER BY startDate DESC`, but `getBudgetForWeek` (`utils/dates.ts:62–77`) is designed for ASC ordering: it walks forward, updating `activeBudget` while entries are ≤ the target week, then `break`s on the first entry that's past it. With DESC input it breaks immediately when the first (most recent) entry is after the target, falling back to `budgetHistory[0].amount` — the newest budget rather than the one active at that week. The `getTotalBudgeted` totals and the weekly spending chart will show wrong budget bars for any user who has ever changed their weekly budget.~~
 
-**Fix:** Sort ascending inside the function, or change `getBudgetHistory` to return `ORDER BY startDate ASC`.
+**Fix applied in `utils/dates.ts`:** With DESC ordering, the first entry where `startDate <= weekStartStr` is the most recent active budget — return it immediately instead of walking and overwriting.
 
 ### 2. `importData` doesn't clear existing data before import (`BudgetContext.tsx:434–449`)
 
@@ -87,7 +87,7 @@ The edit/delete `Pressable` elements in the list items don't have `accessibility
 
 | Priority | Issue | File(s) |
 |---|---|---|
-| High | `getBudgetForWeek` sort mismatch | `utils/dates.ts`, `utils/storage.ts` |
+| ~~High~~ | ~~`getBudgetForWeek` sort mismatch~~ ✅ | ~~`utils/dates.ts`, `utils/storage.ts`~~ |
 | High | `importData` doesn't clear before import | `context/BudgetContext.tsx` |
 | Medium | Hardcoded `rgba` color literal | `app/(tabs)/index.tsx:94` |
 | Medium | Unused AsyncStorage dependency | `package.json` |

@@ -64,17 +64,14 @@ export function getBudgetForWeek(
   budgetHistory: WeeklyBudget[]
 ): number {
   const weekStartStr = toISODate(weekStart);
-  let activeBudget = budgetHistory[0]?.amount ?? 0;
 
   for (const entry of budgetHistory) {
     if (entry.startDate <= weekStartStr) {
-      activeBudget = entry.amount;
-    } else {
-      break;
+      return entry.amount;
     }
   }
 
-  return activeBudget;
+  return 0;
 }
 
 export function getTotalBudgeted(

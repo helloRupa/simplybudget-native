@@ -1,40 +1,44 @@
-import React, {
-  createContext,
-  useContext,
-  useReducer,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
-import { Expense, RecurringExpense, WeeklyBudget, Category } from "@/types";
-import { generatePendingExpenses } from "@/utils/recurring";
-import { formatCurrency, getCurrencySymbol } from "@/utils/currency";
-import { toISODate, getWeekRange, formatDate } from "@/utils/dates";
+import { CUSTOM_CATEGORY_COLORS } from "@/constants/colors";
 import {
-  locales,
   LocaleKey,
   TranslationKey,
   categoryTranslations,
+  locales,
 } from "@/i18n/locales";
-import * as Crypto from "expo-crypto";
+import { Category, Expense, RecurringExpense, WeeklyBudget } from "@/types";
+import { formatCurrency, getCurrencySymbol } from "@/utils/currency";
 import { getDatabase } from "@/utils/database";
-import { CUSTOM_CATEGORY_COLORS } from "@/constants/colors";
+import { formatDate, getWeekRange, toISODate } from "@/utils/dates";
+import { MOCK_STATE } from "@/utils/mockData";
+import { generatePendingExpenses } from "@/utils/recurring";
 import {
-  getExpenses,
-  saveExpense,
-  deleteExpense as dbDeleteExpense,
-  getRecurringExpenses,
-  saveRecurringExpense,
-  deleteRecurringExpense as dbDeleteRecurringExpense,
-  updateLastGeneratedDate,
-  getBudgetHistory,
-  saveBudgetHistory,
-  getCategories,
-  saveCategory,
   deleteCategory as dbDeleteCategory,
+  deleteExpense as dbDeleteExpense,
+  deleteRecurringExpense as dbDeleteRecurringExpense,
+  getBudgetHistory,
+  getCategories,
+  getExpenses,
   getPreferences,
+  getRecurringExpenses,
+  saveBudgetHistory,
+  saveCategory,
+  saveExpense,
+  saveRecurringExpense,
   setPreferences,
+  updateLastGeneratedDate,
 } from "@/utils/storage";
+import * as Crypto from "expo-crypto";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
+
+// Set to true to load pre-populated mock data instead of the real database.
+const USE_MOCK_DATA = true;
 
 // ---------------------------------------------------------------------------
 // State shape
@@ -60,7 +64,10 @@ type Action =
   | { type: "ADD_EXPENSE"; payload: Expense }
   | { type: "UPDATE_EXPENSE"; payload: Expense }
   | { type: "DELETE_EXPENSE"; payload: string }
-  | { type: "SET_WEEKLY_BUDGET"; payload: { amount: number; weekStart: string } }
+  | {
+      type: "SET_WEEKLY_BUDGET";
+      payload: { amount: number; weekStart: string };
+    }
   | { type: "ADD_CATEGORY"; payload: Category }
   | { type: "UPDATE_CATEGORY"; payload: Category }
   | { type: "DELETE_CATEGORY"; payload: string }
@@ -80,7 +87,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         expenses: state.expenses.map((e) =>
-          e.id === action.payload.id ? action.payload : e
+          e.id === action.payload.id ? action.payload : e,
         ),
       };
     case "DELETE_EXPENSE":
@@ -91,14 +98,14 @@ function reducer(state: State, action: Action): State {
     case "SET_WEEKLY_BUDGET": {
       const { amount, weekStart } = action.payload;
       const existing = state.budgetHistory.findIndex(
-        (b) => b.startDate === weekStart
+        (b) => b.startDate === weekStart,
       );
       const newEntry: WeeklyBudget = { amount, startDate: weekStart };
       const updatedHistory =
         existing >= 0
           ? state.budgetHistory.map((b, i) => (i === existing ? newEntry : b))
           : [...state.budgetHistory, newEntry].sort((a, b) =>
-              a.startDate.localeCompare(b.startDate)
+              a.startDate.localeCompare(b.startDate),
             );
       return { ...state, weeklyBudget: amount, budgetHistory: updatedHistory };
     }
@@ -108,7 +115,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         categories: state.categories.map((c) =>
-          c.name === action.payload.name ? action.payload : c
+          c.name === action.payload.name ? action.payload : c,
         ),
       };
     case "DELETE_CATEGORY":
@@ -129,14 +136,14 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         recurringExpenses: state.recurringExpenses.map((r) =>
-          r.id === action.payload.id ? action.payload : r
+          r.id === action.payload.id ? action.payload : r,
         ),
       };
     case "DELETE_RECURRING_EXPENSE":
       return {
         ...state,
         recurringExpenses: state.recurringExpenses.filter(
-          (r) => r.id !== action.payload
+          (r) => r.id !== action.payload,
         ),
       };
   }
@@ -159,7 +166,7 @@ interface BudgetContextValue {
   setCurrency: (currency: string) => void;
   importData: (data: State) => void;
   addRecurringExpense: (
-    expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">
+    expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
   ) => void;
   updateRecurringExpense: (expense: RecurringExpense) => void;
   deleteRecurringExpense: (id: string) => void;
@@ -203,6 +210,12 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
   // Hydrate from SQLite on mount
   useEffect(() => {
+    if (USE_MOCK_DATA) {
+      dispatch({ type: "SET_INITIAL", payload: MOCK_STATE });
+      setIsLoaded(true);
+      return;
+    }
+
     const expenses = getExpenses(db);
     const recurringExpenses = getRecurringExpenses(db);
     const categories = getCategories(db);
@@ -232,24 +245,30 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
     // Seed budget history on first launch (no history yet)
     if (loaded.budgetHistory.length === 0) {
-      const seedEntry = { amount: loaded.weeklyBudget, startDate: firstUseDate };
+      const seedEntry = {
+        amount: loaded.weeklyBudget,
+        startDate: firstUseDate,
+      };
       saveBudgetHistory(db, seedEntry.startDate, seedEntry.amount);
       loaded.budgetHistory = [seedEntry];
     }
 
     // Ensure current week has a budget history entry
     const hasCurrentWeek = loaded.budgetHistory.some(
-      (b) => b.startDate === weekStart
+      (b) => b.startDate === weekStart,
     );
     if (!hasCurrentWeek) {
       // Find the most recent budget before this week
       const sorted = [...loaded.budgetHistory].sort((a, b) =>
-        b.startDate.localeCompare(a.startDate)
+        b.startDate.localeCompare(a.startDate),
       );
       const latest = sorted.find((b) => b.startDate <= weekStart);
       if (latest) {
         saveBudgetHistory(db, weekStart, latest.amount);
-        loaded.budgetHistory = [...loaded.budgetHistory, { amount: latest.amount, startDate: weekStart }];
+        loaded.budgetHistory = [
+          ...loaded.budgetHistory,
+          { amount: latest.amount, startDate: weekStart },
+        ];
       }
     }
 
@@ -257,7 +276,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     if (loaded.recurringExpenses.length > 0) {
       const { newExpenses, updatedRecurringExpenses } = generatePendingExpenses(
         loaded.recurringExpenses,
-        new Date()
+        new Date(),
       );
 
       if (newExpenses.length > 0) {
@@ -290,7 +309,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       saveExpense(db, newExpense);
       dispatch({ type: "ADD_EXPENSE", payload: newExpense });
     },
-    [db]
+    [db],
   );
 
   const updateExpense = useCallback(
@@ -298,7 +317,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       saveExpense(db, expense);
       dispatch({ type: "UPDATE_EXPENSE", payload: expense });
     },
-    [db]
+    [db],
   );
 
   const deleteExpense = useCallback(
@@ -306,7 +325,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       dbDeleteExpense(db, id);
       dispatch({ type: "DELETE_EXPENSE", payload: id });
     },
-    [db]
+    [db],
   );
 
   const setWeeklyBudget = useCallback(
@@ -318,7 +337,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       setPreferences(db, { ...prefs, weeklyBudget: amount });
       dispatch({ type: "SET_WEEKLY_BUDGET", payload: { amount, weekStart } });
     },
-    [db]
+    [db],
   );
 
   const addCategory = useCallback(
@@ -329,7 +348,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
       if (
         state.categories.some(
-          (c) => c.name.toLowerCase() === trimmed.toLowerCase()
+          (c) => c.name.toLowerCase() === trimmed.toLowerCase(),
         )
       ) {
         return false;
@@ -344,7 +363,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       dispatch({ type: "ADD_CATEGORY", payload: cat });
       return true;
     },
-    [db, state.categories]
+    [db, state.categories],
   );
 
   const updateCategory = useCallback(
@@ -352,7 +371,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       saveCategory(db, category);
       dispatch({ type: "UPDATE_CATEGORY", payload: category });
     },
-    [db]
+    [db],
   );
 
   const deleteCategory = useCallback(
@@ -360,7 +379,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       dbDeleteCategory(db, name);
       dispatch({ type: "DELETE_CATEGORY", payload: name });
     },
-    [db]
+    [db],
   );
 
   const setLocale = useCallback(
@@ -369,7 +388,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       setPreferences(db, { ...prefs, locale: LOCALE_TO_INTL[locale] });
       dispatch({ type: "SET_LOCALE", payload: locale });
     },
-    [db]
+    [db],
   );
 
   const setCurrency = useCallback(
@@ -378,12 +397,12 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       setPreferences(db, { ...prefs, currency });
       dispatch({ type: "SET_CURRENCY", payload: currency });
     },
-    [db]
+    [db],
   );
 
   const addRecurringExpense = useCallback(
     (
-      expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">
+      expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
     ) => {
       const newRecurring: RecurringExpense = {
         ...expense,
@@ -397,7 +416,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       // Immediately generate any pending expenses for the new recurring entry
       const { newExpenses, updatedRecurringExpenses } = generatePendingExpenses(
         [newRecurring],
-        new Date()
+        new Date(),
       );
 
       if (newExpenses.length > 0) {
@@ -412,7 +431,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         dispatch({ type: "UPDATE_RECURRING_EXPENSE", payload: updated });
       }
     },
-    [db]
+    [db],
   );
 
   const updateRecurringExpense = useCallback(
@@ -420,7 +439,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       saveRecurringExpense(db, expense);
       dispatch({ type: "UPDATE_RECURRING_EXPENSE", payload: expense });
     },
-    [db]
+    [db],
   );
 
   const deleteRecurringExpense = useCallback(
@@ -428,7 +447,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       dbDeleteRecurringExpense(db, id);
       dispatch({ type: "DELETE_RECURRING_EXPENSE", payload: id });
     },
-    [db]
+    [db],
   );
 
   const importData = useCallback(
@@ -437,7 +456,9 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       data.expenses.forEach((e) => saveExpense(db, e));
       data.recurringExpenses.forEach((r) => saveRecurringExpense(db, r));
       data.categories.forEach((c) => saveCategory(db, c));
-      data.budgetHistory.forEach((b) => saveBudgetHistory(db, b.startDate, b.amount));
+      data.budgetHistory.forEach((b) =>
+        saveBudgetHistory(db, b.startDate, b.amount),
+      );
       setPreferences(db, {
         weeklyBudget: data.weeklyBudget,
         firstUseDate: data.firstUseDate,
@@ -446,7 +467,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       });
       dispatch({ type: "SET_INITIAL", payload: data });
     },
-    [db]
+    [db],
   );
 
   // ---------------------------------------------------------------------------
@@ -458,24 +479,24 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
   const t = useCallback(
     (key: TranslationKey): string => locales[state.locale][key],
-    [state.locale]
+    [state.locale],
   );
 
   const tc = useCallback(
     (category: string): string =>
       categoryTranslations[state.locale][category] ?? category,
-    [state.locale]
+    [state.locale],
   );
 
   const fc = useCallback(
     (amount: number): string =>
       formatCurrency(amount, intlLocale, state.currency),
-    [intlLocale, state.currency]
+    [intlLocale, state.currency],
   );
 
   const fd = useCallback(
     (dateStr: string): string => formatDate(dateStr, intlLocale),
-    [intlLocale]
+    [intlLocale],
   );
 
   return (

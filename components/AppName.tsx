@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/typography";
+import { fonts, fontSize } from "@/constants/typography";
 
 interface AppNameProps {
   size?: "large" | "small";
@@ -28,10 +28,10 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   large: {
-    fontSize: 24,
+    fontSize: fontSize.hero,
   },
   small: {
-    fontSize: 18,
+    fontSize: fontSize.xxxl,
   },
   white: {
     color: colors.white,

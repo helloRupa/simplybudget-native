@@ -16,7 +16,7 @@ import { TranslationKey } from "@/i18n/locales";
 import FieldPicker, { PickerOption } from "@/components/FieldPicker";
 import DateField from "@/components/DateField";
 import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/typography";
+import { fonts, fontSize } from "@/constants/typography";
 
 export const DAY_KEYS: TranslationKey[] = [
   "sunday",
@@ -326,12 +326,12 @@ const styles = StyleSheet.create({
   },
   formTitle: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: fontSize.xxl,
     fontFamily: fonts.bold,
   },
   fieldLabel: {
     color: colors.textSecondary,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.semiBold,
     marginBottom: 6,
   },
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 11,
     color: colors.white,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.regular,
   },
   inputError: {
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   },
   error: {
     color: colors.dangerText,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.regular,
     marginTop: 4,
   },
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   },
   clearDateText: {
     color: colors.dangerText,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.semiBold,
   },
   buttonRow: {
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: colors.textSecondary,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.semiBold,
   },
   submitButton: {
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
   },
   submitText: {
     color: colors.background,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.bold,
   },
 });

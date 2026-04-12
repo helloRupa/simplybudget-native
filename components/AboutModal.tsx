@@ -9,7 +9,7 @@ import {
 import { useBudget } from "@/context/BudgetContext";
 import AppName from "./AppName";
 import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/typography";
+import { fonts, fontSize } from "@/constants/typography";
 
 interface AboutModalProps {
   visible: boolean;
@@ -97,12 +97,12 @@ const styles = StyleSheet.create({
   },
   version: {
     color: colors.textMuted,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.regular,
   },
   description: {
     color: colors.textSecondary,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.regular,
     textAlign: "center",
     lineHeight: 20,
@@ -123,13 +123,13 @@ const styles = StyleSheet.create({
   },
   label: {
     color: colors.textMuted,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.semiBold,
     flexShrink: 0,
   },
   value: {
     color: colors.white,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.regular,
     flex: 1,
   },
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   closeText: {
     color: colors.white,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.semiBold,
   },
 });

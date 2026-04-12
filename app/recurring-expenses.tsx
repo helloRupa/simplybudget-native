@@ -17,7 +17,7 @@ import RecurringExpenseForm, {
   MONTH_KEYS,
 } from "@/components/RecurringExpenseForm";
 import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/typography";
+import { fonts, fontSize } from "@/constants/typography";
 
 interface ToastState {
   message: string;
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: colors.background,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.bold,
   },
   listContent: {
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: colors.textMuted,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.regular,
     textAlign: "center",
     marginTop: 40,
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
   expiredBadgeText: {
     color: colors.dangerText,
-    fontSize: 11,
+    fontSize: fontSize.sm,
     fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.3,
@@ -266,23 +266,23 @@ const styles = StyleSheet.create({
   },
   cardAmount: {
     color: colors.amber,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.bold,
     fontVariant: ["tabular-nums"],
   },
   cardFrequency: {
     color: colors.textMuted,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.regular,
   },
   cardDescription: {
     color: colors.textSecondary,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.regular,
   },
   cardCategory: {
     color: colors.textMuted,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.regular,
   },
   cardActions: {
@@ -293,14 +293,14 @@ const styles = StyleSheet.create({
   },
   editText: {
     color: colors.teal,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.regular,
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
   deleteText: {
     color: colors.dangerText,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.regular,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   },
   deleteConfirmText: {
     color: colors.dangerText,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.semiBold,
   },
   cancelSmallButton: {
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   },
   cancelSmallText: {
     color: colors.textSecondary,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.regular,
   },
 });

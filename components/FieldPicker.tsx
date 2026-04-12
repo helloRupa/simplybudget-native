@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/typography";
+import { fonts, fontSize } from "@/constants/typography";
 
 export interface PickerOption {
   label: string;
@@ -97,7 +97,7 @@ export default function FieldPicker({
 const styles = StyleSheet.create({
   label: {
     color: colors.textSecondary,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.semiBold,
     marginBottom: 6,
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
   triggerText: {
     color: colors.white,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.regular,
     flex: 1,
   },
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
   error: {
     color: colors.dangerText,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.regular,
     marginTop: 4,
   },
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   },
   sheetTitle: {
     color: colors.textMuted,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.bold,
     textTransform: "uppercase",
     letterSpacing: 0.8,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     color: colors.white,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.regular,
   },
   optionTextActive: {

@@ -25,7 +25,7 @@ import {
 import { Category } from "@/types";
 import SpendingChart from "@/components/SpendingChart";
 import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/typography";
+import { fonts, fontSize } from "@/constants/typography";
 
 function getCatColor(categories: Category[], name: string): string {
   return categories.find((c) => c.name === name)?.color ?? colors.textMuted;
@@ -579,7 +579,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     color: colors.textMuted,
-    fontSize: 10,
+    fontSize: fontSize.xs,
     fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -588,18 +588,18 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   amountMain: {
-    fontSize: 20,
+    fontSize: fontSize.display,
     fontFamily: fonts.bold,
     fontVariant: ["tabular-nums"],
   },
   amountCents: {
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.semiBold,
     fontVariant: ["tabular-nums"],
   },
   cardSubtitle: {
     color: colors.textMuted,
-    fontSize: 11,
+    fontSize: fontSize.sm,
     fontFamily: fonts.regular,
     marginTop: 2,
   },
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   tooltipToggle: {
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.regular,
     marginTop: 4,
   },
@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
   },
   tooltipText: {
     color: colors.textSecondary,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.regular,
     lineHeight: 18,
   },
@@ -656,14 +656,14 @@ const styles = StyleSheet.create({
   },
   progressLabel: {
     color: colors.textSecondary,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   progressValue: {
     color: colors.white,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.semiBold,
     fontVariant: ["tabular-nums"],
   },
@@ -683,7 +683,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: colors.white,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.semiBold,
   },
   // Empty state
@@ -697,7 +697,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: colors.textMuted,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.regular,
     textAlign: "center",
     lineHeight: 20,
@@ -728,22 +728,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   categoryInitial: {
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.bold,
   },
   categoryName: {
     color: colors.textSecondary,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.medium,
   },
   categoryPct: {
     color: colors.textMuted,
-    fontSize: 11,
+    fontSize: fontSize.sm,
     fontFamily: fonts.regular,
   },
   categoryAmount: {
     color: colors.white,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.semiBold,
     fontVariant: ["tabular-nums"],
   },
@@ -769,7 +769,7 @@ const styles = StyleSheet.create({
   },
   pieCenterName: {
     color: colors.textMuted,
-    fontSize: 11,
+    fontSize: fontSize.sm,
     fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.4,
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
   },
   pieCenterAmount: {
     color: colors.white,
-    fontSize: 18,
+    fontSize: fontSize.xxxl,
     fontFamily: fonts.bold,
     fontVariant: ["tabular-nums"],
     textAlign: "center",
@@ -806,12 +806,12 @@ const styles = StyleSheet.create({
   },
   pieLegendName: {
     color: colors.textSecondary,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.medium,
   },
   pieLegendAmount: {
     color: colors.textMuted,
-    fontSize: 11,
+    fontSize: fontSize.sm,
     fontFamily: fonts.regular,
     fontVariant: ["tabular-nums"],
   },

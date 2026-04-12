@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text } from "react-native";
 import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/typography";
+import { fonts, fontSize } from "@/constants/typography";
 
 interface ToastProps {
   message: string;
@@ -107,13 +107,13 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: fontSize.xxl,
     fontFamily: fonts.bold,
   },
   message: {
     flex: 1,
     color: colors.white,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.medium,
   },
   closeButton: {
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   closeText: {
     color: colors.whiteMuted,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.regular,
   },
 });

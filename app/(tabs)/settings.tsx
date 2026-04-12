@@ -21,7 +21,7 @@ import FieldPicker, { PickerOption } from "@/components/FieldPicker";
 import AboutModal from "@/components/AboutModal";
 import Toast from "@/components/Toast";
 import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/typography";
+import { fonts, fontSize } from "@/constants/typography";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: colors.white,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.semiBold,
   },
   // Budget
@@ -377,14 +377,14 @@ const styles = StyleSheet.create({
   },
   currencyPrefix: {
     color: colors.amber,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.regular,
     marginRight: 4,
   },
   budgetInput: {
     flex: 1,
     color: colors.white,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.regular,
     paddingVertical: 11,
   },
@@ -400,18 +400,18 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: colors.background,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.bold,
   },
   error: {
     color: colors.dangerText,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.regular,
     marginTop: -4,
   },
   hint: {
     color: colors.textMuted,
-    fontSize: 12,
+    fontSize: fontSize.base,
     fontFamily: fonts.regular,
   },
   // Nav row (recurring expenses)
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   },
   navRowText: {
     color: colors.textSecondary,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.regular,
   },
   // Categories
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 11,
     color: colors.white,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.regular,
   },
   addButton: {
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: colors.background,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.bold,
   },
   categoryChips: {
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   },
   chipText: {
     color: colors.textSecondary,
-    fontSize: 13,
+    fontSize: fontSize.md,
     fontFamily: fonts.regular,
   },
   // Export buttons
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
   },
   exportButtonText: {
     color: colors.background,
-    fontSize: 14,
+    fontSize: fontSize.lg,
     fontFamily: fonts.semiBold,
   },
   exportTextWhite: {
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
   },
   aboutText: {
     color: colors.teal,
-    fontSize: 15,
+    fontSize: fontSize.xl,
     fontFamily: fonts.semiBold,
     flex: 1,
   },

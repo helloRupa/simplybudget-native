@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBudget } from "@/context/BudgetContext";
 import { RecurringExpense, RecurringFrequency } from "@/types";
 import { toISODate } from "@/utils/dates";
-import { parseISO } from "date-fns";
+import { addDays, parseISO } from "date-fns";
 import { TranslationKey } from "@/i18n/locales";
 import FieldPicker, { PickerOption } from "@/components/FieldPicker";
 import DateField from "@/components/DateField";
@@ -82,6 +82,11 @@ export default function RecurringExpenseForm({
     editingExpense?.startDate ?? toISODate(new Date())
   );
   const [endDate, setEndDate] = useState(editingExpense?.endDate ?? "");
+
+  const tomorrow = addDays(new Date(), 1);
+  const minEndDate = startDate
+    ? new Date(Math.max(tomorrow.getTime(), addDays(parseISO(startDate), 1).getTime()))
+    : tomorrow;
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const categoryOptions: PickerOption[] = state.categories.map((cat) => ({
@@ -122,6 +127,14 @@ export default function RecurringExpenseForm({
     }
     if (!startDate) {
       newErrors.startDate = t("dateRequired");
+    }
+    if (endDate) {
+      const today = toISODate(new Date());
+      if (endDate <= today) {
+        newErrors.endDate = t("endDatePast");
+      } else if (startDate && endDate <= startDate) {
+        newErrors.endDate = t("endDateBeforeStart");
+      }
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -262,12 +275,17 @@ export default function RecurringExpenseForm({
           label={t("endDate")}
           value={endDate}
           onChange={setEndDate}
-          minimumDate={firstUseDateObj}
+          minimumDate={minEndDate}
           placeholder={t("noEndDate")}
+          error={errors.endDate}
         />
         {endDate ? (
-          <Pressable onPress={() => setEndDate("")}>
-            <Text style={styles.clearDate}>{t("noEndDate")}</Text>
+          <Pressable
+            style={styles.clearDateButton}
+            onPress={() => setEndDate("")}
+            accessibilityRole="button"
+          >
+            <Text style={styles.clearDateText}>{t("clearEndDate")}</Text>
           </Pressable>
         ) : null}
       </View>
@@ -334,10 +352,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-  clearDate: {
-    color: colors.textMuted,
-    fontSize: 12,
-    marginTop: 6,
+  clearDateButton: {
+    alignSelf: "flex-start",
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: colors.dangerSubtle,
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
+  },
+  clearDateText: {
+    color: colors.dangerText,
+    fontSize: 13,
+    fontWeight: "600",
   },
   buttonRow: {
     flexDirection: "row",

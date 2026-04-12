@@ -23,6 +23,8 @@ interface ToastState {
   type: "success" | "error";
 }
 
+const TODAY = new Date().toISOString().slice(0, 10);
+
 export default function RecurringExpensesScreen() {
   const { state, deleteRecurringExpense, t, tc, fc } = useBudget();
   const insets = useSafeAreaInsets();
@@ -114,14 +116,23 @@ export default function RecurringExpensesScreen() {
             ListEmptyComponent={
               <Text style={styles.emptyText}>{t("noRecurringExpenses")}</Text>
             }
-            renderItem={({ item: re }) => (
-              <View style={styles.card}>
+            renderItem={({ item: re }) => {
+              const isExpired = !!re.endDate && re.endDate < TODAY;
+              return (
+              <View style={[styles.card, isExpired && styles.cardExpired]}>
                 <View style={styles.cardInfo}>
                   <View style={styles.cardTopRow}>
                     <Text style={styles.cardAmount}>{fc(re.amount)}</Text>
                     <Text style={styles.cardFrequency}>
                       {frequencyLabel(re)}
                     </Text>
+                    {isExpired && (
+                      <View style={styles.expiredBadge}>
+                        <Text style={styles.expiredBadgeText}>
+                          {t("expired")}
+                        </Text>
+                      </View>
+                    )}
                   </View>
                   <Text style={styles.cardDescription}>
                     {re.description || tc(re.category)}
@@ -167,7 +178,7 @@ export default function RecurringExpensesScreen() {
                   )}
                 </View>
               </View>
-            )}
+            );}}
           />
         )}
 
@@ -222,6 +233,24 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  cardExpired: {
+    backgroundColor: colors.surfaceDim,
+  },
+  expiredBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 20,
+    backgroundColor: colors.dangerSubtle,
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
+  },
+  expiredBadgeText: {
+    color: colors.dangerText,
+    fontSize: 11,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
   },
   cardInfo: {
     flex: 1,

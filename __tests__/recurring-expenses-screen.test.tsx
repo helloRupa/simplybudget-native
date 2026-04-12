@@ -12,6 +12,7 @@
 import RecurringExpensesScreen from "@/app/recurring-expenses";
 import { BudgetProvider, useBudget } from "@/context/BudgetContext";
 import { _setDatabase, initDatabase } from "@/utils/database";
+import { toISODate } from "@/utils/dates";
 import {
   act,
   fireEvent,
@@ -196,6 +197,71 @@ describe("RecurringExpensesScreen — validation", () => {
     fireEvent.press(screen.getByLabelText("Save"));
     // Form stays open — Save button still present
     expect(screen.getByLabelText("Save")).toBeTruthy();
+  });
+
+  it("shows an error when end date is today", () => {
+    const today = toISODate(new Date());
+    seedRecurringExpense({ endDate: today });
+    renderScreen();
+    fireEvent.press(screen.getByText("Edit"));
+    fireEvent.press(screen.getByLabelText("Update"));
+    expect(screen.getByText("End date must be in the future.")).toBeTruthy();
+  });
+
+  it("shows an error when end date is in the past", () => {
+    seedRecurringExpense({ endDate: "2025-01-01" });
+    renderScreen();
+    fireEvent.press(screen.getByText("Edit"));
+    fireEvent.press(screen.getByLabelText("Update"));
+    expect(screen.getByText("End date must be in the future.")).toBeTruthy();
+  });
+
+  it("does not show an end date error when end date is in the future", () => {
+    seedRecurringExpense({ endDate: "2099-12-31" });
+    renderScreen();
+    fireEvent.press(screen.getByText("Edit"));
+    fireEvent.press(screen.getByLabelText("Update"));
+    expect(screen.queryByText("End date must be in the future.")).toBeNull();
+    expect(screen.getByText("Recurring expense updated!")).toBeTruthy();
+  });
+
+  it("does not show an end date error when end date is absent", () => {
+    seedRecurringExpense({ endDate: null });
+    renderScreen();
+    fireEvent.press(screen.getByText("Edit"));
+    fireEvent.press(screen.getByLabelText("Update"));
+    expect(screen.queryByText("End date must be in the future.")).toBeNull();
+  });
+
+  it("shows an error when end date is the same as start date", () => {
+    seedRecurringExpense({ startDate: "2099-06-01", endDate: "2099-06-01" });
+    renderScreen();
+    fireEvent.press(screen.getByText("Edit"));
+    fireEvent.press(screen.getByLabelText("Update"));
+    expect(
+      screen.getByText("End date must be after the start date.")
+    ).toBeTruthy();
+  });
+
+  it("shows an error when end date is before start date", () => {
+    seedRecurringExpense({ startDate: "2099-06-15", endDate: "2099-06-01" });
+    renderScreen();
+    fireEvent.press(screen.getByText("Edit"));
+    fireEvent.press(screen.getByLabelText("Update"));
+    expect(
+      screen.getByText("End date must be after the start date.")
+    ).toBeTruthy();
+  });
+
+  it("does not show an end date error when end date is after start date", () => {
+    seedRecurringExpense({ startDate: "2099-06-01", endDate: "2099-06-30" });
+    renderScreen();
+    fireEvent.press(screen.getByText("Edit"));
+    fireEvent.press(screen.getByLabelText("Update"));
+    expect(
+      screen.queryByText("End date must be after the start date.")
+    ).toBeNull();
+    expect(screen.getByText("Recurring expense updated!")).toBeTruthy();
   });
 
   it("clears validation errors after a successful submit", () => {
@@ -415,5 +481,45 @@ describe("RecurringExpensesScreen — frequency fields", () => {
     fireEvent.press(screen.getByText("monthly"));
     expect(screen.getByLabelText("Day of Month")).toBeTruthy();
     expect(screen.queryByLabelText("Day of Week")).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Expired styling
+// ---------------------------------------------------------------------------
+
+describe("RecurringExpensesScreen — expired styling", () => {
+  it("shows the Expired badge for a recurring expense whose endDate has passed", () => {
+    seedRecurringExpense({ endDate: "2025-01-01" });
+    renderScreen();
+    expect(screen.getByText("Expired")).toBeTruthy();
+  });
+
+  it("does not show the Expired badge when endDate is null", () => {
+    seedRecurringExpense({ endDate: null });
+    renderScreen();
+    expect(screen.queryByText("Expired")).toBeNull();
+  });
+
+  it("does not show the Expired badge when endDate is in the future", () => {
+    seedRecurringExpense({ endDate: "2099-12-31" });
+    renderScreen();
+    expect(screen.queryByText("Expired")).toBeNull();
+  });
+
+  it("shows Expired badge only on the expired card when both expired and active expenses exist", () => {
+    seedRecurringExpense({ description: "Old Plan", endDate: "2025-01-01" });
+    seedRecurringExpense({ description: "Current Plan", endDate: null });
+    renderScreen();
+    expect(screen.getByText("Expired")).toBeTruthy();
+    expect(screen.getByText("Old Plan")).toBeTruthy();
+    expect(screen.getByText("Current Plan")).toBeTruthy();
+  });
+
+  it("expired cards still show edit and delete actions", () => {
+    seedRecurringExpense({ endDate: "2025-01-01" });
+    renderScreen();
+    expect(screen.getByText("Edit")).toBeTruthy();
+    expect(screen.getByText("Delete")).toBeTruthy();
   });
 });

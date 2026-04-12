@@ -16,6 +16,7 @@ import { TranslationKey } from "@/i18n/locales";
 import FieldPicker, { PickerOption } from "@/components/FieldPicker";
 import DateField from "@/components/DateField";
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 
 export const DAY_KEYS: TranslationKey[] = [
   "sunday",
@@ -326,12 +327,12 @@ const styles = StyleSheet.create({
   formTitle: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
   },
   fieldLabel: {
     color: colors.textSecondary,
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     marginBottom: 6,
   },
   input: {
@@ -343,6 +344,7 @@ const styles = StyleSheet.create({
     paddingVertical: 11,
     color: colors.white,
     fontSize: 15,
+    fontFamily: fonts.regular,
   },
   inputError: {
     borderColor: colors.toastError,
@@ -350,6 +352,7 @@ const styles = StyleSheet.create({
   error: {
     color: colors.dangerText,
     fontSize: 12,
+    fontFamily: fonts.regular,
     marginTop: 4,
   },
   clearDateButton: {
@@ -365,7 +368,7 @@ const styles = StyleSheet.create({
   clearDateText: {
     color: colors.dangerText,
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   buttonRow: {
     flexDirection: "row",
@@ -384,7 +387,7 @@ const styles = StyleSheet.create({
   cancelText: {
     color: colors.textSecondary,
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   submitButton: {
     flex: 1,
@@ -396,6 +399,6 @@ const styles = StyleSheet.create({
   submitText: {
     color: colors.background,
     fontSize: 15,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
   },
 });

@@ -1,4 +1,5 @@
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 import { TranslationKey } from "@/i18n/locales";
 import { useMemo, useRef, useState } from "react";
 import {
@@ -208,10 +209,12 @@ const styles = StyleSheet.create({
   emptyText: {
     color: colors.textMuted,
     fontSize: 14,
+    fontFamily: fonts.regular,
   },
   axisText: {
     color: colors.textMuted,
     fontSize: 10,
+    fontFamily: fonts.regular,
   },
   modalBackdrop: {
     flex: 1,
@@ -237,17 +240,20 @@ const styles = StyleSheet.create({
   tooltipWeek: {
     color: colors.textMuted,
     fontSize: 11,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
   tooltipSpent: {
     color: colors.white,
     fontSize: 15,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
+    fontVariant: ["tabular-nums"],
   },
   tooltipBudget: {
     color: colors.textMuted,
     fontSize: 12,
+    fontFamily: fonts.regular,
+    fontVariant: ["tabular-nums"],
   },
 });

@@ -17,6 +17,7 @@ import { parseISO } from "date-fns";
 import FieldPicker from "@/components/FieldPicker";
 import DateField from "@/components/DateField";
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 
 export default function ExpenseFormScreen() {
   const router = useRouter();
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
   label: {
     color: colors.textSecondary,
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     marginBottom: 6,
   },
   amountRow: {
@@ -226,13 +227,14 @@ const styles = StyleSheet.create({
   currencySymbol: {
     color: colors.amber,
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     marginRight: 8,
   },
   amountInput: {
     flex: 1,
     color: colors.white,
     fontSize: 15,
+    fontFamily: fonts.regular,
     paddingVertical: 11,
   },
   input: {
@@ -244,6 +246,7 @@ const styles = StyleSheet.create({
     paddingVertical: 11,
     color: colors.white,
     fontSize: 15,
+    fontFamily: fonts.regular,
   },
   inputError: {
     borderColor: colors.toastError,
@@ -251,6 +254,7 @@ const styles = StyleSheet.create({
   error: {
     color: colors.dangerText,
     fontSize: 12,
+    fontFamily: fonts.regular,
     marginTop: 4,
   },
   buttonRow: {
@@ -270,7 +274,7 @@ const styles = StyleSheet.create({
   cancelText: {
     color: colors.textSecondary,
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   submitButton: {
     flex: 1,
@@ -282,6 +286,6 @@ const styles = StyleSheet.create({
   submitText: {
     color: colors.background,
     fontSize: 15,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
   },
 });

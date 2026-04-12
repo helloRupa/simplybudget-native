@@ -15,6 +15,7 @@ import { isInRange, toISODate } from "@/utils/dates";
 import ExpenseFilters from "@/components/ExpenseFilters";
 import Toast from "@/components/Toast";
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 
 const TODAY = toISODate(new Date());
 
@@ -318,7 +319,7 @@ const styles = StyleSheet.create({
   sortText: {
     color: colors.textMuted,
     fontSize: 12,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
@@ -330,10 +331,12 @@ const styles = StyleSheet.create({
   emptyText: {
     color: colors.textMuted,
     fontSize: 15,
+    fontFamily: fonts.regular,
   },
   countText: {
     color: colors.textMuted,
     fontSize: 13,
+    fontFamily: fonts.regular,
     textAlign: "center",
     paddingVertical: 12,
   },
@@ -365,7 +368,7 @@ const styles = StyleSheet.create({
   upcomingBadgeText: {
     color: colors.toastInfo,
     fontSize: 11,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.3,
   },
@@ -395,15 +398,17 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 12,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   cardDate: {
     color: colors.textMuted,
     fontSize: 12,
+    fontFamily: fonts.regular,
   },
   cardAmount: {
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
+    fontVariant: ["tabular-nums"],
   },
   amountNormal: {
     color: colors.amber,
@@ -414,6 +419,7 @@ const styles = StyleSheet.create({
   cardDescription: {
     color: colors.textSecondary,
     fontSize: 13,
+    fontFamily: fonts.regular,
   },
   recurringIcon: {
     opacity: 0.7,
@@ -432,7 +438,7 @@ const styles = StyleSheet.create({
   editText: {
     color: colors.teal,
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   deleteButton: {
     paddingHorizontal: 12,
@@ -442,6 +448,7 @@ const styles = StyleSheet.create({
   deleteText: {
     color: colors.dangerText,
     fontSize: 13,
+    fontFamily: fonts.regular,
   },
   deleteConfirmButton: {
     paddingHorizontal: 12,
@@ -452,7 +459,7 @@ const styles = StyleSheet.create({
   deleteConfirmText: {
     color: colors.dangerText,
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   cancelSmallButton: {
     paddingHorizontal: 12,
@@ -465,6 +472,7 @@ const styles = StyleSheet.create({
   cancelSmallText: {
     color: colors.textSecondary,
     fontSize: 13,
+    fontFamily: fonts.regular,
   },
   fab: {
     position: "absolute",

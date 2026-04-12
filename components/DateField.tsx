@@ -13,6 +13,7 @@ import { parseISO } from "date-fns";
 import { toISODate } from "@/utils/dates";
 import { useBudget } from "@/context/BudgetContext";
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 
 interface DateFieldProps {
   label: string;
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   label: {
     color: colors.textSecondary,
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     marginBottom: 6,
   },
   trigger: {
@@ -132,6 +133,7 @@ const styles = StyleSheet.create({
   triggerText: {
     color: colors.white,
     fontSize: 15,
+    fontFamily: fonts.regular,
     flex: 1,
   },
   placeholder: {
@@ -140,6 +142,7 @@ const styles = StyleSheet.create({
   error: {
     color: colors.dangerText,
     fontSize: 12,
+    fontFamily: fonts.regular,
     marginTop: 4,
   },
   iosBackdrop: {
@@ -165,7 +168,7 @@ const styles = StyleSheet.create({
   iosDone: {
     color: colors.teal,
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   iosPicker: {
     height: 200,

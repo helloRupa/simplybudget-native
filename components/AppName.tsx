@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 
 interface AppNameProps {
   size?: "large" | "small";
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
   },
   text: {
-    fontWeight: "800",
+    fontFamily: fonts.extraBold,
     letterSpacing: -0.5,
   },
   large: {

@@ -25,6 +25,7 @@ import {
 import { Category } from "@/types";
 import SpendingChart from "@/components/SpendingChart";
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 
 function getCatColor(categories: Category[], name: string): string {
   return categories.find((c) => c.name === name)?.color ?? colors.textMuted;
@@ -579,7 +580,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: colors.textMuted,
     fontSize: 10,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
@@ -588,15 +589,18 @@ const styles = StyleSheet.create({
   },
   amountMain: {
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
+    fontVariant: ["tabular-nums"],
   },
   amountCents: {
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
+    fontVariant: ["tabular-nums"],
   },
   cardSubtitle: {
     color: colors.textMuted,
     fontSize: 11,
+    fontFamily: fonts.regular,
     marginTop: 2,
   },
   cardIcon: {
@@ -609,6 +613,7 @@ const styles = StyleSheet.create({
   },
   tooltipToggle: {
     fontSize: 13,
+    fontFamily: fonts.regular,
     marginTop: 4,
   },
   tooltipBackdrop: {
@@ -632,6 +637,7 @@ const styles = StyleSheet.create({
   tooltipText: {
     color: colors.textSecondary,
     fontSize: 12,
+    fontFamily: fonts.regular,
     lineHeight: 18,
   },
   // Progress bar
@@ -651,18 +657,19 @@ const styles = StyleSheet.create({
   progressLabel: {
     color: colors.textSecondary,
     fontSize: 12,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   progressValue: {
     color: colors.white,
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
+    fontVariant: ["tabular-nums"],
   },
   progressTotal: {
     color: colors.textMuted,
-    fontWeight: "400",
+    fontFamily: fonts.regular,
   },
   progressTrack: {
     height: 10,
@@ -677,7 +684,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: colors.white,
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   // Empty state
   emptySection: {
@@ -691,6 +698,7 @@ const styles = StyleSheet.create({
   emptyText: {
     color: colors.textMuted,
     fontSize: 14,
+    fontFamily: fonts.regular,
     textAlign: "center",
     lineHeight: 20,
   },
@@ -721,21 +729,23 @@ const styles = StyleSheet.create({
   },
   categoryInitial: {
     fontSize: 12,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
   },
   categoryName: {
     color: colors.textSecondary,
     fontSize: 13,
-    fontWeight: "500",
+    fontFamily: fonts.medium,
   },
   categoryPct: {
     color: colors.textMuted,
     fontSize: 11,
+    fontFamily: fonts.regular,
   },
   categoryAmount: {
     color: colors.white,
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
+    fontVariant: ["tabular-nums"],
   },
   catProgressTrack: {
     height: 4,
@@ -760,7 +770,7 @@ const styles = StyleSheet.create({
   pieCenterName: {
     color: colors.textMuted,
     fontSize: 11,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     textTransform: "uppercase",
     letterSpacing: 0.4,
     textAlign: "center",
@@ -768,7 +778,8 @@ const styles = StyleSheet.create({
   pieCenterAmount: {
     color: colors.white,
     fontSize: 18,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
+    fontVariant: ["tabular-nums"],
     textAlign: "center",
     marginTop: 2,
   },
@@ -796,10 +807,12 @@ const styles = StyleSheet.create({
   pieLegendName: {
     color: colors.textSecondary,
     fontSize: 12,
-    fontWeight: "500",
+    fontFamily: fonts.medium,
   },
   pieLegendAmount: {
     color: colors.textMuted,
     fontSize: 11,
+    fontFamily: fonts.regular,
+    fontVariant: ["tabular-nums"],
   },
 });

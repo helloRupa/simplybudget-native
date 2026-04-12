@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 
 export interface PickerOption {
   label: string;
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
   label: {
     color: colors.textSecondary,
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     marginBottom: 6,
   },
   trigger: {
@@ -117,6 +118,7 @@ const styles = StyleSheet.create({
   triggerText: {
     color: colors.white,
     fontSize: 15,
+    fontFamily: fonts.regular,
     flex: 1,
   },
   placeholder: {
@@ -125,6 +127,7 @@ const styles = StyleSheet.create({
   error: {
     color: colors.dangerText,
     fontSize: 12,
+    fontFamily: fonts.regular,
     marginTop: 4,
   },
   backdrop: {
@@ -146,7 +149,7 @@ const styles = StyleSheet.create({
   sheetTitle: {
     color: colors.textMuted,
     fontSize: 12,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
     textTransform: "uppercase",
     letterSpacing: 0.8,
     paddingHorizontal: 16,
@@ -169,9 +172,10 @@ const styles = StyleSheet.create({
   optionText: {
     color: colors.white,
     fontSize: 15,
+    fontFamily: fonts.regular,
   },
   optionTextActive: {
     color: colors.teal,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
 });

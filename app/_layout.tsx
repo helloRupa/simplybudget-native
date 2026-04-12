@@ -1,6 +1,14 @@
 import AppName from "@/components/AppName";
 import { colors } from "@/constants/colors";
 import { BudgetProvider, useBudget } from "@/context/BudgetContext";
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+  useFonts,
+} from "@expo-google-fonts/inter";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
@@ -10,14 +18,21 @@ SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
   const { isLoaded } = useBudget();
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+  });
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [isLoaded]);
+  }, [isLoaded, fontsLoaded]);
 
-  if (!isLoaded) {
+  if (!isLoaded || !fontsLoaded) {
     return (
       <View style={styles.splash}>
         <AppName size="large" />

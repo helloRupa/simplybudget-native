@@ -21,6 +21,7 @@ import FieldPicker, { PickerOption } from "@/components/FieldPicker";
 import AboutModal from "@/components/AboutModal";
 import Toast from "@/components/Toast";
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: colors.white,
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   // Budget
   budgetRow: {
@@ -377,12 +378,14 @@ const styles = StyleSheet.create({
   currencyPrefix: {
     color: colors.amber,
     fontSize: 15,
+    fontFamily: fonts.regular,
     marginRight: 4,
   },
   budgetInput: {
     flex: 1,
     color: colors.white,
     fontSize: 15,
+    fontFamily: fonts.regular,
     paddingVertical: 11,
   },
   inputError: {
@@ -398,16 +401,18 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: colors.background,
     fontSize: 14,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
   },
   error: {
     color: colors.dangerText,
     fontSize: 12,
+    fontFamily: fonts.regular,
     marginTop: -4,
   },
   hint: {
     color: colors.textMuted,
     fontSize: 12,
+    fontFamily: fonts.regular,
   },
   // Nav row (recurring expenses)
   navRow: {
@@ -424,6 +429,7 @@ const styles = StyleSheet.create({
   navRowText: {
     color: colors.textSecondary,
     fontSize: 14,
+    fontFamily: fonts.regular,
   },
   // Categories
   addRow: {
@@ -440,6 +446,7 @@ const styles = StyleSheet.create({
     paddingVertical: 11,
     color: colors.white,
     fontSize: 14,
+    fontFamily: fonts.regular,
   },
   addButton: {
     paddingHorizontal: 16,
@@ -451,7 +458,7 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: colors.background,
     fontSize: 13,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
   },
   categoryChips: {
     flexDirection: "row",
@@ -477,6 +484,7 @@ const styles = StyleSheet.create({
   chipText: {
     color: colors.textSecondary,
     fontSize: 13,
+    fontFamily: fonts.regular,
   },
   // Export buttons
   buttonGroup: {
@@ -500,7 +508,7 @@ const styles = StyleSheet.create({
   exportButtonText: {
     color: colors.background,
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
   },
   exportTextWhite: {
     color: colors.white,
@@ -519,7 +527,7 @@ const styles = StyleSheet.create({
   aboutText: {
     color: colors.teal,
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: fonts.semiBold,
     flex: 1,
   },
 });

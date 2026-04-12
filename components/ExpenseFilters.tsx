@@ -5,6 +5,7 @@ import { FilterState } from "@/types";
 import FieldPicker from "./FieldPicker";
 import DateField from "./DateField";
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/typography";
 
 interface ExpenseFiltersProps {
   filters: FilterState;
@@ -114,13 +115,14 @@ const styles = StyleSheet.create({
   title: {
     color: colors.textSecondary,
     fontSize: 13,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
     textTransform: "uppercase",
     letterSpacing: 0.6,
   },
   resetText: {
     color: colors.teal,
     fontSize: 13,
+    fontFamily: fonts.regular,
   },
   searchRow: {
     flexDirection: "row",
@@ -138,6 +140,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: colors.white,
     fontSize: 15,
+    fontFamily: fonts.regular,
     paddingVertical: 10,
   },
   dateRow: {

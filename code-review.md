@@ -46,9 +46,11 @@ const db = getDatabase();
 
 This runs on every render. The singleton prevents actual DB reconnection, but `db` is a new reference check on every render, causing all `useCallback([db])` dependencies to appear "stable" only by luck of JavaScript object identity (same singleton reference). A cleaner pattern: `const db = useMemo(() => getDatabase(), [])` or `const dbRef = useRef(getDatabase()); const db = dbRef.current`.
 
-### 6. `isInRange` silently returns `true` on parse error (`utils/dates.ts:48–55`)
+### ~~6. `isInRange` silently returns `true` on parse error (`utils/dates.ts:48–55`)~~ ✅ Fixed
 
-A malformed date string in an expense would pass every date filter and always appear in results. Since expenses are parsed from SQLite rows you control, this is low-risk, but the silent `return true` on catch is fragile — `return false` would be safer to surface data issues.
+~~A malformed date string in an expense would pass every date filter and always appear in results. Since expenses are parsed from SQLite rows you control, this is low-risk, but the silent `return true` on catch is fragile — `return false` would be safer to surface data issues.~~
+
+**Fix applied in `utils/dates.ts`:** Changed `return true` to `return false` in the `catch` block so a malformed date string is excluded from filtered results rather than silently matching every filter.
 
 ### 7. CSV export passes raw ISO date strings (`app/(tabs)/settings.tsx:94`)
 
@@ -94,7 +96,7 @@ The edit/delete `Pressable` elements in the list items don't have `accessibility
 | ~~Medium~~ | ~~Unused AsyncStorage dependency~~ ✅ | ~~`package.json`~~ |
 | ~~Medium~~ | ~~`getDatabase()` called in component body~~ ✅ | ~~`context/BudgetContext.tsx:189`~~ |
 | Medium | CSV export uses identity date formatter | `app/(tabs)/settings.tsx:94` |
-| Low | `isInRange` returns `true` on parse error | `utils/dates.ts` |
+| ~~Low~~ | ~~`isInRange` returns `true` on parse error~~ ✅ | ~~`utils/dates.ts`~~ |
 | Low | `RecurringExpensesScreen` too large (620 lines) | `app/recurring-expenses.tsx` |
 | Low | Tooltip state invalidates chart data memo | `components/SpendingChart.tsx` |
 | Low | Magic `- 72` constant | `components/SpendingChart.tsx` |

@@ -51,7 +51,7 @@ export function isInRange(dateStr: string, from: string, to: string): boolean {
     const end = to ? parseISO(to) : new Date(9999, 11, 31);
     return isWithinInterval(date, { start, end });
   } catch {
-    return true;
+    return false;
   }
 }
 

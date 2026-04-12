@@ -52,7 +52,7 @@ This runs on every render. The singleton prevents actual DB reconnection, but `d
 
 **Fix applied in `utils/dates.ts`:** Changed `return true` to `return false` in the `catch` block so a malformed date string is excluded from filtered results rather than silently matching every filter.
 
-### 7. CSV export passes raw ISO date strings (`app/(tabs)/settings.tsx:94`)
+### 7. CSV export passes raw ISO date strings (`app/(tabs)/settings.tsx:94`) Won't Do
 
 ```ts
 await exportToCSV(state.expenses, t as (key: string) => string, tc, (d) => d);
@@ -70,17 +70,22 @@ The `formatDate` argument is the identity function, so dates in the CSV export a
 
 **Fix applied:** Extracted `components/RecurringExpenseForm.tsx` (~260 lines) containing all form state, validation, and JSX. The screen (`app/recurring-expenses.tsx`) is now ~240 lines and owns only list/navigation concerns. `DAY_KEYS` and `MONTH_KEYS` are exported from the form file for reuse in `frequencyLabel`. The parent passes `key={editingExpense?.id ?? "new"}` so React remounts the form with fresh state when the editing target changes — no `useEffect` sync needed.
 
-### 9. `SpendingChart`: unnecessary re-creation of `chartData` on tooltip state changes (`components/SpendingChart.tsx:79–114`)
+### ~~9. `SpendingChart`: unnecessary re-creation of `chartData` on tooltip state changes (`components/SpendingChart.tsx:79–114`)~~ ✅ Fixed
 
-The `tooltip?.idx` is in the `useMemo` dep array so the `onPress` closures capture the current tooltip. This means every time a bar is tapped, the entire `chartData` array is recreated to update the active/inactive press state. Consider a `useCallback` per-bar approach or separating the selected-bar state from the chart data memo.
+~~The `tooltip?.idx` is in the `useMemo` dep array so the `onPress` closures capture the current tooltip. This means every time a bar is tapped, the entire `chartData` array is recreated to update the active/inactive press state. Consider a `useCallback` per-bar approach or separating the selected-bar state from the chart data memo.~~
 
-### 10. Magic constant in `SpendingChart` (`components/SpendingChart.tsx:124`)
+**Fix applied in `components/SpendingChart.tsx`:** Added `tooltipRef` (kept in sync via `tooltipRef.current = tooltip` on every render). The `onPress` closures now read `tooltipRef.current?.idx` instead of `tooltip?.idx`, so `tooltip?.idx` was removed from the `useMemo` dep array. `chartData` now only rebuilds when `data` changes.
 
-```ts
+### ~~10. Magic constant in `SpendingChart` (`components/SpendingChart.tsx:124`)~~ ✅ Fixed
+
+~~```ts
 const chartWidth = screenWidth - 72;
-```
 
-No comment explaining what 72 represents (section padding × 2 + container padding × 2 = 64? Not quite). A named constant with a comment would prevent silent drift if padding values change.
+```~~
+
+~~No comment explaining what 72 represents (section padding × 2 + container padding × 2 = 64? Not quite). A named constant with a comment would prevent silent drift if padding values change.~~
+
+**Fix applied in `components/SpendingChart.tsx`:** Replaced the bare `72` with a named `CHART_HORIZONTAL_INSET` constant and a comment explaining the breakdown (content padding 16×2 + section padding 16×2 + 8px visual adjustment).
 
 ### ~~11. Missing `accessibilityRole="button"` on recurring list actions (`app/recurring-expenses.tsx:414–419`)~~ ✅ Fixed
 
@@ -102,8 +107,9 @@ No comment explaining what 72 represents (section padding × 2 + container paddi
 | Medium | CSV export uses identity date formatter | `app/(tabs)/settings.tsx:94` |
 | ~~Low~~ | ~~`isInRange` returns `true` on parse error~~ ✅ | ~~`utils/dates.ts`~~ |
 | ~~Low~~ | ~~`RecurringExpensesScreen` too large (620 lines)~~ ✅ | ~~`app/recurring-expenses.tsx`~~ |
-| Low | Tooltip state invalidates chart data memo | `components/SpendingChart.tsx` |
-| Low | Magic `- 72` constant | `components/SpendingChart.tsx` |
+| ~~Low~~ | ~~Tooltip state invalidates chart data memo~~ ✅ | ~~`components/SpendingChart.tsx`~~ |
+| ~~Low~~ | ~~Magic `- 72` constant~~ ✅ | ~~`components/SpendingChart.tsx`~~ |
 | ~~Low~~ | ~~Missing `accessibilityRole` on list actions~~ ✅ | ~~`app/recurring-expenses.tsx`~~ |
 
 The most impactful fix is item 1 — users who've ever updated their weekly budget will see incorrect historical chart data until the sort order is aligned.
+```

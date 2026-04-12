@@ -1,3 +1,5 @@
+import { colors } from "@/constants/colors";
+import { TranslationKey } from "@/i18n/locales";
 import { useMemo, useRef, useState } from "react";
 import {
   Modal,
@@ -8,8 +10,6 @@ import {
   View,
 } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
-import { colors } from "@/constants/colors";
-import { TranslationKey } from "@/i18n/locales";
 
 // These must match the BarChart props below exactly
 const Y_AXIS_WIDTH = 50;
@@ -43,7 +43,7 @@ interface SpendingChartProps {
 
 function getBarColors(
   spent: number,
-  budget: number
+  budget: number,
 ): { frontColor: string; gradientColor: string } {
   if (budget <= 0) {
     return { frontColor: colors.chartTeal, gradientColor: colors.chartBlue };
@@ -75,6 +75,8 @@ export default function SpendingChart({
   const { width: screenWidth } = useWindowDimensions();
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const containerRef = useRef<View>(null);
+  const tooltipRef = useRef(tooltip);
+  tooltipRef.current = tooltip;
 
   const chartData = useMemo(
     () =>
@@ -87,14 +89,18 @@ export default function SpendingChart({
           gradientColor,
           showGradient: true,
           onPress: () => {
-            if (tooltip?.idx === idx) {
+            if (tooltipRef.current?.idx === idx) {
               setTooltip(null);
               return;
             }
             containerRef.current?.measureInWindow((cx, cy) => {
               // Horizontal center of this bar on screen
               const barCenterX =
-                cx + Y_AXIS_WIDTH + INITIAL_SPACING + idx * (BAR_WIDTH + BAR_SPACING) + BAR_WIDTH / 2;
+                cx +
+                Y_AXIS_WIDTH +
+                INITIAL_SPACING +
+                idx * (BAR_WIDTH + BAR_SPACING) +
+                BAR_WIDTH / 2;
 
               // Vertical: compute bar top Y using mirrored gifted-charts scale
               const dataMax = Math.max(...data.map((item) => item.spent), 1);
@@ -109,8 +115,7 @@ export default function SpendingChart({
           },
         };
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, tooltip?.idx]
+    [data],
   );
 
   if (data.length === 0) {
@@ -121,19 +126,24 @@ export default function SpendingChart({
     );
   }
 
-  const chartWidth = screenWidth - 72;
+  // content padding (16×2) + section padding (16×2) + 8px visual adjustment
+  const CHART_HORIZONTAL_INSET = 72;
+  const chartWidth = screenWidth - CHART_HORIZONTAL_INSET;
   const selected = tooltip !== null ? data[tooltip.idx] : null;
 
   // Center tooltip on bar; clamp to screen edges
   const tooltipLeft = tooltip
     ? Math.min(
         Math.max(8, tooltip.screenX - TOOLTIP_WIDTH / 2),
-        screenWidth - TOOLTIP_WIDTH - 8
+        screenWidth - TOOLTIP_WIDTH - 8,
       )
     : 0;
   // Float above the bar top; clamp so it never goes above the container top
   const tooltipTop = tooltip
-    ? Math.max(tooltip.screenY - CHART_HEIGHT, tooltip.screenY - TOOLTIP_HEIGHT - 8)
+    ? Math.max(
+        tooltip.screenY - CHART_HEIGHT,
+        tooltip.screenY - TOOLTIP_HEIGHT - 8,
+      )
     : 0;
 
   return (
@@ -167,9 +177,14 @@ export default function SpendingChart({
         onRequestClose={() => setTooltip(null)}
         statusBarTranslucent
       >
-        <Pressable style={styles.modalBackdrop} onPress={() => setTooltip(null)}>
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={() => setTooltip(null)}
+        >
           {selected && (
-            <View style={[styles.tooltip, { left: tooltipLeft, top: tooltipTop }]}>
+            <View
+              style={[styles.tooltip, { left: tooltipLeft, top: tooltipTop }]}
+            >
               <Text style={styles.tooltipWeek}>{selected.week}</Text>
               <Text style={styles.tooltipSpent}>{fc(selected.spent)}</Text>
               <Text style={styles.tooltipBudget}>/ {fc(selected.budget)}</Text>

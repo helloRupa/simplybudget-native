@@ -64,9 +64,11 @@ The `formatDate` argument is the identity function, so dates in the CSV export a
 
 ## Code Quality
 
-### 8. `recurring-expenses.tsx` is 620 lines with all form state inlined
+### ~~8. `recurring-expenses.tsx` is 620 lines with all form state inlined~~ ✅ Fixed
 
-The component handles both the list view and the add/edit form with ~10 pieces of form state in the parent. Extracting a `RecurringExpenseForm` component would make both pieces easier to test and reason about.
+~~The component handles both the list view and the add/edit form with ~10 pieces of form state in the parent. Extracting a `RecurringExpenseForm` component would make both pieces easier to test and reason about.~~
+
+**Fix applied:** Extracted `components/RecurringExpenseForm.tsx` (~260 lines) containing all form state, validation, and JSX. The screen (`app/recurring-expenses.tsx`) is now ~240 lines and owns only list/navigation concerns. `DAY_KEYS` and `MONTH_KEYS` are exported from the form file for reuse in `frequencyLabel`. The parent passes `key={editingExpense?.id ?? "new"}` so React remounts the form with fresh state when the editing target changes — no `useEffect` sync needed.
 
 ### 9. `SpendingChart`: unnecessary re-creation of `chartData` on tooltip state changes (`components/SpendingChart.tsx:79–114`)
 
@@ -80,9 +82,11 @@ const chartWidth = screenWidth - 72;
 
 No comment explaining what 72 represents (section padding × 2 + container padding × 2 = 64? Not quite). A named constant with a comment would prevent silent drift if padding values change.
 
-### 11. Missing `accessibilityRole="button"` on recurring list actions (`app/recurring-expenses.tsx:414–419`)
+### ~~11. Missing `accessibilityRole="button"` on recurring list actions (`app/recurring-expenses.tsx:414–419`)~~ ✅ Fixed
 
-The edit/delete `Pressable` elements in the list items don't have `accessibilityRole="button"`, unlike the form buttons and FAB in the expenses screen.
+~~The edit/delete `Pressable` elements in the list items don't have `accessibilityRole="button"`, unlike the form buttons and FAB in the expenses screen.~~
+
+**Fix applied** during the #8 refactor: `accessibilityRole="button"` added to the Edit and Delete `Pressable`s in the list card.
 
 ---
 
@@ -97,9 +101,9 @@ The edit/delete `Pressable` elements in the list items don't have `accessibility
 | ~~Medium~~ | ~~`getDatabase()` called in component body~~ ✅ | ~~`context/BudgetContext.tsx:189`~~ |
 | Medium | CSV export uses identity date formatter | `app/(tabs)/settings.tsx:94` |
 | ~~Low~~ | ~~`isInRange` returns `true` on parse error~~ ✅ | ~~`utils/dates.ts`~~ |
-| Low | `RecurringExpensesScreen` too large (620 lines) | `app/recurring-expenses.tsx` |
+| ~~Low~~ | ~~`RecurringExpensesScreen` too large (620 lines)~~ ✅ | ~~`app/recurring-expenses.tsx`~~ |
 | Low | Tooltip state invalidates chart data memo | `components/SpendingChart.tsx` |
 | Low | Magic `- 72` constant | `components/SpendingChart.tsx` |
-| Low | Missing `accessibilityRole` on list actions | `app/recurring-expenses.tsx` |
+| ~~Low~~ | ~~Missing `accessibilityRole` on list actions~~ ✅ | ~~`app/recurring-expenses.tsx`~~ |
 
 The most impactful fix is item 1 — users who've ever updated their weekly budget will see incorrect historical chart data until the sort order is aligned.

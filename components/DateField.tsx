@@ -13,7 +13,8 @@ import { parseISO } from "date-fns";
 import { toISODate } from "@/utils/dates";
 import { useBudget } from "@/context/BudgetContext";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
+import * as sharedStyles from "@/constants/sharedStyles";
 
 interface DateFieldProps {
   label: string;
@@ -110,12 +111,7 @@ export default function DateField({
 }
 
 const styles = StyleSheet.create({
-  label: {
-    color: colors.textSecondary,
-    fontSize: fontSize.md,
-    fontFamily: fonts.semiBold,
-    marginBottom: 6,
-  },
+  label: { ...sharedStyles.formLabel },
   trigger: {
     flexDirection: "row",
     alignItems: "center",
@@ -123,7 +119,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 14,
     paddingVertical: 11,
   },
@@ -139,12 +135,7 @@ const styles = StyleSheet.create({
   placeholder: {
     color: colors.textMuted,
   },
-  error: {
-    color: colors.dangerText,
-    fontSize: fontSize.base,
-    fontFamily: fonts.regular,
-    marginTop: 4,
-  },
+  error: { ...sharedStyles.inlineError },
   iosBackdrop: {
     flex: 1,
     backgroundColor: colors.overlay,
@@ -152,8 +143,8 @@ const styles = StyleSheet.create({
   },
   iosSheet: {
     backgroundColor: colors.surface,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderTopLeftRadius: radius.xxl,
+    borderTopRightRadius: radius.xxl,
     borderTopWidth: 1,
     borderColor: colors.border,
   },

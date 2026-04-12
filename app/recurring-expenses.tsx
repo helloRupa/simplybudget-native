@@ -17,7 +17,7 @@ import RecurringExpenseForm, {
   MONTH_KEYS,
 } from "@/components/RecurringExpenseForm";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
 
 interface ToastState {
   message: string;
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   addButton: {
     margin: 16,
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     backgroundColor: colors.teal,
     alignItems: "center",
   },
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     padding: 12,
     borderWidth: 1,
     borderColor: colors.border,
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   expiredBadge: {
     paddingHorizontal: 7,
     paddingVertical: 3,
-    borderRadius: 20,
+    borderRadius: radius.full,
     backgroundColor: colors.dangerSubtle,
     borderWidth: 1,
     borderColor: colors.dangerBorder,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   deleteConfirmButton: {
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     backgroundColor: colors.dangerSubtle,
   },
   deleteConfirmText: {
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   cancelSmallButton: {
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,

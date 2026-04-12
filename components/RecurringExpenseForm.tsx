@@ -16,7 +16,8 @@ import { TranslationKey } from "@/i18n/locales";
 import FieldPicker, { PickerOption } from "@/components/FieldPicker";
 import DateField from "@/components/DateField";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
+import * as sharedStyles from "@/constants/sharedStyles";
 
 export const DAY_KEYS: TranslationKey[] = [
   "sunday",
@@ -329,38 +330,18 @@ const styles = StyleSheet.create({
     fontSize: fontSize.xxl,
     fontFamily: fonts.bold,
   },
-  fieldLabel: {
-    color: colors.textSecondary,
-    fontSize: fontSize.md,
-    fontFamily: fonts.semiBold,
-    marginBottom: 6,
-  },
-  input: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
-    color: colors.white,
-    fontSize: fontSize.xl,
-    fontFamily: fonts.regular,
-  },
+  fieldLabel: { ...sharedStyles.formLabel },
+  input: { ...sharedStyles.textInput },
   inputError: {
     borderColor: colors.toastError,
   },
-  error: {
-    color: colors.dangerText,
-    fontSize: fontSize.base,
-    fontFamily: fonts.regular,
-    marginTop: 4,
-  },
+  error: { ...sharedStyles.inlineError },
   clearDateButton: {
     alignSelf: "flex-start",
     marginTop: 8,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     backgroundColor: colors.dangerSubtle,
     borderWidth: 1,
     borderColor: colors.dangerBorder,
@@ -378,7 +359,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     paddingVertical: 13,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -392,7 +373,7 @@ const styles = StyleSheet.create({
   submitButton: {
     flex: 1,
     paddingVertical: 13,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     backgroundColor: colors.teal,
     alignItems: "center",
   },

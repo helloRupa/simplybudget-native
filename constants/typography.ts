@@ -18,3 +18,12 @@ export const fontSize = {
   display: 20,
   hero: 24,
 } as const;
+
+export const radius = {
+  sm: 8,   // small action buttons, confirm/cancel
+  md: 10,  // inputs, pickers, triggers
+  lg: 12,  // cards, primary buttons
+  xl: 14,  // modal sheets, filter panels
+  xxl: 16, // section cards, large modals
+  full: 20, // pill badges
+} as const;

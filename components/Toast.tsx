@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text } from "react-native";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
 
 interface ToastProps {
   message: string;
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingHorizontal: 20,
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,

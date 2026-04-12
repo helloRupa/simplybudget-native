@@ -5,7 +5,7 @@ import { FilterState } from "@/types";
 import FieldPicker from "./FieldPicker";
 import DateField from "./DateField";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
 
 interface ExpenseFiltersProps {
   filters: FilterState;
@@ -100,7 +100,7 @@ export default function ExpenseFilters({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.surface,
-    borderRadius: 14,
+    borderRadius: radius.xl,
     padding: 16,
     marginBottom: 12,
     gap: 12,
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 12,
   },
   searchIcon: {

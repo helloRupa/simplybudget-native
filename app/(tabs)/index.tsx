@@ -25,7 +25,8 @@ import {
 import { Category } from "@/types";
 import SpendingChart from "@/components/SpendingChart";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
+import * as sharedStyles from "@/constants/sharedStyles";
 
 function getCatColor(categories: Category[], name: string): string {
   return categories.find((c) => c.name === name)?.color ?? colors.textMuted;
@@ -564,7 +565,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: radius.xxl,
     borderWidth: 1,
     padding: 14,
   },
@@ -606,7 +607,7 @@ const styles = StyleSheet.create({
   cardIcon: {
     width: 36,
     height: 36,
-    borderRadius: 10,
+    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 8,
@@ -626,7 +627,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
+    borderRadius: radius.md,
     padding: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -641,14 +642,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   // Progress bar
-  section: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 16,
-    gap: 12,
-  },
+  section: { ...sharedStyles.surfaceCard },
   progressHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -689,7 +683,7 @@ const styles = StyleSheet.create({
   // Empty state
   emptySection: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: radius.xxl,
     borderWidth: 1,
     borderColor: colors.border,
     padding: 40,
@@ -723,7 +717,7 @@ const styles = StyleSheet.create({
   categoryAvatar: {
     width: 32,
     height: 32,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     alignItems: "center",
     justifyContent: "center",
   },

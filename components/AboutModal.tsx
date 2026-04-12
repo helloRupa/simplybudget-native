@@ -9,7 +9,7 @@ import {
 import { useBudget } from "@/context/BudgetContext";
 import AppName from "./AppName";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
 
 interface AboutModalProps {
   visible: boolean;
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: radius.xxl,
     padding: 24,
     marginHorizontal: 16,
     width: "100%",
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 72,
     height: 72,
-    borderRadius: 16,
+    borderRadius: radius.xxl,
     borderWidth: 2,
     borderColor: colors.teal,
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: 12,
     backgroundColor: colors.surfaceSubtle,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: radius.md,
     backgroundColor: colors.tealFaint,
     borderWidth: 1,
     borderColor: colors.tealBorder,

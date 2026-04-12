@@ -21,7 +21,8 @@ import FieldPicker, { PickerOption } from "@/components/FieldPicker";
 import AboutModal from "@/components/AboutModal";
 import Toast from "@/components/Toast";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
+import * as sharedStyles from "@/constants/sharedStyles";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -347,14 +348,7 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingBottom: 40,
   },
-  section: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 16,
-    gap: 12,
-  },
+  section: { ...sharedStyles.surfaceCard },
   sectionTitle: {
     color: colors.white,
     fontSize: fontSize.xl,
@@ -372,7 +366,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 12,
   },
   currencyPrefix: {
@@ -394,7 +388,7 @@ const styles = StyleSheet.create({
   saveButton: {
     paddingHorizontal: 20,
     paddingVertical: 11,
-    borderRadius: 10,
+    borderRadius: radius.md,
     backgroundColor: colors.teal,
     justifyContent: "center",
   },
@@ -420,7 +414,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: colors.background,
-    borderRadius: 10,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: 14,
@@ -441,7 +435,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 14,
     paddingVertical: 11,
     color: colors.white,
@@ -451,7 +445,7 @@ const styles = StyleSheet.create({
   addButton: {
     paddingHorizontal: 16,
     paddingVertical: 11,
-    borderRadius: 10,
+    borderRadius: radius.md,
     backgroundColor: colors.teal,
     justifyContent: "center",
   },
@@ -470,7 +464,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
     backgroundColor: colors.background,
-    borderRadius: 20,
+    borderRadius: radius.full,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: 10,
@@ -495,7 +489,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     backgroundColor: colors.teal,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 16,
     paddingVertical: 11,
   },
@@ -519,7 +513,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: radius.xxl,
     borderWidth: 1,
     borderColor: colors.tealBorder,
     padding: 16,

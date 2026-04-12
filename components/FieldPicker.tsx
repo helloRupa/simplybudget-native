@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
+import * as sharedStyles from "@/constants/sharedStyles";
 
 export interface PickerOption {
   label: string;
@@ -95,12 +96,7 @@ export default function FieldPicker({
 }
 
 const styles = StyleSheet.create({
-  label: {
-    color: colors.textSecondary,
-    fontSize: fontSize.md,
-    fontFamily: fonts.semiBold,
-    marginBottom: 6,
-  },
+  label: { ...sharedStyles.formLabel },
   trigger: {
     flexDirection: "row",
     alignItems: "center",
@@ -108,7 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 14,
     paddingVertical: 11,
   },
@@ -124,12 +120,7 @@ const styles = StyleSheet.create({
   placeholder: {
     color: colors.textMuted,
   },
-  error: {
-    color: colors.dangerText,
-    fontSize: fontSize.base,
-    fontFamily: fonts.regular,
-    marginTop: 4,
-  },
+  error: { ...sharedStyles.inlineError },
   backdrop: {
     flex: 1,
     backgroundColor: colors.overlay,
@@ -139,7 +130,7 @@ const styles = StyleSheet.create({
   },
   sheet: {
     backgroundColor: colors.surface,
-    borderRadius: 14,
+    borderRadius: radius.xl,
     width: "100%",
     maxHeight: 400,
     borderWidth: 1,

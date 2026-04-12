@@ -15,7 +15,7 @@ import { isInRange, toISODate } from "@/utils/dates";
 import ExpenseFilters from "@/components/ExpenseFilters";
 import Toast from "@/components/Toast";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
 
 const TODAY = toISODate(new Date());
 
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     padding: 12,
     borderWidth: 1,
     borderColor: colors.border,
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   upcomingBadge: {
     paddingHorizontal: 7,
     paddingVertical: 3,
-    borderRadius: 20,
+    borderRadius: radius.full,
     backgroundColor: colors.toastInfoSubtle,
     borderWidth: 1,
     borderColor: colors.toastInfoBorder,
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 20,
+    borderRadius: radius.full,
     borderWidth: 1,
     gap: 5,
   },
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
   editButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     backgroundColor: colors.tealSubtle,
   },
   editText: {
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
   deleteButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: radius.sm,
   },
   deleteText: {
     color: colors.dangerText,
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
   deleteConfirmButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     backgroundColor: colors.dangerSubtle,
   },
   deleteConfirmText: {
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   cancelSmallButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,

@@ -1,5 +1,5 @@
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
 import { TranslationKey } from "@/i18n/locales";
 import { useMemo, useRef, useState } from "react";
 import {
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.tealBorder,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
     alignItems: "center",

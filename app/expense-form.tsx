@@ -17,7 +17,8 @@ import { parseISO } from "date-fns";
 import FieldPicker from "@/components/FieldPicker";
 import DateField from "@/components/DateField";
 import { colors } from "@/constants/colors";
-import { fonts, fontSize } from "@/constants/typography";
+import { fonts, fontSize, radius } from "@/constants/typography";
+import * as sharedStyles from "@/constants/sharedStyles";
 
 export default function ExpenseFormScreen() {
   const router = useRouter();
@@ -209,19 +210,14 @@ const styles = StyleSheet.create({
   field: {
     gap: 0,
   },
-  label: {
-    color: colors.textSecondary,
-    fontSize: fontSize.md,
-    fontFamily: fonts.semiBold,
-    marginBottom: 6,
-  },
+  label: { ...sharedStyles.formLabel },
   amountRow: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
+    borderRadius: radius.md,
     paddingHorizontal: 14,
   },
   currencySymbol: {
@@ -237,26 +233,11 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     paddingVertical: 11,
   },
-  input: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
-    color: colors.white,
-    fontSize: fontSize.xl,
-    fontFamily: fonts.regular,
-  },
+  input: { ...sharedStyles.textInput },
   inputError: {
     borderColor: colors.toastError,
   },
-  error: {
-    color: colors.dangerText,
-    fontSize: fontSize.base,
-    fontFamily: fonts.regular,
-    marginTop: 4,
-  },
+  error: { ...sharedStyles.inlineError },
   buttonRow: {
     flexDirection: "row",
     gap: 12,
@@ -265,7 +246,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     paddingVertical: 13,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -279,7 +260,7 @@ const styles = StyleSheet.create({
   submitButton: {
     flex: 1,
     paddingVertical: 13,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     backgroundColor: colors.teal,
     alignItems: "center",
   },

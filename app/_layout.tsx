@@ -3,6 +3,9 @@ import LockScreen from "@/components/LockScreen";
 import { colors } from "@/constants/colors";
 import { BudgetProvider, useBudget } from "@/context/BudgetContext";
 import { shouldReLock } from "@/utils/lockTimer";
+import { NOTIFICATION_IDS } from "@/utils/notifications";
+import * as Notifications from "expo-notifications";
+import { Stack, useRouter } from "expo-router";
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -11,7 +14,6 @@ import {
   Inter_800ExtraBold,
   useFonts,
 } from "@expo-google-fonts/inter";
-import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus, StyleSheet, View } from "react-native";
@@ -19,6 +21,7 @@ import { AppState, AppStateStatus, StyleSheet, View } from "react-native";
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
+  const router = useRouter();
   const { isLoaded, state, lockSuppressed } = useBudget();
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -30,16 +33,53 @@ function RootLayoutNav() {
 
   // Start locked when lock is enabled; unlock if lock is off
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isAuthenticatedRef = useRef(isAuthenticated);
+  const pendingNavigation = useRef<string | null>(null);
   const appState = useRef(AppState.currentState);
   const backgroundedAt = useRef<number | null>(null);
   const lockSuppressedRef = useRef(lockSuppressed);
   const LOCK_GRACE_MS = 30_000;
 
-  // Keep the ref in sync so the AppState handler always reads the latest value
-  // without needing to re-register the subscription on every change.
+  // Keep refs in sync so event handlers always read the latest value
+  // without needing to re-register subscriptions on every change.
   useEffect(() => {
     lockSuppressedRef.current = lockSuppressed;
   }, [lockSuppressed]);
+
+  useEffect(() => {
+    isAuthenticatedRef.current = isAuthenticated;
+  }, [isAuthenticated]);
+
+  // Navigate to any destination queued during a notification tap while locked
+  useEffect(() => {
+    if (isAuthenticated && pendingNavigation.current) {
+      router.push(pendingNavigation.current as Parameters<typeof router.push>[0]);
+      pendingNavigation.current = null;
+    }
+  }, [isAuthenticated, router]);
+
+  // Handle notification taps — navigate to the relevant screen
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const id = response.notification.request.identifier;
+        let destination: string | null = null;
+        if (id === NOTIFICATION_IDS.dailyExpenseReminder) {
+          destination = "/expense-form";
+        } else if (id === NOTIFICATION_IDS.weeklyBackupReminder) {
+          destination = "/(tabs)/settings";
+        }
+        if (!destination) return;
+
+        if (isAuthenticatedRef.current) {
+          router.push(destination as Parameters<typeof router.push>[0]);
+        } else {
+          pendingNavigation.current = destination;
+        }
+      }
+    );
+    return () => subscription.remove();
+  }, [router]);
 
   // Once data loads, resolve initial auth state
   useEffect(() => {

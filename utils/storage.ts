@@ -213,6 +213,8 @@ const PREFERENCES_DEFAULTS: Preferences = {
   locale: "en-US",
   currency: "USD",
   lockEnabled: false,
+  notifyDailyExpense: false,
+  notifyWeeklyBackup: false,
 };
 
 export function getPreferences(db: SQLiteDatabase): Preferences {
@@ -222,8 +224,10 @@ export function getPreferences(db: SQLiteDatabase): Preferences {
     locale: string;
     currency: string;
     lockEnabled: number;
+    notifyDailyExpense: number;
+    notifyWeeklyBackup: number;
   }>(
-    "SELECT weeklyBudget, firstUseDate, locale, currency, lockEnabled FROM preferences WHERE id = 1"
+    "SELECT weeklyBudget, firstUseDate, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup FROM preferences WHERE id = 1"
   );
   if (!row) return { ...PREFERENCES_DEFAULTS };
   return {
@@ -232,6 +236,8 @@ export function getPreferences(db: SQLiteDatabase): Preferences {
     locale: row.locale,
     currency: row.currency,
     lockEnabled: row.lockEnabled === 1,
+    notifyDailyExpense: row.notifyDailyExpense === 1,
+    notifyWeeklyBackup: row.notifyWeeklyBackup === 1,
   };
 }
 
@@ -240,18 +246,22 @@ export function setPreferences(
   prefs: Preferences
 ): void {
   db.runSync(
-    `INSERT INTO preferences (id, weeklyBudget, firstUseDate, locale, currency, lockEnabled)
-     VALUES (1, ?, ?, ?, ?, ?)
+    `INSERT INTO preferences (id, weeklyBudget, firstUseDate, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup)
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET
        weeklyBudget = excluded.weeklyBudget,
        firstUseDate = excluded.firstUseDate,
        locale = excluded.locale,
        currency = excluded.currency,
-       lockEnabled = excluded.lockEnabled`,
+       lockEnabled = excluded.lockEnabled,
+       notifyDailyExpense = excluded.notifyDailyExpense,
+       notifyWeeklyBackup = excluded.notifyWeeklyBackup`,
     prefs.weeklyBudget,
     prefs.firstUseDate,
     prefs.locale,
     prefs.currency,
-    prefs.lockEnabled ? 1 : 0
+    prefs.lockEnabled ? 1 : 0,
+    prefs.notifyDailyExpense ? 1 : 0,
+    prefs.notifyWeeklyBackup ? 1 : 0
   );
 }

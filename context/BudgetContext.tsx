@@ -12,6 +12,13 @@ import { formatDate, getWeekRange, toISODate } from "@/utils/dates";
 import { MOCK_STATE } from "@/utils/mockData";
 import { generatePendingExpenses } from "@/utils/recurring";
 import {
+  cancelDailyExpenseReminder,
+  cancelWeeklyBackupReminder,
+  scheduleDailyExpenseReminder,
+  scheduleWeeklyBackupReminder,
+  syncNotificationsOnStartup,
+} from "@/utils/notifications";
+import {
   clearAllData,
   deleteCategory as dbDeleteCategory,
   deleteExpense as dbDeleteExpense,
@@ -58,6 +65,8 @@ export interface State {
   recurringExpenses: RecurringExpense[];
   budgetHistory: WeeklyBudget[];
   lockEnabled: boolean;
+  notifyDailyExpense: boolean;
+  notifyWeeklyBackup: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -79,6 +88,8 @@ type Action =
   | { type: "SET_LOCALE"; payload: LocaleKey }
   | { type: "SET_CURRENCY"; payload: string }
   | { type: "SET_LOCK_ENABLED"; payload: boolean }
+  | { type: "SET_NOTIFY_DAILY_EXPENSE"; payload: boolean }
+  | { type: "SET_NOTIFY_WEEKLY_BACKUP"; payload: boolean }
   | { type: "ADD_RECURRING_EXPENSE"; payload: RecurringExpense }
   | { type: "UPDATE_RECURRING_EXPENSE"; payload: RecurringExpense }
   | { type: "DELETE_RECURRING_EXPENSE"; payload: string };
@@ -135,6 +146,10 @@ function reducer(state: State, action: Action): State {
       return { ...state, currency: action.payload };
     case "SET_LOCK_ENABLED":
       return { ...state, lockEnabled: action.payload };
+    case "SET_NOTIFY_DAILY_EXPENSE":
+      return { ...state, notifyDailyExpense: action.payload };
+    case "SET_NOTIFY_WEEKLY_BACKUP":
+      return { ...state, notifyWeeklyBackup: action.payload };
     case "ADD_RECURRING_EXPENSE":
       return {
         ...state,
@@ -175,6 +190,8 @@ interface BudgetContextValue {
   setLockEnabled: (enabled: boolean) => void;
   lockSuppressed: boolean;
   setLockSuppressed: (suppressed: boolean) => void;
+  setNotifyDailyExpense: (enabled: boolean) => void;
+  setNotifyWeeklyBackup: (enabled: boolean) => void;
   importData: (data: State) => void;
   addRecurringExpense: (
     expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
@@ -216,11 +233,15 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     recurringExpenses: [],
     budgetHistory: [],
     lockEnabled: false,
+    notifyDailyExpense: false,
+    notifyWeeklyBackup: false,
   });
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [lockSuppressed, setLockSuppressed] = useState(false);
   const lockEnabledRef = useRef(false);
+  const notifyDailyExpenseRef = useRef(false);
+  const notifyWeeklyBackupRef = useRef(false);
 
   // Hydrate from SQLite on mount
   useEffect(() => {
@@ -272,6 +293,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       locale: localeKey,
       currency: prefs.currency,
       lockEnabled: prefs.lockEnabled,
+      notifyDailyExpense: prefs.notifyDailyExpense,
+      notifyWeeklyBackup: prefs.notifyWeeklyBackup,
     };
 
     // Seed budget history on first launch (no history yet)
@@ -323,6 +346,20 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     }
 
     lockEnabledRef.current = loaded.lockEnabled;
+    notifyDailyExpenseRef.current = loaded.notifyDailyExpense;
+    notifyWeeklyBackupRef.current = loaded.notifyWeeklyBackup;
+
+    // Re-register any scheduled notifications (may be cleared after app update/restart)
+    syncNotificationsOnStartup(
+      { notifyDailyExpense: loaded.notifyDailyExpense, notifyWeeklyBackup: loaded.notifyWeeklyBackup },
+      {
+        dailyTitle: locales[localeKey].notifyDailyExpenseTitle,
+        dailyBody: locales[localeKey].notifyDailyExpenseBody,
+        weeklyTitle: locales[localeKey].notifyWeeklyBackupTitle,
+        weeklyBody: locales[localeKey].notifyWeeklyBackupBody,
+      }
+    );
+
     dispatch({ type: "SET_INITIAL", payload: loaded });
     setIsLoaded(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -442,6 +479,42 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     [db],
   );
 
+  const setNotifyDailyExpense = useCallback(
+    (enabled: boolean) => {
+      const prefs = getPreferences(db);
+      setPreferences(db, { ...prefs, notifyDailyExpense: enabled });
+      notifyDailyExpenseRef.current = enabled;
+      if (enabled) {
+        scheduleDailyExpenseReminder(
+          locales[state.locale].notifyDailyExpenseTitle,
+          locales[state.locale].notifyDailyExpenseBody
+        );
+      } else {
+        cancelDailyExpenseReminder();
+      }
+      dispatch({ type: "SET_NOTIFY_DAILY_EXPENSE", payload: enabled });
+    },
+    [db, state.locale],
+  );
+
+  const setNotifyWeeklyBackup = useCallback(
+    (enabled: boolean) => {
+      const prefs = getPreferences(db);
+      setPreferences(db, { ...prefs, notifyWeeklyBackup: enabled });
+      notifyWeeklyBackupRef.current = enabled;
+      if (enabled) {
+        scheduleWeeklyBackupReminder(
+          locales[state.locale].notifyWeeklyBackupTitle,
+          locales[state.locale].notifyWeeklyBackupBody
+        );
+      } else {
+        cancelWeeklyBackupReminder();
+      }
+      dispatch({ type: "SET_NOTIFY_WEEKLY_BACKUP", payload: enabled });
+    },
+    [db, state.locale],
+  );
+
   const addRecurringExpense = useCallback(
     (
       expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
@@ -510,9 +583,19 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
           locale: LOCALE_TO_INTL[data.locale],
           currency: data.currency,
           lockEnabled: lockEnabledRef.current, // device setting — not restored from backup
+          notifyDailyExpense: notifyDailyExpenseRef.current, // device setting — not restored from backup
+          notifyWeeklyBackup: notifyWeeklyBackupRef.current, // device setting — not restored from backup
         });
       });
-      dispatch({ type: "SET_INITIAL", payload: { ...data, lockEnabled: lockEnabledRef.current } });
+      dispatch({
+        type: "SET_INITIAL",
+        payload: {
+          ...data,
+          lockEnabled: lockEnabledRef.current,
+          notifyDailyExpense: notifyDailyExpenseRef.current,
+          notifyWeeklyBackup: notifyWeeklyBackupRef.current,
+        },
+      });
     },
     [db],
   );
@@ -562,6 +645,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         setLockEnabled,
         lockSuppressed,
         setLockSuppressed,
+        setNotifyDailyExpense,
+        setNotifyWeeklyBackup,
         importData,
         addRecurringExpense,
         updateRecurringExpense,

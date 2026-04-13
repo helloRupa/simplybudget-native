@@ -46,7 +46,15 @@
       ],
       "expo-sqlite",
       "@react-native-community/datetimepicker",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "color": "#14b8a6",
+          "defaultChannel": "reminders",
+          "sounds": []
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

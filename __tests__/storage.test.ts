@@ -356,6 +356,8 @@ const testPrefs: Preferences = {
   locale: "en-GB",
   currency: "GBP",
   lockEnabled: false,
+  notifyDailyExpense: false,
+  notifyWeeklyBackup: false,
 };
 
 describe("preferences", () => {

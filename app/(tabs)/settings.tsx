@@ -26,6 +26,7 @@ import { colors } from "@/constants/colors";
 import { fonts, fontSize, radius } from "@/constants/typography";
 import * as sharedStyles from "@/constants/sharedStyles";
 import { authenticate, useLockAuthAvailability } from "@/hooks/useLockAuth";
+import { requestNotificationPermissions } from "@/utils/notifications";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -38,6 +39,8 @@ export default function SettingsScreen() {
     setLocale,
     setLockEnabled,
     setLockSuppressed,
+    setNotifyDailyExpense,
+    setNotifyWeeklyBackup,
     importData,
     t,
     tc,
@@ -66,6 +69,28 @@ export default function SettingsScreen() {
       message: enable ? t("lockEnabled") : t("lockDisabled"),
       type: "success",
     });
+  }
+
+  async function handleToggleDailyReminder(enable: boolean) {
+    if (enable) {
+      const granted = await requestNotificationPermissions();
+      if (!granted) {
+        setToast({ message: t("notificationPermissionDenied"), type: "error" });
+        return;
+      }
+    }
+    setNotifyDailyExpense(enable);
+  }
+
+  async function handleToggleWeeklyBackup(enable: boolean) {
+    if (enable) {
+      const granted = await requestNotificationPermissions();
+      if (!granted) {
+        setToast({ message: t("notificationPermissionDenied"), type: "error" });
+        return;
+      }
+    }
+    setNotifyWeeklyBackup(enable);
   }
 
   const currencyOptions: PickerOption[] = Object.entries(SUPPORTED_CURRENCIES).map(
@@ -351,6 +376,35 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* Notifications */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t("notifications")}</Text>
+          <View style={styles.notificationRow}>
+            <View style={styles.notificationText}>
+              <Text style={styles.notificationLabel}>{t("notifyDailyExpense")}</Text>
+              <Text style={styles.notificationHint}>{t("notifyDailyExpenseHint")}</Text>
+            </View>
+            <Switch
+              value={state.notifyDailyExpense}
+              onValueChange={handleToggleDailyReminder}
+              trackColor={{ false: colors.border, true: colors.tealSubtle }}
+              thumbColor={state.notifyDailyExpense ? colors.teal : colors.textMuted}
+            />
+          </View>
+          <View style={styles.notificationRow}>
+            <View style={styles.notificationText}>
+              <Text style={styles.notificationLabel}>{t("notifyWeeklyBackup")}</Text>
+              <Text style={styles.notificationHint}>{t("notifyWeeklyBackupHint")}</Text>
+            </View>
+            <Switch
+              value={state.notifyWeeklyBackup}
+              onValueChange={handleToggleWeeklyBackup}
+              trackColor={{ false: colors.border, true: colors.tealSubtle }}
+              thumbColor={state.notifyWeeklyBackup ? colors.teal : colors.textMuted}
+            />
+          </View>
+        </View>
+
         {/* About */}
         <Pressable
           style={styles.aboutRow}
@@ -566,6 +620,27 @@ const styles = StyleSheet.create({
   },
   exportTextWhite: {
     color: colors.white,
+  },
+  // Notifications
+  notificationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  notificationText: {
+    flex: 1,
+    gap: 2,
+  },
+  notificationLabel: {
+    color: colors.white,
+    fontSize: fontSize.lg,
+    fontFamily: fonts.regular,
+  },
+  notificationHint: {
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    fontFamily: fonts.regular,
   },
   // About
   aboutRow: {

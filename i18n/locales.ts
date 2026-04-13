@@ -166,6 +166,18 @@ const en = {
   lockEnabled: "App lock enabled.",
   lockDisabled: "App lock disabled.",
 
+  // Notifications
+  notifications: "Notifications",
+  notifyDailyExpense: "Daily Expense Reminder",
+  notifyDailyExpenseHint: "Reminds you to log expenses at 8 PM every day.",
+  notifyWeeklyBackup: "Weekly Backup Reminder",
+  notifyWeeklyBackupHint: "Reminds you to back up your data every Sunday at 8 PM.",
+  notificationPermissionDenied: "Notification permission denied. Enable it in system settings.",
+  notifyDailyExpenseTitle: "Any expenses to log?",
+  notifyDailyExpenseBody: "Take a moment to record today's spending.",
+  notifyWeeklyBackupTitle: "Back up your data",
+  notifyWeeklyBackupBody: "It's Sunday — a good time to export a backup of your budget.",
+
   // About
   about: "About",
   aboutDescription:
@@ -318,6 +330,16 @@ const es: typeof en = {
   authenticating: "Autenticando...",
   lockEnabled: "Bloqueo de app activado.",
   lockDisabled: "Bloqueo de app desactivado.",
+  notifications: "Notificaciones",
+  notifyDailyExpense: "Recordatorio Diario de Gastos",
+  notifyDailyExpenseHint: "Te recuerda registrar gastos a las 8 PM todos los días.",
+  notifyWeeklyBackup: "Recordatorio Semanal de Respaldo",
+  notifyWeeklyBackupHint: "Te recuerda respaldar tus datos cada domingo a las 8 PM.",
+  notificationPermissionDenied: "Permiso de notificación denegado. Actívalo en los ajustes del sistema.",
+  notifyDailyExpenseTitle: "¿Tienes gastos que registrar?",
+  notifyDailyExpenseBody: "Tómate un momento para anotar tus gastos de hoy.",
+  notifyWeeklyBackupTitle: "Respalda tus datos",
+  notifyWeeklyBackupBody: "Es domingo — un buen momento para exportar un respaldo de tu presupuesto.",
   about: "Acerca de",
   aboutDescription:
     "Un rastreador de presupuesto semanal simple y privado. Todos tus datos permanecen en tu dispositivo — nada se envía a ningún servidor.",
@@ -470,6 +492,16 @@ const fr: typeof en = {
   authenticating: "Authentification...",
   lockEnabled: "Verrouillage activé.",
   lockDisabled: "Verrouillage désactivé.",
+  notifications: "Notifications",
+  notifyDailyExpense: "Rappel Quotidien de Dépenses",
+  notifyDailyExpenseHint: "Vous rappelle d'enregistrer vos dépenses à 20h chaque jour.",
+  notifyWeeklyBackup: "Rappel Hebdomadaire de Sauvegarde",
+  notifyWeeklyBackupHint: "Vous rappelle de sauvegarder vos données chaque dimanche à 20h.",
+  notificationPermissionDenied: "Permission de notification refusée. Activez-la dans les réglages système.",
+  notifyDailyExpenseTitle: "Des dépenses à enregistrer ?",
+  notifyDailyExpenseBody: "Prenez un moment pour noter vos dépenses du jour.",
+  notifyWeeklyBackupTitle: "Sauvegardez vos données",
+  notifyWeeklyBackupBody: "C'est dimanche — un bon moment pour exporter une sauvegarde de votre budget.",
   about: "À propos",
   aboutDescription:
     "Un suivi de budget hebdomadaire simple et privé. Toutes vos données restent sur votre appareil — rien n'est envoyé à aucun serveur.",

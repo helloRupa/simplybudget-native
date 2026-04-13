@@ -84,6 +84,22 @@ export function initDatabase(db: SQLite.SQLiteDatabase): void {
     // Column already exists — safe to ignore
   }
 
+  // Migration: add notification preference columns
+  try {
+    db.execSync(
+      "ALTER TABLE preferences ADD COLUMN notifyDailyExpense INTEGER NOT NULL DEFAULT 0"
+    );
+  } catch {
+    // Column already exists — safe to ignore
+  }
+  try {
+    db.execSync(
+      "ALTER TABLE preferences ADD COLUMN notifyWeeklyBackup INTEGER NOT NULL DEFAULT 0"
+    );
+  } catch {
+    // Column already exists — safe to ignore
+  }
+
   seedDefaultCategories(db);
 }
 

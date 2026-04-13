@@ -51,6 +51,8 @@ export interface Preferences {
   locale: string;
   currency: string;
   lockEnabled: boolean;
+  notifyDailyExpense: boolean;
+  notifyWeeklyBackup: boolean;
 }
 
 export interface Category {

@@ -45,7 +45,7 @@ export async function exportBackup(state: State): Promise<void> {
 
 export async function pickAndParseBackup(): Promise<State> {
   const result = await DocumentPicker.getDocumentAsync({
-    type: "application/json",
+    type: "*/*", // broad type so local Files app appears on Android
     copyToCacheDirectory: true,
   });
 
@@ -53,14 +53,23 @@ export async function pickAndParseBackup(): Promise<State> {
     throw new Error("cancelled");
   }
 
-  const uri = result.assets[0].uri;
-  const content = await FileSystem.readAsStringAsync(uri, {
+  const asset = result.assets[0];
+  if (asset.name && !asset.name.toLowerCase().endsWith(".json")) {
+    throw new Error("Please select a .json backup file.");
+  }
+
+  const content = await FileSystem.readAsStringAsync(asset.uri, {
     encoding: FileSystem.EncodingType.UTF8,
   });
 
-  const parsed: BackupFile = JSON.parse(content);
+  let parsed: BackupFile;
+  try {
+    parsed = JSON.parse(content);
+  } catch {
+    throw new Error("Invalid backup file format.");
+  }
 
-  if (!parsed.version || !parsed.data) {
+  if (!parsed?.version || !parsed?.data) {
     throw new Error("Invalid backup file format.");
   }
 

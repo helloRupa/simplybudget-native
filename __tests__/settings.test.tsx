@@ -184,7 +184,7 @@ describe("SettingsScreen — export", () => {
     exportBackup.mockResolvedValue(undefined);
     renderSettings();
     fireEvent.press(screen.getByText("Export Backup (JSON)"));
-    await screen.findByText("Backup exported!");
+    await screen.findByText("Backup file created.");
     expect(exportBackup).toHaveBeenCalledTimes(1);
   });
 });

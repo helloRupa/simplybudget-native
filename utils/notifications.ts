@@ -90,6 +90,23 @@ export async function cancelWeeklyBackupReminder(): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
+// Dev helper — fires a test notification after a short delay
+// ---------------------------------------------------------------------------
+
+export async function scheduleTestNotification(): Promise<void> {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Test notification",
+      body: "Notifications are working.",
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: 5,
+    },
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Startup sync — re-registers notifications based on saved prefs.
 // Does NOT prompt for permissions; skips silently if not granted.
 // ---------------------------------------------------------------------------

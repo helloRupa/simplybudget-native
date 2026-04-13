@@ -26,7 +26,10 @@ import { colors } from "@/constants/colors";
 import { fonts, fontSize, radius } from "@/constants/typography";
 import * as sharedStyles from "@/constants/sharedStyles";
 import { authenticate, useLockAuthAvailability } from "@/hooks/useLockAuth";
-import { requestNotificationPermissions } from "@/utils/notifications";
+import {
+  requestNotificationPermissions,
+  scheduleTestNotification,
+} from "@/utils/notifications";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -405,6 +408,25 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* Dev: test notification */}
+        {__DEV__ && (
+          <Pressable
+            style={styles.devButton}
+            onPress={async () => {
+              const granted = await requestNotificationPermissions();
+              if (!granted) {
+                setToast({ message: t("notificationPermissionDenied"), type: "error" });
+                return;
+              }
+              await scheduleTestNotification();
+              setToast({ message: "Test notification in 5s — background the app.", type: "success" });
+            }}
+            accessibilityRole="button"
+          >
+            <Text style={styles.devButtonText}>Send test notification (5s)</Text>
+          </Pressable>
+        )}
+
         {/* About */}
         <Pressable
           style={styles.aboutRow}
@@ -640,6 +662,19 @@ const styles = StyleSheet.create({
   notificationHint: {
     color: colors.textMuted,
     fontSize: fontSize.sm,
+    fontFamily: fonts.regular,
+  },
+  // Dev
+  devButton: {
+    alignItems: "center",
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingVertical: 12,
+  },
+  devButtonText: {
+    color: colors.textMuted,
+    fontSize: fontSize.base,
     fontFamily: fonts.regular,
   },
   // About

@@ -227,23 +227,6 @@ export default function SettingsScreen() {
           />
         </View>
 
-        {/* App Lock */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t("appLock")}</Text>
-          <View style={styles.lockRow}>
-            <Text style={styles.lockHint}>
-              {lockAvailable ? t("appLockHint") : t("appLockUnavailable")}
-            </Text>
-            <Switch
-              value={state.lockEnabled}
-              onValueChange={handleToggleLock}
-              disabled={!lockAvailable}
-              trackColor={{ false: colors.border, true: colors.tealSubtle }}
-              thumbColor={state.lockEnabled ? colors.teal : colors.textMuted}
-            />
-          </View>
-        </View>
-
         {/* Recurring Expenses */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("recurringExpenses")}</Text>
@@ -345,6 +328,23 @@ export default function SettingsScreen() {
           <Text style={styles.hint}>
             {state.expenses.length} {t("expenses").toLowerCase()}
           </Text>
+        </View>
+
+        {/* App Lock */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t("appLock")}</Text>
+          <View style={styles.lockRow}>
+            <Text style={styles.lockHint}>
+              {lockAvailable ? t("appLockHint") : t("appLockUnavailable")}
+            </Text>
+            <Switch
+              value={state.lockEnabled}
+              onValueChange={handleToggleLock}
+              disabled={!lockAvailable}
+              trackColor={{ false: colors.border, true: colors.tealSubtle }}
+              thumbColor={state.lockEnabled ? colors.teal : colors.textMuted}
+            />
+          </View>
         </View>
 
         {/* About */}

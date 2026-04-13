@@ -37,6 +37,7 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
 } from "react";
 
@@ -219,6 +220,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [lockSuppressed, setLockSuppressed] = useState(false);
+  const lockEnabledRef = useRef(false);
 
   // Hydrate from SQLite on mount
   useEffect(() => {
@@ -320,6 +322,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
+    lockEnabledRef.current = loaded.lockEnabled;
     dispatch({ type: "SET_INITIAL", payload: loaded });
     setIsLoaded(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -433,6 +436,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     (enabled: boolean) => {
       const prefs = getPreferences(db);
       setPreferences(db, { ...prefs, lockEnabled: enabled });
+      lockEnabledRef.current = enabled;
       dispatch({ type: "SET_LOCK_ENABLED", payload: enabled });
     },
     [db],
@@ -505,10 +509,10 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
           firstUseDate: data.firstUseDate,
           locale: LOCALE_TO_INTL[data.locale],
           currency: data.currency,
-          lockEnabled: state.lockEnabled, // device setting — not restored from backup
+          lockEnabled: lockEnabledRef.current, // device setting — not restored from backup
         });
       });
-      dispatch({ type: "SET_INITIAL", payload: { ...data, lockEnabled: state.lockEnabled } });
+      dispatch({ type: "SET_INITIAL", payload: { ...data, lockEnabled: lockEnabledRef.current } });
     },
     [db],
   );

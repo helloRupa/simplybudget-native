@@ -19,6 +19,7 @@ interface BackupFile {
     currency: string;
     recurringExpenses: RecurringExpense[];
     budgetHistory: WeeklyBudget[];
+    lockEnabled?: boolean;
   };
 }
 
@@ -109,5 +110,6 @@ export async function pickAndParseBackup(): Promise<State> {
     currency: data.currency ?? "USD",
     recurringExpenses: data.recurringExpenses ?? [],
     budgetHistory: data.budgetHistory ?? [],
+    lockEnabled: data.lockEnabled ?? false,
   };
 }

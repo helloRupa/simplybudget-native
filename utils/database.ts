@@ -75,6 +75,15 @@ export function initDatabase(db: SQLite.SQLiteDatabase): void {
     );
   `);
 
+  // Migration: add lockEnabled column for existing databases that predate this field
+  try {
+    db.execSync(
+      "ALTER TABLE preferences ADD COLUMN lockEnabled INTEGER NOT NULL DEFAULT 0"
+    );
+  } catch {
+    // Column already exists — safe to ignore
+  }
+
   seedDefaultCategories(db);
 }
 

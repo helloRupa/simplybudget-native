@@ -355,6 +355,7 @@ const testPrefs: Preferences = {
   firstUseDate: "2026-01-01",
   locale: "en-GB",
   currency: "GBP",
+  lockEnabled: false,
 };
 
 describe("preferences", () => {

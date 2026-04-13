@@ -50,6 +50,7 @@ export interface Preferences {
   firstUseDate: string; // ISO date YYYY-MM-DD
   locale: string;
   currency: string;
+  lockEnabled: boolean;
 }
 
 export interface Category {

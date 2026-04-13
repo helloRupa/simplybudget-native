@@ -56,6 +56,7 @@ export interface State {
   currency: string;
   recurringExpenses: RecurringExpense[];
   budgetHistory: WeeklyBudget[];
+  lockEnabled: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -76,6 +77,7 @@ type Action =
   | { type: "DELETE_CATEGORY"; payload: string }
   | { type: "SET_LOCALE"; payload: LocaleKey }
   | { type: "SET_CURRENCY"; payload: string }
+  | { type: "SET_LOCK_ENABLED"; payload: boolean }
   | { type: "ADD_RECURRING_EXPENSE"; payload: RecurringExpense }
   | { type: "UPDATE_RECURRING_EXPENSE"; payload: RecurringExpense }
   | { type: "DELETE_RECURRING_EXPENSE"; payload: string };
@@ -130,6 +132,8 @@ function reducer(state: State, action: Action): State {
       return { ...state, locale: action.payload };
     case "SET_CURRENCY":
       return { ...state, currency: action.payload };
+    case "SET_LOCK_ENABLED":
+      return { ...state, lockEnabled: action.payload };
     case "ADD_RECURRING_EXPENSE":
       return {
         ...state,
@@ -167,6 +171,7 @@ interface BudgetContextValue {
   deleteCategory: (name: string) => void;
   setLocale: (locale: LocaleKey) => void;
   setCurrency: (currency: string) => void;
+  setLockEnabled: (enabled: boolean) => void;
   importData: (data: State) => void;
   addRecurringExpense: (
     expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
@@ -207,6 +212,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     currency: "USD",
     recurringExpenses: [],
     budgetHistory: [],
+    lockEnabled: false,
   });
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -260,6 +266,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       firstUseDate,
       locale: localeKey,
       currency: prefs.currency,
+      lockEnabled: prefs.lockEnabled,
     };
 
     // Seed budget history on first launch (no history yet)
@@ -419,6 +426,15 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     [db],
   );
 
+  const setLockEnabled = useCallback(
+    (enabled: boolean) => {
+      const prefs = getPreferences(db);
+      setPreferences(db, { ...prefs, lockEnabled: enabled });
+      dispatch({ type: "SET_LOCK_ENABLED", payload: enabled });
+    },
+    [db],
+  );
+
   const addRecurringExpense = useCallback(
     (
       expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
@@ -486,6 +502,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
           firstUseDate: data.firstUseDate,
           locale: LOCALE_TO_INTL[data.locale],
           currency: data.currency,
+          lockEnabled: data.lockEnabled ?? false,
         });
       });
       dispatch({ type: "SET_INITIAL", payload: data });
@@ -535,6 +552,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         deleteCategory,
         setLocale,
         setCurrency,
+        setLockEnabled,
         importData,
         addRecurringExpense,
         updateRecurringExpense,

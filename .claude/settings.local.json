@@ -6,7 +6,8 @@
       "Bash(npx tsc:*)",
       "Bash(echo \"Exit code: $?\")",
       "Bash(npx expo:*)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(git checkout:*)"
     ]
   }
 }

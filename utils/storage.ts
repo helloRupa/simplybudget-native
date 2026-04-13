@@ -212,13 +212,27 @@ const PREFERENCES_DEFAULTS: Preferences = {
   firstUseDate: toISODate(getWeekRange().start),
   locale: "en-US",
   currency: "USD",
+  lockEnabled: false,
 };
 
 export function getPreferences(db: SQLiteDatabase): Preferences {
-  const row = db.getFirstSync<Preferences>(
-    "SELECT weeklyBudget, firstUseDate, locale, currency FROM preferences WHERE id = 1"
+  const row = db.getFirstSync<{
+    weeklyBudget: number;
+    firstUseDate: string;
+    locale: string;
+    currency: string;
+    lockEnabled: number;
+  }>(
+    "SELECT weeklyBudget, firstUseDate, locale, currency, lockEnabled FROM preferences WHERE id = 1"
   );
-  return row ?? { ...PREFERENCES_DEFAULTS };
+  if (!row) return { ...PREFERENCES_DEFAULTS };
+  return {
+    weeklyBudget: row.weeklyBudget,
+    firstUseDate: row.firstUseDate,
+    locale: row.locale,
+    currency: row.currency,
+    lockEnabled: row.lockEnabled === 1,
+  };
 }
 
 export function setPreferences(
@@ -226,16 +240,18 @@ export function setPreferences(
   prefs: Preferences
 ): void {
   db.runSync(
-    `INSERT INTO preferences (id, weeklyBudget, firstUseDate, locale, currency)
-     VALUES (1, ?, ?, ?, ?)
+    `INSERT INTO preferences (id, weeklyBudget, firstUseDate, locale, currency, lockEnabled)
+     VALUES (1, ?, ?, ?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET
        weeklyBudget = excluded.weeklyBudget,
        firstUseDate = excluded.firstUseDate,
        locale = excluded.locale,
-       currency = excluded.currency`,
+       currency = excluded.currency,
+       lockEnabled = excluded.lockEnabled`,
     prefs.weeklyBudget,
     prefs.firstUseDate,
     prefs.locale,
-    prefs.currency
+    prefs.currency,
+    prefs.lockEnabled ? 1 : 0
   );
 }

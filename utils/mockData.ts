@@ -35,6 +35,7 @@ export const MOCK_STATE: State = {
   locale: "en",
   currency: "USD",
   firstUseDate: d(2, 0), // Monday 2 weeks ago
+  lockEnabled: false,
 
   weeklyBudget: 100, // current week's budget
 

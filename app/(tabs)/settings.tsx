@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -7,6 +7,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View,
@@ -24,6 +25,7 @@ import Toast from "@/components/Toast";
 import { colors } from "@/constants/colors";
 import { fonts, fontSize, radius } from "@/constants/typography";
 import * as sharedStyles from "@/constants/sharedStyles";
+import { authenticate, useLockAuthAvailability } from "@/hooks/useLockAuth";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -34,6 +36,7 @@ export default function SettingsScreen() {
     deleteCategory,
     setCurrency,
     setLocale,
+    setLockEnabled,
     importData,
     t,
     tc,
@@ -49,6 +52,20 @@ export default function SettingsScreen() {
     message: string;
     type: "success" | "error";
   } | null>(null);
+
+  const lockAuth = useLockAuthAvailability();
+  const lockAvailable = lockAuth.isReady && lockAuth.hasHardware && lockAuth.isEnrolled;
+
+  async function handleToggleLock(enable: boolean) {
+    // Require authentication before changing the lock setting either way
+    const confirmed = await authenticate(t("unlockApp"));
+    if (!confirmed) return;
+    setLockEnabled(enable);
+    setToast({
+      message: enable ? t("lockEnabled") : t("lockDisabled"),
+      type: "success",
+    });
+  }
 
   const currencyOptions: PickerOption[] = Object.entries(SUPPORTED_CURRENCIES).map(
     ([code, label]) => ({ value: code, label })
@@ -208,6 +225,23 @@ export default function SettingsScreen() {
             options={localeOptions}
             onChange={(v) => setLocale(v as LocaleKey)}
           />
+        </View>
+
+        {/* App Lock */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t("appLock")}</Text>
+          <View style={styles.lockRow}>
+            <Text style={styles.lockHint}>
+              {lockAvailable ? t("appLockHint") : t("appLockUnavailable")}
+            </Text>
+            <Switch
+              value={state.lockEnabled}
+              onValueChange={handleToggleLock}
+              disabled={!lockAvailable}
+              trackColor={{ false: colors.border, true: colors.tealSubtle }}
+              thumbColor={state.lockEnabled ? colors.teal : colors.textMuted}
+            />
+          </View>
         </View>
 
         {/* Recurring Expenses */}
@@ -413,6 +447,19 @@ const styles = StyleSheet.create({
     marginTop: -4,
   },
   hint: {
+    color: colors.textMuted,
+    fontSize: fontSize.base,
+    fontFamily: fonts.regular,
+  },
+  // App Lock
+  lockRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  lockHint: {
+    flex: 1,
     color: colors.textMuted,
     fontSize: fontSize.base,
     fontFamily: fonts.regular,

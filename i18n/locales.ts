@@ -157,6 +157,15 @@ const en = {
   totalSavedTooltip:
     "Tracking since {startDate}. Total budgeted across {weeks} weeks ({budgeted}) minus total spent ({spent}).",
 
+  // App Lock
+  appLock: "App Lock",
+  appLockHint: "Use Face ID, fingerprint, or device PIN to unlock the app.",
+  appLockUnavailable: "Set up Face ID, fingerprint, or a device PIN in system settings first.",
+  unlockApp: "Unlock",
+  authenticating: "Authenticating...",
+  lockEnabled: "App lock enabled.",
+  lockDisabled: "App lock disabled.",
+
   // About
   about: "About",
   aboutDescription:
@@ -302,6 +311,13 @@ const es: typeof en = {
   december: "Diciembre",
   totalSavedTooltip:
     "Seguimiento desde {startDate}. Total presupuestado en {weeks} semanas ({budgeted}) menos el total gastado ({spent}).",
+  appLock: "Bloqueo de App",
+  appLockHint: "Usa Face ID, huella dactilar o el PIN del dispositivo para desbloquear la app.",
+  appLockUnavailable: "Primero configura Face ID, huella dactilar o un PIN en los ajustes del sistema.",
+  unlockApp: "Desbloquear",
+  authenticating: "Autenticando...",
+  lockEnabled: "Bloqueo de app activado.",
+  lockDisabled: "Bloqueo de app desactivado.",
   about: "Acerca de",
   aboutDescription:
     "Un rastreador de presupuesto semanal simple y privado. Todos tus datos permanecen en tu dispositivo — nada se envía a ningún servidor.",
@@ -447,6 +463,13 @@ const fr: typeof en = {
   december: "Décembre",
   totalSavedTooltip:
     "Suivi depuis {startDate}. Total budgété sur {weeks} semaines ({budgeted}) moins le total dépensé ({spent}).",
+  appLock: "Verrouillage",
+  appLockHint: "Utilisez Face ID, empreinte digitale ou le code PIN pour déverrouiller l'app.",
+  appLockUnavailable: "Configurez Face ID, une empreinte digitale ou un code PIN dans les réglages système.",
+  unlockApp: "Déverrouiller",
+  authenticating: "Authentification...",
+  lockEnabled: "Verrouillage activé.",
+  lockDisabled: "Verrouillage désactivé.",
   about: "À propos",
   aboutDescription:
     "Un suivi de budget hebdomadaire simple et privé. Toutes vos données restent sur votre appareil — rien n'est envoyé à aucun serveur.",

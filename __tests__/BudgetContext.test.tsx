@@ -485,6 +485,7 @@ describe("BudgetProvider — importData", () => {
         firstUseDate: "2026-03-30",
         locale: "en",
         currency: "EUR",
+        lockEnabled: false,
       });
     });
 
@@ -528,6 +529,7 @@ describe("BudgetProvider — importData", () => {
         firstUseDate: "2026-03-30",
         locale: "en",
         currency: "USD",
+        lockEnabled: false,
       });
     });
 
@@ -606,6 +608,7 @@ describe("BudgetProvider — first-launch device detection", () => {
       firstUseDate: "2026-04-06",
       locale: "en-US",
       currency: "USD",
+      lockEnabled: false,
     });
     _setDatabase(db);
 

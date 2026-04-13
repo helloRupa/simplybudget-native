@@ -25,10 +25,11 @@ interface BackupFile {
 
 export async function exportBackup(state: State): Promise<void> {
   const now = new Date();
+  const { lockEnabled: _omit, ...exportableState } = state;
   const backup = {
     version: BACKUP_VERSION,
     exportedAt: now.toISOString(),
-    data: state,
+    data: exportableState,
   };
   const json = JSON.stringify(backup, null, 2);
   const filename = `simplybudget-backup-${now.toISOString().slice(0, 10)}.json`;

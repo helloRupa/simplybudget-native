@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
 
 export interface LockAuthState {
-  hasHardware: boolean;
-  isEnrolled: boolean;
-  isReady: boolean; // true once the async checks have resolved
+  isAvailable: boolean; // true if device has any secure lock (PIN, pattern, biometrics)
+  isReady: boolean;     // true once the async check has resolved
 }
 
 export async function authenticate(promptMessage: string): Promise<boolean> {
@@ -18,20 +17,19 @@ export async function authenticate(promptMessage: string): Promise<boolean> {
 
 export function useLockAuthAvailability(): LockAuthState {
   const [state, setState] = useState<LockAuthState>({
-    hasHardware: false,
-    isEnrolled: false,
+    isAvailable: false,
     isReady: false,
   });
 
   useEffect(() => {
     let cancelled = false;
     async function check() {
-      const [hasHardware, isEnrolled] = await Promise.all([
-        LocalAuthentication.hasHardwareAsync(),
-        LocalAuthentication.isEnrolledAsync(),
-      ]);
+      // SecurityLevel.NONE means no lock screen at all — PIN, pattern,
+      // password, and biometrics all return a level above NONE.
+      const level = await LocalAuthentication.getEnrolledLevelAsync();
+      const isAvailable = level > LocalAuthentication.SecurityLevel.NONE;
       if (!cancelled) {
-        setState({ hasHardware, isEnrolled, isReady: true });
+        setState({ isAvailable, isReady: true });
       }
     }
     check();

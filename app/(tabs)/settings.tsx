@@ -54,7 +54,7 @@ export default function SettingsScreen() {
   } | null>(null);
 
   const lockAuth = useLockAuthAvailability();
-  const lockAvailable = lockAuth.isReady && lockAuth.hasHardware && lockAuth.isEnrolled;
+  const lockAvailable = lockAuth.isReady && lockAuth.isAvailable;
 
   async function handleToggleLock(enable: boolean) {
     // Require authentication before changing the lock setting either way

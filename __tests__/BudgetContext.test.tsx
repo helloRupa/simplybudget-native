@@ -4,13 +4,41 @@
  * expo-sqlite is mocked with a better-sqlite3-backed in-memory database
  * (see __mocks__/expo-sqlite.ts). We inject a fresh DB per test via
  * _setDatabase so the context always starts with a clean slate.
+ *
+ * expo-localization is mocked (see __mocks__/expo-localization.ts) and
+ * returns English/USD by default.
  */
+/* eslint-disable import/first */
+jest.mock("expo-localization");
+
 import { BudgetProvider, useBudget } from "@/context/BudgetContext";
 import type { Category, Expense } from "@/types";
 import { _setDatabase, initDatabase } from "@/utils/database";
+import { setPreferences } from "@/utils/storage";
 import { act, renderHook } from "@testing-library/react-native";
+import { getLocales } from "expo-localization";
 import { openDatabaseSync } from "expo-sqlite";
 import React from "react";
+
+const mockGetLocales = getLocales as jest.MockedFunction<typeof getLocales>;
+
+const DEFAULT_LOCALE = [
+  { languageCode: "en", currencyCode: "USD" } as ReturnType<
+    typeof getLocales
+  >[number],
+];
+
+function mockDevice(languageCode: string, currencyCode: string) {
+  mockGetLocales.mockReturnValue([
+    { languageCode, currencyCode } as ReturnType<typeof getLocales>[number],
+  ]);
+}
+
+afterEach(() => {
+  // Restore the default rather than reset, so tests that don't call
+  // mockDevice() still get a valid getLocales() return value.
+  mockGetLocales.mockReturnValue(DEFAULT_LOCALE);
+});
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -521,5 +549,70 @@ describe("useBudget — outside provider", () => {
       "useBudget must be used within BudgetProvider",
     );
     spy.mockRestore();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// First-launch device detection
+// ---------------------------------------------------------------------------
+
+describe("BudgetProvider — first-launch device detection", () => {
+  it("uses device locale on first launch (French device → fr)", () => {
+    mockDevice("fr", "USD");
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    expect(result.current.state.locale).toBe("fr");
+  });
+
+  it("uses device locale on first launch (Spanish device → es)", () => {
+    mockDevice("es", "MXN");
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    expect(result.current.state.locale).toBe("es");
+  });
+
+  it("uses device currency on first launch when it is supported", () => {
+    mockDevice("en", "GBP");
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    expect(result.current.state.currency).toBe("GBP");
+  });
+
+  it("falls back to USD on first launch when device currency is unsupported", () => {
+    mockDevice("en", "CNY");
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    expect(result.current.state.currency).toBe("USD");
+  });
+
+  it("falls back to en on first launch when device language is unsupported", () => {
+    mockDevice("de", "EUR");
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    expect(result.current.state.locale).toBe("en");
+  });
+
+  it("persists detected locale and currency to DB on first launch", () => {
+    mockDevice("fr", "EUR");
+    const { result } = renderHook(() => useBudget(), { wrapper });
+
+    // Verify it was persisted — subsequent hydration from the same DB should
+    // yield the same values even if the device mock changes
+    expect(result.current.state.locale).toBe("fr");
+    expect(result.current.state.currency).toBe("EUR");
+  });
+
+  it("ignores device locale on returning launches (stored prefs win)", () => {
+    // Pre-populate the DB with stored English/USD prefs — simulates a
+    // returning user whose device locale is now French
+    const db = makeDb();
+    setPreferences(db, {
+      weeklyBudget: 200,
+      firstUseDate: "2026-04-06",
+      locale: "en-US",
+      currency: "USD",
+    });
+    _setDatabase(db);
+
+    mockDevice("fr", "EUR");
+    const { result } = renderHook(() => useBudget(), { wrapper });
+
+    expect(result.current.state.locale).toBe("en");
+    expect(result.current.state.currency).toBe("USD");
   });
 });

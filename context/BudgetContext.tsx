@@ -29,6 +29,7 @@ import {
   updateLastGeneratedDate,
 } from "@/utils/storage";
 import * as Crypto from "expo-crypto";
+import { getDeviceCurrencyCode, getDeviceLocaleKey } from "@/utils/deviceLocale";
 import React, {
   createContext,
   useCallback,
@@ -222,7 +223,23 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     const recurringExpenses = getRecurringExpenses(db);
     const categories = getCategories(db);
     const budgetHistory = getBudgetHistory(db);
-    const prefs = getPreferences(db);
+
+    // Detect first launch before reading preferences — no row means never saved
+    const isFirstLaunch =
+      db.getFirstSync("SELECT id FROM preferences WHERE id = 1") === null;
+
+    const rawPrefs = getPreferences(db);
+    const prefs = isFirstLaunch
+      ? {
+          ...rawPrefs,
+          locale: LOCALE_TO_INTL[getDeviceLocaleKey()],
+          currency: getDeviceCurrencyCode(),
+        }
+      : rawPrefs;
+
+    if (isFirstLaunch) {
+      setPreferences(db, prefs);
+    }
 
     const weekStart = toISODate(getWeekRange().start);
     const firstUseDate = prefs.firstUseDate;

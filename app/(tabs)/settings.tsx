@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -66,6 +67,7 @@ export default function SettingsScreen() {
       setBudgetError(t("budgetPositive"));
       return;
     }
+    Keyboard.dismiss();
     setBudgetError("");
     setWeeklyBudget(Math.round(amount * 100) / 100);
     setToast({ message: t("budgetUpdated"), type: "success" });
@@ -160,6 +162,13 @@ export default function SettingsScreen() {
                 placeholderTextColor={colors.textMuted}
                 returnKeyType="done"
                 onSubmitEditing={handleSaveBudget}
+                onBlur={() => {
+                  const amount = parseFloat(budgetInput);
+                  if (isNaN(amount) || amount <= 0) {
+                    setBudgetInput(state.weeklyBudget.toString());
+                    setBudgetError("");
+                  }
+                }}
               />
             </View>
             <Pressable

@@ -540,6 +540,30 @@ describe("BudgetProvider — importData", () => {
 });
 
 // ---------------------------------------------------------------------------
+// BudgetProvider — lock suppression
+// ---------------------------------------------------------------------------
+
+describe("BudgetProvider — lock suppression", () => {
+  it("lockSuppressed starts false", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    expect(result.current.lockSuppressed).toBe(false);
+  });
+
+  it("setLockSuppressed(true) sets lockSuppressed to true", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    act(() => { result.current.setLockSuppressed(true); });
+    expect(result.current.lockSuppressed).toBe(true);
+  });
+
+  it("setLockSuppressed(false) clears suppression", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    act(() => { result.current.setLockSuppressed(true); });
+    act(() => { result.current.setLockSuppressed(false); });
+    expect(result.current.lockSuppressed).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // useBudget — error when used outside provider
 // ---------------------------------------------------------------------------
 

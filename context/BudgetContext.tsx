@@ -172,6 +172,8 @@ interface BudgetContextValue {
   setLocale: (locale: LocaleKey) => void;
   setCurrency: (currency: string) => void;
   setLockEnabled: (enabled: boolean) => void;
+  lockSuppressed: boolean;
+  setLockSuppressed: (suppressed: boolean) => void;
   importData: (data: State) => void;
   addRecurringExpense: (
     expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
@@ -216,6 +218,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [isLoaded, setIsLoaded] = useState(false);
+  const [lockSuppressed, setLockSuppressed] = useState(false);
 
   // Hydrate from SQLite on mount
   useEffect(() => {
@@ -502,10 +505,10 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
           firstUseDate: data.firstUseDate,
           locale: LOCALE_TO_INTL[data.locale],
           currency: data.currency,
-          lockEnabled: data.lockEnabled ?? false,
+          lockEnabled: state.lockEnabled, // device setting — not restored from backup
         });
       });
-      dispatch({ type: "SET_INITIAL", payload: data });
+      dispatch({ type: "SET_INITIAL", payload: { ...data, lockEnabled: state.lockEnabled } });
     },
     [db],
   );
@@ -553,6 +556,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         setLocale,
         setCurrency,
         setLockEnabled,
+        lockSuppressed,
+        setLockSuppressed,
         importData,
         addRecurringExpense,
         updateRecurringExpense,

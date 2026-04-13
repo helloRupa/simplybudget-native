@@ -2,6 +2,7 @@ import AppName from "@/components/AppName";
 import LockScreen from "@/components/LockScreen";
 import { colors } from "@/constants/colors";
 import { BudgetProvider, useBudget } from "@/context/BudgetContext";
+import { shouldReLock } from "@/utils/lockTimer";
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -18,7 +19,7 @@ import { AppState, AppStateStatus, StyleSheet, View } from "react-native";
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
-  const { isLoaded, state } = useBudget();
+  const { isLoaded, state, lockSuppressed } = useBudget();
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -31,7 +32,14 @@ function RootLayoutNav() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const appState = useRef(AppState.currentState);
   const backgroundedAt = useRef<number | null>(null);
+  const lockSuppressedRef = useRef(lockSuppressed);
   const LOCK_GRACE_MS = 30_000;
+
+  // Keep the ref in sync so the AppState handler always reads the latest value
+  // without needing to re-register the subscription on every change.
+  useEffect(() => {
+    lockSuppressedRef.current = lockSuppressed;
+  }, [lockSuppressed]);
 
   // Once data loads, resolve initial auth state
   useEffect(() => {
@@ -57,11 +65,16 @@ function RootLayoutNav() {
           backgroundedAt.current = Date.now();
         }
 
-        if (wasBackground && isActive && state.lockEnabled) {
+        if (wasBackground && isActive) {
           const elapsed = backgroundedAt.current
             ? Date.now() - backgroundedAt.current
             : Infinity;
-          if (elapsed >= LOCK_GRACE_MS) {
+          if (shouldReLock({
+            lockEnabled: state.lockEnabled,
+            lockSuppressed: lockSuppressedRef.current,
+            elapsed,
+            gracePeriodMs: LOCK_GRACE_MS,
+          })) {
             setIsAuthenticated(false);
           }
         }

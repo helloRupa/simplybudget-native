@@ -37,6 +37,7 @@ export default function SettingsScreen() {
     setCurrency,
     setLocale,
     setLockEnabled,
+    setLockSuppressed,
     importData,
     t,
     tc,
@@ -138,6 +139,7 @@ export default function SettingsScreen() {
           text: t("importBackup"),
           style: "destructive",
           onPress: async () => {
+            setLockSuppressed(true);
             try {
               const data = await pickAndParseBackup();
               importData(data);
@@ -147,6 +149,8 @@ export default function SettingsScreen() {
               if (err instanceof Error && err.message !== "cancelled") {
                 setToast({ message: t("backupImportFailed"), type: "error" });
               }
+            } finally {
+              setLockSuppressed(false);
             }
           },
         },

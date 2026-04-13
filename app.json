@@ -9,16 +9,15 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "icon": "./assets/images/ios-icon.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.SimplyBudget"
     },
     "android": {
       "backgroundColor": "#0d1117",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#14b8a6",
+        "foregroundImage": "./assets/images/android-foreground-icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,

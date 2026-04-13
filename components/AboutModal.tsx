@@ -92,8 +92,6 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: radius.xxl,
-    borderWidth: 2,
-    borderColor: colors.teal,
   },
   version: {
     color: colors.textMuted,

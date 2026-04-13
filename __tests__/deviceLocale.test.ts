@@ -4,9 +4,6 @@
  * expo-localization is mocked (see __mocks__/expo-localization.ts).
  * Each test overrides getLocales to simulate a specific device configuration.
  */
-/* eslint-disable import/first */
-jest.mock("expo-localization");
-
 import {
   getDeviceCurrencyCode,
   getDeviceLocaleKey,

@@ -19,6 +19,12 @@ jest.mock("@/utils/backup", () => ({
   pickAndParseBackup: jest.fn(),
 }));
 
+// Biometric check is async; stub the hook so no async useEffect runs in these tests
+jest.mock("@/hooks/useLockAuth", () => ({
+  useLockAuthAvailability: jest.fn(() => ({ isAvailable: false, isReady: true })),
+  authenticate: jest.fn().mockResolvedValue(false),
+}));
+
 // Notification utility — permission and schedule calls are tested separately
 const mockRequestNotificationPermissions = jest.fn().mockResolvedValue(true);
 jest.mock("@/utils/notifications", () => ({

@@ -8,9 +8,6 @@
  * expo-localization is mocked (see __mocks__/expo-localization.ts) and
  * returns English/USD by default.
  */
-/* eslint-disable import/first */
-jest.mock("expo-localization");
-
 import { BudgetProvider, useBudget } from "@/context/BudgetContext";
 import type { Category, Expense } from "@/types";
 import { _setDatabase, initDatabase } from "@/utils/database";
@@ -486,6 +483,8 @@ describe("BudgetProvider — importData", () => {
         locale: "en",
         currency: "EUR",
         lockEnabled: false,
+        notifyDailyExpense: false,
+        notifyWeeklyBackup: false,
       });
     });
 
@@ -530,6 +529,8 @@ describe("BudgetProvider — importData", () => {
         locale: "en",
         currency: "USD",
         lockEnabled: false,
+        notifyDailyExpense: false,
+        notifyWeeklyBackup: false,
       });
     });
 
@@ -633,6 +634,8 @@ describe("BudgetProvider — first-launch device detection", () => {
       locale: "en-US",
       currency: "USD",
       lockEnabled: false,
+      notifyDailyExpense: false,
+      notifyWeeklyBackup: false,
     });
     _setDatabase(db);
 

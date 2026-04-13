@@ -30,6 +30,8 @@ function RootLayoutNav() {
   // Start locked when lock is enabled; unlock if lock is off
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const appState = useRef(AppState.currentState);
+  const backgroundedAt = useRef<number | null>(null);
+  const LOCK_GRACE_MS = 30_000;
 
   // Once data loads, resolve initial auth state
   useEffect(() => {
@@ -41,7 +43,7 @@ function RootLayoutNav() {
     }
   }, [isLoaded, state.lockEnabled]);
 
-  // Re-lock when app returns from background
+  // Re-lock when app returns from background after the grace period
   useEffect(() => {
     const subscription = AppState.addEventListener(
       "change",
@@ -50,9 +52,20 @@ function RootLayoutNav() {
           appState.current === "background" ||
           appState.current === "inactive";
         const isActive = nextState === "active";
-        if (wasBackground && isActive && state.lockEnabled) {
-          setIsAuthenticated(false);
+
+        if (!wasBackground && (nextState === "background" || nextState === "inactive")) {
+          backgroundedAt.current = Date.now();
         }
+
+        if (wasBackground && isActive && state.lockEnabled) {
+          const elapsed = backgroundedAt.current
+            ? Date.now() - backgroundedAt.current
+            : Infinity;
+          if (elapsed >= LOCK_GRACE_MS) {
+            setIsAuthenticated(false);
+          }
+        }
+
         appState.current = nextState;
       }
     );

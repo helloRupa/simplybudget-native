@@ -110,6 +110,6 @@ export async function pickAndParseBackup(): Promise<State> {
     currency: data.currency ?? "USD",
     recurringExpenses: data.recurringExpenses ?? [],
     budgetHistory: data.budgetHistory ?? [],
-    lockEnabled: data.lockEnabled ?? false,
+    lockEnabled: false, // never inherit from backup — lock is a per-device setting
   };
 }

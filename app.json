@@ -11,7 +11,10 @@
     "ios": {
       "icon": "./assets/images/ios-icon.png",
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.SimplyBudget"
+      "bundleIdentifier": "com.anonymous.SimplyBudget",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Used to unlock the app."
+      }
     },
     "android": {
       "backgroundColor": "#0d1117",

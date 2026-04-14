@@ -25,6 +25,21 @@ export function _setDatabase(db: SQLite.SQLiteDatabase | null): void {
 }
 
 export function initDatabase(db: SQLite.SQLiteDatabase): void {
+  const tableInfo = db.getFirstSync<{ strict: number } | null>(
+    "SELECT strict FROM pragma_table_list WHERE name = 'expenses'"
+  );
+  const needsRecreate = tableInfo === null || tableInfo.strict === 0;
+
+  if (needsRecreate) {
+    db.execSync(`
+      DROP TABLE IF EXISTS expenses;
+      DROP TABLE IF EXISTS recurring_expenses;
+      DROP TABLE IF EXISTS budget_history;
+      DROP TABLE IF EXISTS categories;
+      DROP TABLE IF EXISTS preferences;
+    `);
+  }
+
   db.execSync(`
     CREATE TABLE IF NOT EXISTS expenses (
       id TEXT PRIMARY KEY,
@@ -34,7 +49,7 @@ export function initDatabase(db: SQLite.SQLiteDatabase): void {
       date TEXT NOT NULL,
       createdAt TEXT NOT NULL,
       recurringExpenseId TEXT
-    );
+    ) STRICT;
 
     CREATE TABLE IF NOT EXISTS recurring_expenses (
       id TEXT PRIMARY KEY,
@@ -54,51 +69,30 @@ export function initDatabase(db: SQLite.SQLiteDatabase): void {
         (frequency = 'monthly'  AND dayOfMonth IS NOT NULL AND dayOfWeek IS NULL     AND monthOfYear IS NULL) OR
         (frequency = 'annually' AND dayOfMonth IS NOT NULL AND monthOfYear IS NOT NULL AND dayOfWeek IS NULL)
       )
-    );
+    ) STRICT;
 
     CREATE TABLE IF NOT EXISTS budget_history (
       startDate TEXT PRIMARY KEY,
       amount REAL NOT NULL
-    );
+    ) STRICT;
 
     CREATE TABLE IF NOT EXISTS categories (
       name TEXT PRIMARY KEY,
       color TEXT NOT NULL
-    );
+    ) STRICT;
 
     CREATE TABLE IF NOT EXISTS preferences (
       id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
       weeklyBudget REAL NOT NULL,
       firstUseDate TEXT NOT NULL,
       locale TEXT NOT NULL,
-      currency TEXT NOT NULL
-    );
+      currency TEXT NOT NULL,
+      lockEnabled INTEGER NOT NULL DEFAULT 0,
+      notifyDailyExpense INTEGER NOT NULL DEFAULT 0,
+      notifyWeeklyBackup INTEGER NOT NULL DEFAULT 0,
+      crashlyticsEnabled INTEGER NOT NULL DEFAULT 0
+    ) STRICT;
   `);
-
-  const prefColumns = db
-    .getAllSync<{ name: string }>("PRAGMA table_info(preferences)")
-    .map((row) => row.name);
-
-  if (!prefColumns.includes("lockEnabled")) {
-    db.execSync(
-      "ALTER TABLE preferences ADD COLUMN lockEnabled INTEGER NOT NULL DEFAULT 0"
-    );
-  }
-  if (!prefColumns.includes("notifyDailyExpense")) {
-    db.execSync(
-      "ALTER TABLE preferences ADD COLUMN notifyDailyExpense INTEGER NOT NULL DEFAULT 0"
-    );
-  }
-  if (!prefColumns.includes("notifyWeeklyBackup")) {
-    db.execSync(
-      "ALTER TABLE preferences ADD COLUMN notifyWeeklyBackup INTEGER NOT NULL DEFAULT 0"
-    );
-  }
-  if (!prefColumns.includes("crashlyticsEnabled")) {
-    db.execSync(
-      "ALTER TABLE preferences ADD COLUMN crashlyticsEnabled INTEGER NOT NULL DEFAULT 0"
-    );
-  }
 
   seedDefaultCategories(db);
 }

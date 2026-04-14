@@ -17,7 +17,7 @@ import { parseISO } from "date-fns";
 import FieldPicker from "@/components/FieldPicker";
 import DateField from "@/components/DateField";
 import { colors } from "@/constants/colors";
-import { logToCrashlytics } from "@/utils/crashlytics";
+import { CrashlyticsLog, logToCrashlytics } from "@/utils/crashlytics";
 import { fonts, fontSize, radius } from "@/constants/typography";
 import * as sharedStyles from "@/constants/sharedStyles";
 
@@ -85,7 +85,7 @@ export default function ExpenseFormScreen() {
         description: description.trim(),
         date,
       });
-      logToCrashlytics("Expense updated");
+      logToCrashlytics(CrashlyticsLog.ExpenseUpdated);
     } else {
       addExpense({
         amount: parsedAmount,
@@ -93,7 +93,7 @@ export default function ExpenseFormScreen() {
         description: description.trim(),
         date,
       });
-      logToCrashlytics("Expense added");
+      logToCrashlytics(CrashlyticsLog.ExpenseAdded);
     }
 
     router.back();

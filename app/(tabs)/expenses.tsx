@@ -15,7 +15,7 @@ import { isInRange, toISODate } from "@/utils/dates";
 import ExpenseFilters from "@/components/ExpenseFilters";
 import Toast from "@/components/Toast";
 import { colors } from "@/constants/colors";
-import { logToCrashlytics } from "@/utils/crashlytics";
+import { CrashlyticsLog, logToCrashlytics } from "@/utils/crashlytics";
 import { fonts, fontSize, radius } from "@/constants/typography";
 
 const TODAY = toISODate(new Date());
@@ -200,7 +200,7 @@ export default function ExpensesScreen() {
   function confirmDelete(id: string) {
     deleteExpense(id);
     setDeletingId(null);
-    logToCrashlytics("Expense deleted");
+    logToCrashlytics(CrashlyticsLog.ExpenseDeleted);
     setToast({ message: t("expenseDeleted"), type: "success" });
   }
 
@@ -267,7 +267,7 @@ export default function ExpensesScreen() {
             expense={item}
             deletingId={deletingId}
             onEdit={(expense) => {
-              logToCrashlytics("Opened expense form: edit");
+              logToCrashlytics(CrashlyticsLog.ExpenseFormOpenedEdit);
               router.push({
                 pathname: "/expense-form",
                 params: { id: expense.id },
@@ -284,7 +284,7 @@ export default function ExpensesScreen() {
       <Pressable
         style={styles.fab}
         onPress={() => {
-          logToCrashlytics("Opened expense form: new");
+          logToCrashlytics(CrashlyticsLog.ExpenseFormOpenedNew);
           router.push("/expense-form");
         }}
         accessibilityLabel={t("addExpense")}

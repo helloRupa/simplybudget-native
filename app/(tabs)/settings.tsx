@@ -31,7 +31,7 @@ import {
   scheduleTestNotification,
 } from "@/utils/notifications";
 import { getCrashlytics, crash } from "@react-native-firebase/crashlytics";
-import { logToCrashlytics, recordNonFatalError } from "@/utils/crashlytics";
+import { CrashlyticsLog, logToCrashlytics, recordNonFatalError } from "@/utils/crashlytics";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -144,7 +144,7 @@ export default function SettingsScreen() {
     }
     try {
       await exportToCSV(state.expenses, t as (key: string) => string, tc, (d) => d);
-      logToCrashlytics("CSV export succeeded");
+      logToCrashlytics(CrashlyticsLog.CsvExportSucceeded);
       setToast({ message: t("csvExported"), type: "success" });
     } catch (err) {
       recordNonFatalError(err as Error, "handleExportCSV failed");
@@ -155,7 +155,7 @@ export default function SettingsScreen() {
   async function handleExportBackup() {
     try {
       await exportBackup(state);
-      logToCrashlytics("Backup export succeeded");
+      logToCrashlytics(CrashlyticsLog.BackupExportSucceeded);
       setToast({ message: t("backupExported"), type: "success" });
     } catch (err) {
       recordNonFatalError(err as Error, "handleExportBackup failed");
@@ -178,7 +178,7 @@ export default function SettingsScreen() {
               const data = await pickAndParseBackup();
               importData(data);
               setBudgetInput(data.weeklyBudget.toString());
-              logToCrashlytics("Backup import succeeded");
+              logToCrashlytics(CrashlyticsLog.BackupImportSucceeded);
               setToast({ message: t("backupImported"), type: "success" });
             } catch (err) {
               if (err instanceof Error && err.message !== "cancelled") {
@@ -273,7 +273,7 @@ export default function SettingsScreen() {
           <Pressable
             style={styles.navRow}
             onPress={() => {
-              logToCrashlytics("Navigated to recurring expenses");
+              logToCrashlytics(CrashlyticsLog.NavigatedToRecurringExpenses);
               router.push("/recurring-expenses");
             }}
           >

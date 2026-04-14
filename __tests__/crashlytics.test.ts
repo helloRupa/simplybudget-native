@@ -5,15 +5,14 @@
  * __mocks__/@react-native-firebase/crashlytics.ts.
  */
 import {
+  CrashlyticsLog,
   logToCrashlytics,
   recordNonFatalError,
-  setCrashlyticsAttribute,
 } from "@/utils/crashlytics";
 import {
   getCrashlytics,
   log,
   recordError,
-  setAttribute,
 } from "@react-native-firebase/crashlytics";
 
 const mockInstance = (getCrashlytics as jest.Mock)();
@@ -27,32 +26,21 @@ beforeEach(() => {
 // ---------------------------------------------------------------------------
 
 describe("logToCrashlytics", () => {
-  it("calls log with the crashlytics instance and the given message", () => {
-    logToCrashlytics("user opened expense form");
+  it("calls log with the crashlytics instance and the given constant", () => {
+    logToCrashlytics(CrashlyticsLog.ExpenseFormOpenedNew);
     expect(log).toHaveBeenCalledTimes(1);
-    expect(log).toHaveBeenCalledWith(mockInstance, "user opened expense form");
+    expect(log).toHaveBeenCalledWith(
+      mockInstance,
+      CrashlyticsLog.ExpenseFormOpenedNew
+    );
   });
 
-  it("forwards any string message verbatim", () => {
-    logToCrashlytics("backup export failed");
-    expect(log).toHaveBeenCalledWith(mockInstance, "backup export failed");
-  });
-});
-
-// ---------------------------------------------------------------------------
-// setCrashlyticsAttribute
-// ---------------------------------------------------------------------------
-
-describe("setCrashlyticsAttribute", () => {
-  it("calls setAttribute with the crashlytics instance, key, and value", () => {
-    setCrashlyticsAttribute("locale", "en");
-    expect(setAttribute).toHaveBeenCalledTimes(1);
-    expect(setAttribute).toHaveBeenCalledWith(mockInstance, "locale", "en");
-  });
-
-  it("forwards the key and value verbatim", () => {
-    setCrashlyticsAttribute("currency", "EUR");
-    expect(setAttribute).toHaveBeenCalledWith(mockInstance, "currency", "EUR");
+  it("forwards the constant value verbatim", () => {
+    logToCrashlytics(CrashlyticsLog.BackupExportSucceeded);
+    expect(log).toHaveBeenCalledWith(
+      mockInstance,
+      CrashlyticsLog.BackupExportSucceeded
+    );
   });
 });
 

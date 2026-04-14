@@ -2,21 +2,30 @@ import {
   getCrashlytics,
   log,
   recordError,
-  setAttribute,
 } from "@react-native-firebase/crashlytics";
 
 function getInstance() {
   return getCrashlytics();
 }
 
-/** Log a breadcrumb message visible in the Crashlytics crash report. */
-export function logToCrashlytics(message: string) {
-  log(getInstance(), message);
-}
+/** Allowed breadcrumb messages for Crashlytics. Add new entries here as needed. */
+export const CrashlyticsLog = {
+  ExpenseAdded: "Expense added",
+  ExpenseUpdated: "Expense updated",
+  ExpenseDeleted: "Expense deleted",
+  ExpenseFormOpenedNew: "Opened expense form: new",
+  ExpenseFormOpenedEdit: "Opened expense form: edit",
+  CsvExportSucceeded: "CSV export succeeded",
+  BackupExportSucceeded: "Backup export succeeded",
+  BackupImportSucceeded: "Backup import succeeded",
+  NavigatedToRecurringExpenses: "Navigated to recurring expenses",
+} as const;
 
-/** Attach a key/value attribute to all subsequent crash reports. */
-export function setCrashlyticsAttribute(key: string, value: string) {
-  setAttribute(getInstance(), key, value);
+type CrashlyticsLogValue = (typeof CrashlyticsLog)[keyof typeof CrashlyticsLog];
+
+/** Log a breadcrumb message visible in the Crashlytics crash report. */
+export function logToCrashlytics(message: CrashlyticsLogValue) {
+  log(getInstance(), message);
 }
 
 /**

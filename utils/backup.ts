@@ -37,10 +37,14 @@ export async function exportBackup(state: State): Promise<void> {
   await FileSystem.writeAsStringAsync(uri, json, {
     encoding: FileSystem.EncodingType.UTF8,
   });
-  await Sharing.shareAsync(uri, {
-    mimeType: "application/json",
-    dialogTitle: filename,
-  });
+  try {
+    await Sharing.shareAsync(uri, {
+      mimeType: "application/json",
+      dialogTitle: filename,
+    });
+  } finally {
+    await FileSystem.deleteAsync(uri, { idempotent: true });
+  }
 }
 
 export async function pickAndParseBackup(): Promise<State> {
@@ -58,9 +62,14 @@ export async function pickAndParseBackup(): Promise<State> {
     throw new Error("Please select a .json backup file.");
   }
 
-  const content = await FileSystem.readAsStringAsync(asset.uri, {
-    encoding: FileSystem.EncodingType.UTF8,
-  });
+  let content: string;
+  try {
+    content = await FileSystem.readAsStringAsync(asset.uri, {
+      encoding: FileSystem.EncodingType.UTF8,
+    });
+  } finally {
+    await FileSystem.deleteAsync(asset.uri, { idempotent: true });
+  }
 
   let parsed: BackupFile;
   try {

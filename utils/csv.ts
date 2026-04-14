@@ -38,8 +38,12 @@ export async function exportToCSV(
   await FileSystem.writeAsStringAsync(uri, csv, {
     encoding: FileSystem.EncodingType.UTF8,
   });
-  await Sharing.shareAsync(uri, {
-    mimeType: "text/csv",
-    dialogTitle: filename,
-  });
+  try {
+    await Sharing.shareAsync(uri, {
+      mimeType: "text/csv",
+      dialogTitle: filename,
+    });
+  } finally {
+    await FileSystem.deleteAsync(uri, { idempotent: true });
+  }
 }

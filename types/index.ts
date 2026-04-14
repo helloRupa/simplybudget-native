@@ -53,6 +53,7 @@ export interface Preferences {
   lockEnabled: boolean;
   notifyDailyExpense: boolean;
   notifyWeeklyBackup: boolean;
+  crashlyticsEnabled: boolean;
 }
 
 export interface Category {

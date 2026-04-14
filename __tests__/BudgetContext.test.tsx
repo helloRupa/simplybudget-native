@@ -485,6 +485,7 @@ describe("BudgetProvider — importData", () => {
         lockEnabled: false,
         notifyDailyExpense: false,
         notifyWeeklyBackup: false,
+        crashlyticsEnabled: false,
       });
     });
 
@@ -531,6 +532,7 @@ describe("BudgetProvider — importData", () => {
         lockEnabled: false,
         notifyDailyExpense: false,
         notifyWeeklyBackup: false,
+        crashlyticsEnabled: false,
       });
     });
 
@@ -636,6 +638,7 @@ describe("BudgetProvider — first-launch device detection", () => {
       lockEnabled: false,
       notifyDailyExpense: false,
       notifyWeeklyBackup: false,
+      crashlyticsEnabled: false,
     });
     _setDatabase(db);
 

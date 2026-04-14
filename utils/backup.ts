@@ -25,7 +25,7 @@ interface BackupFile {
 
 export async function exportBackup(state: State): Promise<void> {
   const now = new Date();
-  const { lockEnabled: _omit, ...exportableState } = state;
+  const { lockEnabled: _omit, crashlyticsEnabled: _omit2, ...exportableState } = state;
   const backup = {
     version: BACKUP_VERSION,
     exportedAt: now.toISOString(),
@@ -121,5 +121,8 @@ export async function pickAndParseBackup(): Promise<State> {
     recurringExpenses: data.recurringExpenses ?? [],
     budgetHistory: data.budgetHistory ?? [],
     lockEnabled: false, // never inherit from backup — lock is a per-device setting
+    notifyDailyExpense: false, // never inherit from backup — notification prefs are per-device
+    notifyWeeklyBackup: false, // never inherit from backup — notification prefs are per-device
+    crashlyticsEnabled: false, // never inherit from backup — consent is a per-device setting
   };
 }

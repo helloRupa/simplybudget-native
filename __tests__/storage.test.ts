@@ -358,6 +358,7 @@ const testPrefs: Preferences = {
   lockEnabled: false,
   notifyDailyExpense: false,
   notifyWeeklyBackup: false,
+  crashlyticsEnabled: false,
 };
 
 describe("preferences", () => {

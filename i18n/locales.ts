@@ -178,6 +178,12 @@ const en = {
   notifyWeeklyBackupTitle: "Back up your data",
   notifyWeeklyBackupBody: "It's Sunday — a good time to export a backup of your budget.",
 
+  // Crash Reporting
+  crashReporting: "Crash Reporting",
+  crashReportingHint: "Send anonymous crash reports to help improve the app. No personal or financial data is ever included.",
+  crashReportingEnabled: "Crash reporting enabled.",
+  crashReportingDisabled: "Crash reporting disabled.",
+
   // About
   about: "About",
   aboutDescription:
@@ -340,6 +346,10 @@ const es: typeof en = {
   notifyDailyExpenseBody: "Tómate un momento para anotar tus gastos de hoy.",
   notifyWeeklyBackupTitle: "Respalda tus datos",
   notifyWeeklyBackupBody: "Es domingo — un buen momento para exportar un respaldo de tu presupuesto.",
+  crashReporting: "Informes de Fallos",
+  crashReportingHint: "Envía informes de fallos anónimos para ayudar a mejorar la app. Nunca se incluyen datos personales ni financieros.",
+  crashReportingEnabled: "Informes de fallos activados.",
+  crashReportingDisabled: "Informes de fallos desactivados.",
   about: "Acerca de",
   aboutDescription:
     "Un rastreador de presupuesto semanal simple y privado. Todos tus datos permanecen en tu dispositivo — nada se envía a ningún servidor.",
@@ -502,6 +512,10 @@ const fr: typeof en = {
   notifyDailyExpenseBody: "Prenez un moment pour noter vos dépenses du jour.",
   notifyWeeklyBackupTitle: "Sauvegardez vos données",
   notifyWeeklyBackupBody: "C'est dimanche — un bon moment pour exporter une sauvegarde de votre budget.",
+  crashReporting: "Rapports de Plantage",
+  crashReportingHint: "Envoie des rapports de plantage anonymes pour aider à améliorer l'app. Aucune donnée personnelle ou financière n'est jamais incluse.",
+  crashReportingEnabled: "Rapports de plantage activés.",
+  crashReportingDisabled: "Rapports de plantage désactivés.",
   about: "À propos",
   aboutDescription:
     "Un suivi de budget hebdomadaire simple et privé. Toutes vos données restent sur votre appareil — rien n'est envoyé à aucun serveur.",

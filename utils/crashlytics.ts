@@ -2,6 +2,7 @@ import {
   getCrashlytics,
   log,
   recordError,
+  setCrashlyticsCollectionEnabled,
 } from "@react-native-firebase/crashlytics";
 
 function getInstance() {
@@ -26,6 +27,14 @@ type CrashlyticsLogValue = (typeof CrashlyticsLog)[keyof typeof CrashlyticsLog];
 /** Log a breadcrumb message visible in the Crashlytics crash report. */
 export function logToCrashlytics(message: CrashlyticsLogValue) {
   log(getInstance(), message);
+}
+
+/**
+ * Apply the user's crash reporting consent to the Firebase SDK.
+ * Call this once on startup (after preferences load) and whenever the setting changes.
+ */
+export function applyCrashlyticsConsent(enabled: boolean) {
+  setCrashlyticsCollectionEnabled(getInstance(), enabled);
 }
 
 /**

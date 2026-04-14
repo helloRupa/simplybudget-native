@@ -94,6 +94,11 @@ export function initDatabase(db: SQLite.SQLiteDatabase): void {
       "ALTER TABLE preferences ADD COLUMN notifyWeeklyBackup INTEGER NOT NULL DEFAULT 0"
     );
   }
+  if (!prefColumns.includes("crashlyticsEnabled")) {
+    db.execSync(
+      "ALTER TABLE preferences ADD COLUMN crashlyticsEnabled INTEGER NOT NULL DEFAULT 0"
+    );
+  }
 
   seedDefaultCategories(db);
 }

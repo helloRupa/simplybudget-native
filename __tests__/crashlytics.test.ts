@@ -6,6 +6,7 @@
  */
 import {
   CrashlyticsLog,
+  applyCrashlyticsConsent,
   logToCrashlytics,
   recordNonFatalError,
 } from "@/utils/crashlytics";
@@ -13,12 +14,31 @@ import {
   getCrashlytics,
   log,
   recordError,
+  setCrashlyticsCollectionEnabled,
 } from "@react-native-firebase/crashlytics";
 
 const mockInstance = (getCrashlytics as jest.Mock)();
 
 beforeEach(() => {
   jest.clearAllMocks();
+});
+
+// ---------------------------------------------------------------------------
+// applyCrashlyticsConsent
+// ---------------------------------------------------------------------------
+
+describe("applyCrashlyticsConsent", () => {
+  it("calls setCrashlyticsCollectionEnabled with true when enabled", () => {
+    applyCrashlyticsConsent(true);
+    expect(setCrashlyticsCollectionEnabled).toHaveBeenCalledTimes(1);
+    expect(setCrashlyticsCollectionEnabled).toHaveBeenCalledWith(mockInstance, true);
+  });
+
+  it("calls setCrashlyticsCollectionEnabled with false when disabled", () => {
+    applyCrashlyticsConsent(false);
+    expect(setCrashlyticsCollectionEnabled).toHaveBeenCalledTimes(1);
+    expect(setCrashlyticsCollectionEnabled).toHaveBeenCalledWith(mockInstance, false);
+  });
 });
 
 // ---------------------------------------------------------------------------

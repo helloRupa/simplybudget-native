@@ -18,6 +18,7 @@ import {
   scheduleWeeklyBackupReminder,
   syncNotificationsOnStartup,
 } from "@/utils/notifications";
+import { applyCrashlyticsConsent } from "@/utils/crashlytics";
 import {
   clearAllData,
   deleteCategory as dbDeleteCategory,
@@ -67,6 +68,7 @@ export interface State {
   lockEnabled: boolean;
   notifyDailyExpense: boolean;
   notifyWeeklyBackup: boolean;
+  crashlyticsEnabled: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -90,6 +92,7 @@ type Action =
   | { type: "SET_LOCK_ENABLED"; payload: boolean }
   | { type: "SET_NOTIFY_DAILY_EXPENSE"; payload: boolean }
   | { type: "SET_NOTIFY_WEEKLY_BACKUP"; payload: boolean }
+  | { type: "SET_CRASHLYTICS_ENABLED"; payload: boolean }
   | { type: "ADD_RECURRING_EXPENSE"; payload: RecurringExpense }
   | { type: "UPDATE_RECURRING_EXPENSE"; payload: RecurringExpense }
   | { type: "DELETE_RECURRING_EXPENSE"; payload: string };
@@ -150,6 +153,8 @@ function reducer(state: State, action: Action): State {
       return { ...state, notifyDailyExpense: action.payload };
     case "SET_NOTIFY_WEEKLY_BACKUP":
       return { ...state, notifyWeeklyBackup: action.payload };
+    case "SET_CRASHLYTICS_ENABLED":
+      return { ...state, crashlyticsEnabled: action.payload };
     case "ADD_RECURRING_EXPENSE":
       return {
         ...state,
@@ -192,6 +197,7 @@ interface BudgetContextValue {
   setLockSuppressed: (suppressed: boolean) => void;
   setNotifyDailyExpense: (enabled: boolean) => void;
   setNotifyWeeklyBackup: (enabled: boolean) => void;
+  setCrashlyticsEnabled: (enabled: boolean) => void;
   importData: (data: State) => void;
   addRecurringExpense: (
     expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
@@ -235,6 +241,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     lockEnabled: false,
     notifyDailyExpense: false,
     notifyWeeklyBackup: false,
+    crashlyticsEnabled: false,
   });
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -242,6 +249,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
   const lockEnabledRef = useRef(false);
   const notifyDailyExpenseRef = useRef(false);
   const notifyWeeklyBackupRef = useRef(false);
+  const crashlyticsEnabledRef = useRef(false);
 
   // Hydrate from SQLite on mount
   useEffect(() => {
@@ -295,6 +303,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       lockEnabled: prefs.lockEnabled,
       notifyDailyExpense: prefs.notifyDailyExpense,
       notifyWeeklyBackup: prefs.notifyWeeklyBackup,
+      crashlyticsEnabled: prefs.crashlyticsEnabled,
     };
 
     // Seed budget history on first launch (no history yet)
@@ -348,6 +357,8 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     lockEnabledRef.current = loaded.lockEnabled;
     notifyDailyExpenseRef.current = loaded.notifyDailyExpense;
     notifyWeeklyBackupRef.current = loaded.notifyWeeklyBackup;
+    crashlyticsEnabledRef.current = loaded.crashlyticsEnabled;
+    applyCrashlyticsConsent(loaded.crashlyticsEnabled);
 
     // Re-register any scheduled notifications (may be cleared after app update/restart)
     syncNotificationsOnStartup(
@@ -515,6 +526,17 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     [db, state.locale],
   );
 
+  const setCrashlyticsEnabled = useCallback(
+    (enabled: boolean) => {
+      const prefs = getPreferences(db);
+      setPreferences(db, { ...prefs, crashlyticsEnabled: enabled });
+      crashlyticsEnabledRef.current = enabled;
+      applyCrashlyticsConsent(enabled);
+      dispatch({ type: "SET_CRASHLYTICS_ENABLED", payload: enabled });
+    },
+    [db],
+  );
+
   const addRecurringExpense = useCallback(
     (
       expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
@@ -585,6 +607,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
           lockEnabled: lockEnabledRef.current, // device setting — not restored from backup
           notifyDailyExpense: notifyDailyExpenseRef.current, // device setting — not restored from backup
           notifyWeeklyBackup: notifyWeeklyBackupRef.current, // device setting — not restored from backup
+          crashlyticsEnabled: crashlyticsEnabledRef.current, // device setting — not restored from backup
         });
       });
       dispatch({
@@ -594,6 +617,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
           lockEnabled: lockEnabledRef.current,
           notifyDailyExpense: notifyDailyExpenseRef.current,
           notifyWeeklyBackup: notifyWeeklyBackupRef.current,
+          crashlyticsEnabled: crashlyticsEnabledRef.current,
         },
       });
     },
@@ -647,6 +671,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         setLockSuppressed,
         setNotifyDailyExpense,
         setNotifyWeeklyBackup,
+        setCrashlyticsEnabled,
         importData,
         addRecurringExpense,
         updateRecurringExpense,

@@ -10,3 +10,4 @@ export const log = jest.fn();
 export const setAttribute = jest.fn();
 export const recordError = jest.fn();
 export const crash = jest.fn();
+export const setCrashlyticsCollectionEnabled = jest.fn();

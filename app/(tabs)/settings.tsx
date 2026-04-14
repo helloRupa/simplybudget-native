@@ -46,6 +46,7 @@ export default function SettingsScreen() {
     setLockSuppressed,
     setNotifyDailyExpense,
     setNotifyWeeklyBackup,
+    setCrashlyticsEnabled,
     importData,
     t,
     tc,
@@ -371,6 +372,26 @@ export default function SettingsScreen() {
           <Text style={styles.hint}>
             {state.expenses.length} {t("expenses").toLowerCase()}
           </Text>
+        </View>
+
+        {/* Crash Reporting */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t("crashReporting")}</Text>
+          <View style={styles.notificationRow}>
+            <Text style={styles.lockHint}>{t("crashReportingHint")}</Text>
+            <Switch
+              value={state.crashlyticsEnabled}
+              onValueChange={(enabled) => {
+                setCrashlyticsEnabled(enabled);
+                setToast({
+                  message: enabled ? t("crashReportingEnabled") : t("crashReportingDisabled"),
+                  type: "success",
+                });
+              }}
+              trackColor={{ false: colors.border, true: colors.tealSubtle }}
+              thumbColor={state.crashlyticsEnabled ? colors.teal : colors.textMuted}
+            />
+          </View>
         </View>
 
         {/* App Lock */}

@@ -75,29 +75,24 @@ export function initDatabase(db: SQLite.SQLiteDatabase): void {
     );
   `);
 
-  // Migration: add lockEnabled column for existing databases that predate this field
-  try {
+  const prefColumns = db
+    .getAllSync<{ name: string }>("PRAGMA table_info(preferences)")
+    .map((row) => row.name);
+
+  if (!prefColumns.includes("lockEnabled")) {
     db.execSync(
       "ALTER TABLE preferences ADD COLUMN lockEnabled INTEGER NOT NULL DEFAULT 0"
     );
-  } catch {
-    // Column already exists — safe to ignore
   }
-
-  // Migration: add notification preference columns
-  try {
+  if (!prefColumns.includes("notifyDailyExpense")) {
     db.execSync(
       "ALTER TABLE preferences ADD COLUMN notifyDailyExpense INTEGER NOT NULL DEFAULT 0"
     );
-  } catch {
-    // Column already exists — safe to ignore
   }
-  try {
+  if (!prefColumns.includes("notifyWeeklyBackup")) {
     db.execSync(
       "ALTER TABLE preferences ADD COLUMN notifyWeeklyBackup INTEGER NOT NULL DEFAULT 0"
     );
-  } catch {
-    // Column already exists — safe to ignore
   }
 
   seedDefaultCategories(db);

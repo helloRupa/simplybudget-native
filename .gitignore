@@ -18,6 +18,10 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
+# Firebase config (contains API keys — store via EAS secrets instead)
+google-services.json
+GoogleService-Info.plist
+
 # Metro
 .metro-health-check*
 

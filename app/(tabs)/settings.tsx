@@ -30,6 +30,8 @@ import {
   requestNotificationPermissions,
   scheduleTestNotification,
 } from "@/utils/notifications";
+import { getCrashlytics, crash } from "@react-native-firebase/crashlytics";
+import { logToCrashlytics, recordNonFatalError } from "@/utils/crashlytics";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -142,8 +144,10 @@ export default function SettingsScreen() {
     }
     try {
       await exportToCSV(state.expenses, t as (key: string) => string, tc, (d) => d);
+      logToCrashlytics("CSV export succeeded");
       setToast({ message: t("csvExported"), type: "success" });
-    } catch {
+    } catch (err) {
+      recordNonFatalError(err as Error, "handleExportCSV failed");
       setToast({ message: t("backupImportFailed"), type: "error" });
     }
   }
@@ -151,8 +155,10 @@ export default function SettingsScreen() {
   async function handleExportBackup() {
     try {
       await exportBackup(state);
+      logToCrashlytics("Backup export succeeded");
       setToast({ message: t("backupExported"), type: "success" });
-    } catch {
+    } catch (err) {
+      recordNonFatalError(err as Error, "handleExportBackup failed");
       setToast({ message: t("backupImportFailed"), type: "error" });
     }
   }
@@ -172,9 +178,11 @@ export default function SettingsScreen() {
               const data = await pickAndParseBackup();
               importData(data);
               setBudgetInput(data.weeklyBudget.toString());
+              logToCrashlytics("Backup import succeeded");
               setToast({ message: t("backupImported"), type: "success" });
             } catch (err) {
               if (err instanceof Error && err.message !== "cancelled") {
+                recordNonFatalError(err, "handleImportBackup failed");
                 setToast({ message: t("backupImportFailed"), type: "error" });
               }
             } finally {
@@ -264,7 +272,10 @@ export default function SettingsScreen() {
           <Text style={styles.sectionTitle}>{t("recurringExpenses")}</Text>
           <Pressable
             style={styles.navRow}
-            onPress={() => router.push("/recurring-expenses")}
+            onPress={() => {
+              logToCrashlytics("Navigated to recurring expenses");
+              router.push("/recurring-expenses");
+            }}
           >
             <Text style={styles.navRowText}>{t("recurringExpenses")}</Text>
             <Ionicons
@@ -424,6 +435,17 @@ export default function SettingsScreen() {
             accessibilityRole="button"
           >
             <Text style={styles.devButtonText}>Send test notification (5s)</Text>
+          </Pressable>
+        )}
+
+        {/* Dev: test Crashlytics */}
+        {__DEV__ && (
+          <Pressable
+            style={styles.devButton}
+            onPress={() => crash(getCrashlytics())}
+            accessibilityRole="button"
+          >
+            <Text style={styles.devButtonText}>Test Crashlytics (force crash)</Text>
           </Pressable>
         )}
 

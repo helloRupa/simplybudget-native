@@ -15,6 +15,7 @@ import { isInRange, toISODate } from "@/utils/dates";
 import ExpenseFilters from "@/components/ExpenseFilters";
 import Toast from "@/components/Toast";
 import { colors } from "@/constants/colors";
+import { logToCrashlytics } from "@/utils/crashlytics";
 import { fonts, fontSize, radius } from "@/constants/typography";
 
 const TODAY = toISODate(new Date());
@@ -199,6 +200,7 @@ export default function ExpensesScreen() {
   function confirmDelete(id: string) {
     deleteExpense(id);
     setDeletingId(null);
+    logToCrashlytics("Expense deleted");
     setToast({ message: t("expenseDeleted"), type: "success" });
   }
 
@@ -264,12 +266,13 @@ export default function ExpensesScreen() {
           <ExpenseCard
             expense={item}
             deletingId={deletingId}
-            onEdit={(expense) =>
+            onEdit={(expense) => {
+              logToCrashlytics("Opened expense form: edit");
               router.push({
                 pathname: "/expense-form",
                 params: { id: expense.id },
-              })
-            }
+              });
+            }}
             onDelete={setDeletingId}
             onConfirmDelete={confirmDelete}
             onCancelDelete={() => setDeletingId(null)}
@@ -280,7 +283,10 @@ export default function ExpensesScreen() {
       {/* FAB */}
       <Pressable
         style={styles.fab}
-        onPress={() => router.push("/expense-form")}
+        onPress={() => {
+          logToCrashlytics("Opened expense form: new");
+          router.push("/expense-form");
+        }}
         accessibilityLabel={t("addExpense")}
       >
         <Ionicons name="add" size={28} color={colors.background} />

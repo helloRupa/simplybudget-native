@@ -11,7 +11,8 @@
     "ios": {
       "icon": "./assets/images/ios-icon.png",
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.SimplyBudget",
+      "bundleIdentifier": "io.github.helloRupa.simplybudget",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Used to unlock the app."
       }
@@ -24,13 +25,15 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.SimplyBudget"
+      "package": "io.github.helloRupa.simplybudget",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./plugins/withModularHeaders",
       "expo-router",
       [
         "expo-splash-screen",
@@ -55,7 +58,9 @@
           "defaultChannel": "reminders",
           "sounds": []
         }
-      ]
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics"
     ],
     "experiments": {
       "typedRoutes": true,

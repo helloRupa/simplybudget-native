@@ -1,3 +1,4 @@
+import { getCrashlytics } from "@react-native-firebase/crashlytics";
 import AppName from "@/components/AppName";
 import LockScreen from "@/components/LockScreen";
 import { colors } from "@/constants/colors";
@@ -19,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus, StyleSheet, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
+getCrashlytics(); // initialize Crashlytics at startup
 
 function RootLayoutNav() {
   const router = useRouter();

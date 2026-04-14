@@ -44,6 +44,11 @@
           "backgroundColor": "#0d1117",
           "dark": {
             "backgroundColor": "#0d1117"
+          },
+          "android": {
+            "image": "./assets/images/android-foreground-icon.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#0d1117"
           }
         }
       ],

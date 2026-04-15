@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import { Ionicons } from "@expo/vector-icons";
 import { useBudget } from "@/context/BudgetContext";
 import { DEFAULT_CATEGORY_NAMES, SUPPORTED_CURRENCIES, CurrencyCode } from "@/utils/constants";
@@ -469,6 +470,22 @@ export default function SettingsScreen() {
             <Text style={styles.devButtonText}>Test Crashlytics (force crash)</Text>
           </Pressable>
         )}
+
+        {/* Privacy Policy */}
+        <Pressable
+          style={styles.aboutRow}
+          onPress={() => WebBrowser.openBrowserAsync("https://gist.github.com/helloRupa/132f443ccd82fdfe95302c99ff3d9c36")}
+          accessibilityLabel={t("privacyPolicy")}
+          accessibilityRole="link"
+        >
+          <Ionicons
+            name="shield-checkmark-outline"
+            size={20}
+            color={colors.teal}
+          />
+          <Text style={styles.aboutText}>{t("privacyPolicy")}</Text>
+          <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+        </Pressable>
 
         {/* About */}
         <Pressable

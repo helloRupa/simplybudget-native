@@ -185,6 +185,7 @@ const en = {
   crashReportingDisabled: "Crash reporting disabled.",
 
   // About
+  privacyPolicy: "Privacy Policy",
   about: "About",
   aboutDescription:
     "A simple, privacy-first weekly budget tracker. All your data stays on your device — nothing is sent to any server.",
@@ -350,6 +351,7 @@ const es: typeof en = {
   crashReportingHint: "Envía informes de fallos anónimos para ayudar a mejorar la app. Nunca se incluyen datos personales ni financieros.",
   crashReportingEnabled: "Informes de fallos activados.",
   crashReportingDisabled: "Informes de fallos desactivados.",
+  privacyPolicy: "Política de Privacidad",
   about: "Acerca de",
   aboutDescription:
     "Un rastreador de presupuesto semanal simple y privado. Todos tus datos permanecen en tu dispositivo — nada se envía a ningún servidor.",
@@ -516,6 +518,7 @@ const fr: typeof en = {
   crashReportingHint: "Envoie des rapports de plantage anonymes pour aider à améliorer l'app. Aucune donnée personnelle ou financière n'est jamais incluse.",
   crashReportingEnabled: "Rapports de plantage activés.",
   crashReportingDisabled: "Rapports de plantage désactivés.",
+  privacyPolicy: "Politique de Confidentialité",
   about: "À propos",
   aboutDescription:
     "Un suivi de budget hebdomadaire simple et privé. Toutes vos données restent sur votre appareil — rien n'est envoyé à aucun serveur.",

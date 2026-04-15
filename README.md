@@ -1,3 +1,7 @@
+# UNDER CONSTRUCTION
+
+[Privacy Policy](https://gist.github.com/helloRupa/132f443ccd82fdfe95302c99ff3d9c36)
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).

@@ -12,7 +12,7 @@ import {
   Inter_800ExtraBold,
   useFonts,
 } from "@expo-google-fonts/inter";
-import { getCrashlytics } from "@react-native-firebase/crashlytics";
+import { initCrashlytics } from "@/utils/crashlytics";
 import * as Notifications from "expo-notifications";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -21,7 +21,7 @@ import { AppState, AppStateStatus, StyleSheet, View } from "react-native";
 
 SplashScreen.setOptions({ duration: 1000, fade: true });
 SplashScreen.preventAutoHideAsync();
-getCrashlytics(); // initialize Crashlytics at startup
+initCrashlytics();
 
 function RootLayoutNav() {
   const router = useRouter();

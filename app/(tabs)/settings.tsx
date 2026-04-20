@@ -32,7 +32,7 @@ import {
   scheduleTestNotification,
 } from "@/utils/notifications";
 import { getCrashlytics, crash } from "@react-native-firebase/crashlytics";
-import { CrashlyticsLog, logToCrashlytics, recordNonFatalError } from "@/utils/crashlytics";
+import { CrashlyticsLog, crashlyticsAvailable, logToCrashlytics, recordNonFatalError } from "@/utils/crashlytics";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -379,7 +379,9 @@ export default function SettingsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("crashReporting")}</Text>
           <View style={styles.notificationRow}>
-            <Text style={styles.lockHint}>{t("crashReportingHint")}</Text>
+            <Text style={styles.lockHint}>
+              {crashlyticsAvailable ? t("crashReportingHint") : t("crashReportingUnavailable")}
+            </Text>
             <Switch
               value={state.crashlyticsEnabled}
               onValueChange={(enabled) => {
@@ -389,6 +391,7 @@ export default function SettingsScreen() {
                   type: "success",
                 });
               }}
+              disabled={!crashlyticsAvailable}
               trackColor={{ false: colors.border, true: colors.tealSubtle }}
               thumbColor={state.crashlyticsEnabled ? colors.teal : colors.textMuted}
             />
@@ -461,7 +464,7 @@ export default function SettingsScreen() {
         )}
 
         {/* Dev: test Crashlytics */}
-        {__DEV__ && (
+        {__DEV__ && crashlyticsAvailable && (
           <Pressable
             style={styles.devButton}
             onPress={() => crash(getCrashlytics())}

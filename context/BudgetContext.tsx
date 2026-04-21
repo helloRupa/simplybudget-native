@@ -117,16 +117,9 @@ function reducer(state: State, action: Action): State {
       };
     case "SET_WEEKLY_BUDGET": {
       const { amount, weekStart } = action.payload;
-      const existing = state.budgetHistory.findIndex(
-        (b) => b.startDate === weekStart,
+      const updatedHistory = state.budgetHistory.map((b) =>
+        b.startDate === weekStart ? { ...b, amount } : b,
       );
-      const newEntry: WeeklyBudget = { amount, startDate: weekStart };
-      const updatedHistory =
-        existing >= 0
-          ? state.budgetHistory.map((b, i) => (i === existing ? newEntry : b))
-          : [...state.budgetHistory, newEntry].sort((a, b) =>
-              a.startDate.localeCompare(b.startDate),
-            );
       return { ...state, weeklyBudget: amount, budgetHistory: updatedHistory };
     }
     case "ADD_CATEGORY":

@@ -150,6 +150,7 @@ export default function SpendingChart({
   return (
     <View ref={containerRef} style={styles.container}>
       <BarChart
+        key={data.map((d) => d.spent).join(",")}
         data={chartData}
         width={chartWidth}
         height={CHART_HEIGHT}

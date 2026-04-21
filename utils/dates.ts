@@ -1,14 +1,14 @@
-import {
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
-  endOfMonth,
-  format,
-  parseISO,
-  isWithinInterval,
-  addWeeks,
-} from "date-fns";
 import { WeeklyBudget } from "@/types";
+import {
+  addWeeks,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isWithinInterval,
+  parseISO,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
 
 export function getWeekRange(date: Date = new Date()) {
   const start = startOfWeek(date, { weekStartsOn: 1 }); // Monday
@@ -61,12 +61,12 @@ export function toISODate(date: Date): string {
 
 export function getBudgetForWeek(
   weekStart: Date,
-  budgetHistory: WeeklyBudget[]
+  budgetHistory: WeeklyBudget[],
 ): number {
   const weekStartStr = toISODate(weekStart);
 
   for (const entry of budgetHistory) {
-    if (entry.startDate <= weekStartStr) {
+    if (weekStartStr >= entry.startDate) {
       return entry.amount;
     }
   }
@@ -76,17 +76,17 @@ export function getBudgetForWeek(
 
 export function getTotalBudgeted(
   firstUseDate: string,
-  budgetHistory: WeeklyBudget[]
+  budgetHistory: WeeklyBudget[],
 ): number {
   const weekRanges = getWeekRanges(firstUseDate);
   return weekRanges.reduce(
     (sum, week) => sum + getBudgetForWeek(week.start, budgetHistory),
-    0
+    0,
   );
 }
 
 export function getWeekRanges(
-  firstUseDate: string
+  firstUseDate: string,
 ): { start: Date; end: Date }[] {
   try {
     const startDate = startOfWeek(parseISO(firstUseDate), { weekStartsOn: 1 });

@@ -186,7 +186,7 @@ describe("BudgetProvider — weekly budget", () => {
     expect(result.current.state.weeklyBudget).toBe(750);
   });
 
-  it("setWeeklyBudget creates or updates a budget history entry for the current week", () => {
+  it("setWeeklyBudget updates the current week's budget history entry", () => {
     const { result } = renderHook(() => useBudget(), { wrapper });
 
     act(() => {
@@ -196,6 +196,19 @@ describe("BudgetProvider — weekly budget", () => {
     const { budgetHistory } = result.current.state;
     const thisWeekEntry = budgetHistory.find((b) => b.amount === 750);
     expect(thisWeekEntry).toBeDefined();
+  });
+
+  it("setWeeklyBudget preserves descending sort order after update", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+
+    act(() => {
+      result.current.setWeeklyBudget(750);
+    });
+
+    const { budgetHistory } = result.current.state;
+    const dates = budgetHistory.map((b) => b.startDate);
+    const sorted = [...dates].sort((a, b) => b.localeCompare(a));
+    expect(dates).toEqual(sorted);
   });
 });
 

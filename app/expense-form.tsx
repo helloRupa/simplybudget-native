@@ -123,7 +123,7 @@ export default function ExpenseFormScreen() {
               onChangeText={setAmount}
               placeholder="0.00"
               placeholderTextColor={colors.textMuted}
-              keyboardType="numbers-and-punctuation"
+              keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "numeric"}
             />
           </View>
           {errors.amount ? (

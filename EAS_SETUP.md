@@ -6,33 +6,39 @@
 
 ### First-time setup
 
-Run these commands from the project root (requires the local files to be present):
+Run once per environment you intend to build for (`preview`, `production`, `development`):
 
 ```bash
-eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json
-eas secret:create --scope project --name GOOGLE_SERVICES_INFO_PLIST --type file --value ./GoogleService-Info.plist
+eas env:create --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json --visibility secret --environment preview
+eas env:create --name GOOGLE_SERVICES_INFO_PLIST --type file --value ./GoogleService-Info.plist --visibility secret --environment preview
+
+eas env:create --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json --visibility secret --environment production
+eas env:create --name GOOGLE_SERVICES_INFO_PLIST --type file --value ./GoogleService-Info.plist --visibility secret --environment production
 ```
 
 ### How it works
 
-EAS stores the files and exposes them during builds as env vars (`$GOOGLE_SERVICES_JSON`, `$GOOGLE_SERVICES_INFO_PLIST`) containing the path to each file in the build environment. The `prebuildCommand` in `eas.json` copies them to the project root before `expo prebuild` runs, which is when they're read from `app.json` and written into the native Android/iOS project.
+EAS stores the files and exposes them during builds as env vars (`$GOOGLE_SERVICES_JSON`, `$GOOGLE_SERVICES_INFO_PLIST`) containing the **path** to each file in the build environment. `app.config.js` reads those env vars and passes the paths directly to the `googleServicesFile` fields, falling back to the local file paths for local development. No shell scripts or file copying needed.
 
 ### Updating the secret files
 
 If the Firebase config files change (e.g. after rotating keys):
 
 ```bash
-eas secret:delete --name GOOGLE_SERVICES_JSON
-eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json
+eas env:delete --name GOOGLE_SERVICES_JSON --environment preview
+eas env:create --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json --visibility secret --environment preview
 
-eas secret:delete --name GOOGLE_SERVICES_INFO_PLIST
-eas secret:create --scope project --name GOOGLE_SERVICES_INFO_PLIST --type file --value ./GoogleService-Info.plist
+eas env:delete --name GOOGLE_SERVICES_INFO_PLIST --environment preview
+eas env:create --name GOOGLE_SERVICES_INFO_PLIST --type file --value ./GoogleService-Info.plist --visibility secret --environment preview
 ```
+
+Repeat for other environments (`production`, etc.) as needed.
 
 ### Verify secrets are uploaded
 
 ```bash
-eas secret:list
+eas env:list --environment preview
+eas env:list --environment production
 ```
 
 ## Build Profiles

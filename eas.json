@@ -6,16 +6,13 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "prebuildCommand": "cp $GOOGLE_SERVICES_JSON ./google-services.json && cp $GOOGLE_SERVICES_INFO_PLIST ./GoogleService-Info.plist"
+      "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "prebuildCommand": "cp $GOOGLE_SERVICES_JSON ./google-services.json && cp $GOOGLE_SERVICES_INFO_PLIST ./GoogleService-Info.plist"
+      "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true,
-      "prebuildCommand": "cp $GOOGLE_SERVICES_JSON ./google-services.json && cp $GOOGLE_SERVICES_INFO_PLIST ./GoogleService-Info.plist"
+      "autoIncrement": true
     }
   },
   "submit": {

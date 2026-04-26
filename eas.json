@@ -1,0 +1,24 @@
+{
+  "cli": {
+    "version": ">= 18.8.1",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "prebuildCommand": "cp $GOOGLE_SERVICES_JSON ./google-services.json && cp $GOOGLE_SERVICES_INFO_PLIST ./GoogleService-Info.plist"
+    },
+    "preview": {
+      "distribution": "internal",
+      "prebuildCommand": "cp $GOOGLE_SERVICES_JSON ./google-services.json && cp $GOOGLE_SERVICES_INFO_PLIST ./GoogleService-Info.plist"
+    },
+    "production": {
+      "autoIncrement": true,
+      "prebuildCommand": "cp $GOOGLE_SERVICES_JSON ./google-services.json && cp $GOOGLE_SERVICES_INFO_PLIST ./GoogleService-Info.plist"
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

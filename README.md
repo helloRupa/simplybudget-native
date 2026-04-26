@@ -1,8 +1,39 @@
-# UNDER CONSTRUCTION
+# SimplyBudget
+
+A simple privacy-focused budgeting app. All of your expenses remain on your device and under your control. Optionally opt into crash reporting, notifications, and screen-lock protection.
 
 [Privacy Policy](https://gist.github.com/helloRupa/132f443ccd82fdfe95302c99ff3d9c36)
 
-# Welcome to your Expo app 👋
+## Features
+
+- Create, read, update, and delete expenses, recurring expenses, and spending categories
+- Update weekly spending budget
+- Track weekly and overall spending against a set budget
+- Track spending across categories
+- Backup and restore past budget data
+- Opt into notifications for updating expenses (daily) or backing up data (weekly)
+- Opt into crash reporting
+- Opt into screen lock protection: uses your existing screen lock to unlock the app on load or after sleep
+
+# Contributing
+
+Contributing is easy! Just follow a few simple rules and use the git workflow.
+
+## Rules
+
+- A user's financial data must never be transmitted to any server
+- Do not install any packages that might violate a user's privacy, e.g., analytics
+- Do not install any packages that are deprecated or poorly maintained
+- Never solicit payment for any additional services or features
+
+## Git workflow
+
+1. Fork this repo
+2. Create a new branch with a meaningful name, e.g., "feature-addLocationToExpenses" (I'm not terribly fussed about the format)
+3. Keep your work focused on the type of work described in the feature's name
+4. Once you're done, make a PR!
+
+# Built with Expo and React Native
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -25,30 +56,6 @@ In the output, you'll find options to open the app in a
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo that does not support all features, such as crash reporting
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

@@ -189,7 +189,7 @@ const en = {
   privacyPolicy: "Privacy Policy",
   about: "About",
   aboutDescription:
-    "A simple, privacy-first weekly budget tracker. All your data stays on your device — nothing is sent to any server.",
+    "Track your weekly spending, simply. Your data is always in your control.",
   aboutBuiltBy: "Built by",
   aboutBuiltWith: "Built with",
   aboutVersion: "Version",
@@ -356,7 +356,7 @@ const es: typeof en = {
   privacyPolicy: "Política de Privacidad",
   about: "Acerca de",
   aboutDescription:
-    "Un rastreador de presupuesto semanal simple y privado. Todos tus datos permanecen en tu dispositivo — nada se envía a ningún servidor.",
+    "Controla tus gastos semanales, simplemente. Tus datos siempre están bajo tu control.",
   aboutBuiltBy: "Creado por",
   aboutBuiltWith: "Construido con",
   aboutVersion: "Versión",
@@ -524,7 +524,7 @@ const fr: typeof en = {
   privacyPolicy: "Politique de Confidentialité",
   about: "À propos",
   aboutDescription:
-    "Un suivi de budget hebdomadaire simple et privé. Toutes vos données restent sur votre appareil — rien n'est envoyé à aucun serveur.",
+    "Suivez vos dépenses hebdomadaires, simplement. Vos données sont toujours sous votre contrôle.",
   aboutBuiltBy: "Créé par",
   aboutBuiltWith: "Construit avec",
   aboutVersion: "Version",

@@ -6,6 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
+import Constants from "expo-constants";
 import { useBudget } from "@/context/BudgetContext";
 import AppName from "./AppName";
 import { colors } from "@/constants/colors";
@@ -36,7 +37,7 @@ export default function AboutModal({ visible, onClose }: AboutModalProps) {
               resizeMode="contain"
             />
             <AppName size="small" />
-            <Text style={styles.version}>{t("aboutVersion")} 0.1.0</Text>
+            <Text style={styles.version}>{t("aboutVersion")} {Constants.expoConfig?.version}</Text>
           </View>
 
           {/* Description */}

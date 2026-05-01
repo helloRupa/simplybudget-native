@@ -41,6 +41,7 @@ function RootLayoutNav() {
   const appState = useRef(AppState.currentState);
   const backgroundedAt = useRef<number | null>(null);
   const lockSuppressedRef = useRef(lockSuppressed);
+  const handledNotificationDate = useRef<number | null>(null);
   const LOCK_GRACE_MS = 30_000;
 
   // Keep refs in sync so event handlers always read the latest value
@@ -65,25 +66,44 @@ function RootLayoutNav() {
 
   // Handle notification taps — navigate to the relevant screen
   useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        const id = response.notification.request.identifier;
-        let destination: string | null = null;
-        if (id === NOTIFICATION_IDS.dailyExpenseReminder) {
-          destination = "/expense-form";
-        } else if (id === NOTIFICATION_IDS.weeklyBackupReminder) {
-          destination = "/(tabs)/settings";
-        }
-        if (!destination) return;
+    function handleResponse(response: Notifications.NotificationResponse) {
+      // Deduplicate: both getLastNotificationResponseAsync and the live listener
+      // can fire for the same notification on warm starts.
+      const notifDate = response.notification.date;
+      if (handledNotificationDate.current === notifDate) return;
+      handledNotificationDate.current = notifDate;
 
-        if (isAuthenticatedRef.current) {
-          router.push(destination as Parameters<typeof router.push>[0]);
-        } else {
-          pendingNavigation.current = destination;
-        }
-      },
-    );
-    return () => subscription.remove();
+      const id = response.notification.request.identifier;
+      let destination: string | null = null;
+      if (id === NOTIFICATION_IDS.dailyExpenseReminder) {
+        destination = "/expense-form";
+      } else if (id === NOTIFICATION_IDS.weeklyBackupReminder) {
+        destination = "/(tabs)/settings";
+      }
+      if (!destination) return;
+
+      if (isAuthenticatedRef.current) {
+        router.push(destination as Parameters<typeof router.push>[0]);
+      } else {
+        pendingNavigation.current = destination;
+      }
+    }
+
+    let cancelled = false;
+    // On Android, tapping a notification that cold-starts the app does not fire
+    // addNotificationResponseReceivedListener. Retrieve the stored response instead.
+    Notifications.getLastNotificationResponseAsync()
+      .then((response) => {
+        if (!cancelled && response) handleResponse(response);
+      })
+      .catch(() => {});
+
+    const subscription =
+      Notifications.addNotificationResponseReceivedListener(handleResponse);
+    return () => {
+      cancelled = true;
+      subscription.remove();
+    };
   }, [router]);
 
   // Once data loads, resolve initial auth state

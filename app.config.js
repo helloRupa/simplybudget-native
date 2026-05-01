@@ -1,17 +1,92 @@
-const { expo } = require('./app.json');
 const { version } = require('./package.json');
 
 module.exports = {
   expo: {
-    ...expo,
+    name: 'SimplyBudget',
+    slug: 'SimplyBudget',
     version,
+    orientation: 'portrait',
+    icon: './assets/images/icon.png',
+    scheme: 'simplybudgetnative',
+    userInterfaceStyle: 'automatic',
+    newArchEnabled: true,
     ios: {
-      ...expo.ios,
-      googleServicesFile: process.env.GOOGLE_SERVICES_INFO_PLIST ?? expo.ios.googleServicesFile,
+      icon: './assets/images/ios-icon.png',
+      supportsTablet: true,
+      bundleIdentifier: 'io.github.helloRupa.simplybudget',
+      googleServicesFile:
+        process.env.GOOGLE_SERVICES_INFO_PLIST ?? './GoogleService-Info.plist',
+      infoPlist: {
+        NSFaceIDUsageDescription: 'Used to unlock the app.',
+      },
     },
     android: {
-      ...expo.android,
-      googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? expo.android.googleServicesFile,
+      backgroundColor: '#0d1117',
+      adaptiveIcon: {
+        backgroundColor: '#0d1117',
+        foregroundImage: './assets/images/android-foreground-icon.png',
+      },
+      edgeToEdgeEnabled: true,
+      predictiveBackGestureEnabled: false,
+      package: 'io.github.helloRupa.simplybudget',
+      googleServicesFile:
+        process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
+    },
+    web: {
+      output: 'static',
+      favicon: './assets/images/favicon.png',
+    },
+    plugins: [
+      './plugins/withModularHeaders',
+      'expo-router',
+      [
+        'expo-splash-screen',
+        {
+          ios: {
+            image: './assets/images/splash-icon.png',
+            imageWidth: 200,
+            resizeMode: 'contain',
+            backgroundColor: '#0d1117',
+            dark: {
+              backgroundColor: '#0d1117',
+            },
+          },
+          android: {
+            image: './assets/images/android-foreground-icon.png',
+            imageWidth: 200,
+            resizeMode: 'contain',
+            backgroundColor: '#14b8a6',
+            dark: {
+              backgroundColor: '#14b8a6',
+            },
+          },
+        },
+      ],
+      'expo-sqlite',
+      '@react-native-community/datetimepicker',
+      'expo-localization',
+      [
+        'expo-notifications',
+        {
+          icon: './assets/images/notification-icon.png',
+          color: '#14b8a6',
+          defaultChannel: 'reminders',
+          sounds: [],
+        },
+      ],
+      'expo-web-browser',
+      '@react-native-firebase/app',
+      '@react-native-firebase/crashlytics',
+    ],
+    experiments: {
+      typedRoutes: true,
+      reactCompiler: true,
+    },
+    extra: {
+      router: {},
+      eas: {
+        projectId: '50321e82-18bd-400f-9b83-1beb17ddc974',
+      },
     },
   },
 };

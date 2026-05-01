@@ -13,6 +13,7 @@ import {
 } from "@react-native-firebase/crashlytics";
 
 const {
+  CrashlyticsContext,
   CrashlyticsLog,
   applyCrashlyticsConsent,
   initCrashlytics,
@@ -100,8 +101,8 @@ describe("recordNonFatalError", () => {
 
   it("logs the context message before recording the error when context is provided", () => {
     const error = new Error("export failed");
-    recordNonFatalError(error, "handleExportBackup failed");
-    expect(log).toHaveBeenCalledWith(mockInstance, "handleExportBackup failed");
+    recordNonFatalError(error, CrashlyticsContext.HandleExportBackupFailed);
+    expect(log).toHaveBeenCalledWith(mockInstance, CrashlyticsContext.HandleExportBackupFailed);
     expect(recordError).toHaveBeenCalledWith(mockInstance, error);
   });
 
@@ -136,7 +137,7 @@ describe("silent failure guards", () => {
 
   it("recordNonFatalError with context does not throw when getCrashlytics throws", () => {
     expect(() =>
-      recordNonFatalError(new Error("boom"), "some context")
+      recordNonFatalError(new Error("boom"), CrashlyticsContext.HandleImportBackupFailed)
     ).not.toThrow();
   });
 });

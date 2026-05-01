@@ -41,7 +41,7 @@ function RootLayoutNav() {
   const appState = useRef(AppState.currentState);
   const backgroundedAt = useRef<number | null>(null);
   const lockSuppressedRef = useRef(lockSuppressed);
-  const handledNotificationDate = useRef<number | null>(null);
+  const handledNotificationKey = useRef<string | null>(null);
   const LOCK_GRACE_MS = 30_000;
 
   // Keep refs in sync so event handlers always read the latest value
@@ -69,9 +69,11 @@ function RootLayoutNav() {
     function handleResponse(response: Notifications.NotificationResponse) {
       // Deduplicate: both getLastNotificationResponseAsync and the live listener
       // can fire for the same notification on warm starts.
-      const notifDate = response.notification.date;
-      if (handledNotificationDate.current === notifDate) return;
-      handledNotificationDate.current = notifDate;
+      // Include request.identifier so two different notifications delivered at
+      // the same second (e.g. daily + weekly both at 8PM Sunday) aren't conflated.
+      const notifKey = `${response.notification.date}-${response.notification.request.identifier}`;
+      if (handledNotificationKey.current === notifKey) return;
+      handledNotificationKey.current = notifKey;
 
       const id = response.notification.request.identifier;
       let destination: string | null = null;

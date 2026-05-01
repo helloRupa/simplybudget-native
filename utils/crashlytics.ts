@@ -24,6 +24,16 @@ export function initCrashlytics(): void {
   }
 }
 
+/** Allowed context identifiers passed to recordNonFatalError. Add new entries here as needed. */
+export const CrashlyticsContext = {
+  HandleExportCSVFailed: "handleExportCSV failed",
+  HandleExportBackupFailed: "handleExportBackup failed",
+  HandleImportBackupFailed: "handleImportBackup failed",
+} as const;
+
+type CrashlyticsContextValue =
+  (typeof CrashlyticsContext)[keyof typeof CrashlyticsContext];
+
 /** Allowed breadcrumb messages for Crashlytics. Add new entries here as needed. */
 export const CrashlyticsLog = {
   ExpenseAdded: "Expense added",
@@ -60,7 +70,7 @@ export function applyCrashlyticsConsent(enabled: boolean) {
  * Record a non-fatal error — shows up in Crashlytics as a non-fatal issue
  * rather than a full crash, useful for caught errors you still want visibility on.
  */
-export function recordNonFatalError(error: Error, context?: string) {
+export function recordNonFatalError(error: Error, context?: CrashlyticsContextValue) {
   try {
     const instance = getCrashlytics();
     if (context) log(instance, context);

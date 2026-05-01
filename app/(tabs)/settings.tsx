@@ -32,7 +32,7 @@ import {
   scheduleTestNotification,
 } from "@/utils/notifications";
 import { getCrashlytics, crash } from "@react-native-firebase/crashlytics";
-import { CrashlyticsLog, crashlyticsAvailable, logToCrashlytics, recordNonFatalError } from "@/utils/crashlytics";
+import { CrashlyticsContext, CrashlyticsLog, crashlyticsAvailable, logToCrashlytics, recordNonFatalError } from "@/utils/crashlytics";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -149,7 +149,7 @@ export default function SettingsScreen() {
       logToCrashlytics(CrashlyticsLog.CsvExportSucceeded);
       setToast({ message: t("csvExported"), type: "success" });
     } catch (err) {
-      recordNonFatalError(err as Error, "handleExportCSV failed");
+      recordNonFatalError(err as Error, CrashlyticsContext.HandleExportCSVFailed);
       setToast({ message: t("backupImportFailed"), type: "error" });
     }
   }
@@ -160,7 +160,7 @@ export default function SettingsScreen() {
       logToCrashlytics(CrashlyticsLog.BackupExportSucceeded);
       setToast({ message: t("backupExported"), type: "success" });
     } catch (err) {
-      recordNonFatalError(err as Error, "handleExportBackup failed");
+      recordNonFatalError(err as Error, CrashlyticsContext.HandleExportBackupFailed);
       setToast({ message: t("backupImportFailed"), type: "error" });
     }
   }
@@ -184,7 +184,7 @@ export default function SettingsScreen() {
               setToast({ message: t("backupImported"), type: "success" });
             } catch (err) {
               if (err instanceof Error && err.message !== "cancelled") {
-                recordNonFatalError(err, "handleImportBackup failed");
+                recordNonFatalError(err, CrashlyticsContext.HandleImportBackupFailed);
                 setToast({ message: t("backupImportFailed"), type: "error" });
               }
             } finally {

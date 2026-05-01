@@ -110,7 +110,7 @@ describe("AboutModal", () => {
         <AboutModal visible={true} onClose={() => {}} />
       </Providers>
     );
-    expect(screen.getByText(/0\.1\.0/)).toBeTruthy();
+    expect(screen.getByText(/1\.0\.0/)).toBeTruthy();
   });
 
   it("shows built-by credit", () => {

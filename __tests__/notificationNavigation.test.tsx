@@ -1,15 +1,24 @@
 /**
  * Tests for notification deep-linking in app/_layout.tsx.
  *
- * Verifies that tapping a notification cold-starts the app and routes to the
- * correct screen (getLastNotificationResponseAsync path, Android cold-start).
+ * Covers:
+ *  - Cold-start (getLastNotificationResponseAsync path, Android)
+ *  - Warm-start (addNotificationResponseReceivedListener path)
+ *  - Deduplication when both paths fire for the same notification
+ *  - Lock-enabled: navigation queued and fired after unlock
  */
 import React from "react";
-import { render, waitFor } from "@testing-library/react-native";
+import { act, render, waitFor } from "@testing-library/react-native";
 import * as Notifications from "expo-notifications";
 import { NOTIFICATION_IDS } from "@/utils/notifications";
 
 const mockPush = jest.fn();
+const mockUseBudget = jest.fn(() => ({
+  isLoaded: true,
+  state: { lockEnabled: false },
+  lockSuppressed: false,
+}));
+let mockOnUnlock: (() => void) | null = null;
 
 jest.mock("expo-router", () => {
   const StackScreen = () => null;
@@ -39,18 +48,21 @@ jest.mock("@expo-google-fonts/inter", () => ({
 }));
 
 jest.mock("@/context/BudgetContext", () => ({
-  useBudget: () => ({
-    isLoaded: true,
-    state: { lockEnabled: false },
-    lockSuppressed: false,
-  }),
+  useBudget: () => mockUseBudget(),
   BudgetProvider: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
   ),
 }));
 
 jest.mock("@/components/AppName", () => () => null);
-jest.mock("@/components/LockScreen", () => () => null);
+jest.mock(
+  "@/components/LockScreen",
+  () =>
+    ({ onUnlock }: { onUnlock: () => void }) => {
+      mockOnUnlock = onUnlock;
+      return null;
+    },
+);
 jest.mock("@/utils/crashlytics", () => ({ initCrashlytics: jest.fn() }));
 jest.mock("@/utils/lockTimer", () => ({
   shouldReLock: jest.fn().mockReturnValue(false),
@@ -81,6 +93,12 @@ beforeEach(() => {
   jest.clearAllMocks();
   mockGetLast.mockResolvedValue(null);
   mockAddListener.mockReturnValue({ remove: jest.fn() });
+  mockUseBudget.mockReturnValue({
+    isLoaded: true,
+    state: { lockEnabled: false },
+    lockSuppressed: false,
+  });
+  mockOnUnlock = null;
 });
 
 describe("cold-start notification navigation", () => {
@@ -116,5 +134,82 @@ describe("cold-start notification navigation", () => {
     render(<RootLayout />);
     await waitFor(() => expect(mockGetLast).toHaveBeenCalled());
     expect(mockPush).not.toHaveBeenCalled();
+  });
+});
+
+describe("warm-start notification navigation", () => {
+  it("navigates when the live listener fires", async () => {
+    let listenerCallback:
+      | ((r: Notifications.NotificationResponse) => void)
+      | null = null;
+    mockAddListener.mockImplementation((cb) => {
+      listenerCallback = cb;
+      return { remove: jest.fn() };
+    });
+
+    render(<RootLayout />);
+    await waitFor(() => expect(mockGetLast).toHaveBeenCalled());
+    expect(mockPush).not.toHaveBeenCalled();
+
+    act(() => {
+      listenerCallback!(makeResponse(NOTIFICATION_IDS.dailyExpenseReminder));
+    });
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/expense-form");
+    });
+  });
+});
+
+describe("notification deduplication", () => {
+  it("navigates only once when both cold-start and live listener fire for the same notification", async () => {
+    const response = makeResponse(NOTIFICATION_IDS.dailyExpenseReminder);
+    mockGetLast.mockResolvedValue(response);
+
+    let listenerCallback:
+      | ((r: Notifications.NotificationResponse) => void)
+      | null = null;
+    mockAddListener.mockImplementation((cb) => {
+      listenerCallback = cb;
+      return { remove: jest.fn() };
+    });
+
+    render(<RootLayout />);
+    await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1));
+
+    act(() => {
+      listenerCallback!(response);
+    });
+
+    expect(mockPush).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("notification navigation with lock enabled", () => {
+  it("queues navigation and fires after unlock on cold-start", async () => {
+    mockUseBudget.mockReturnValue({
+      isLoaded: true,
+      state: { lockEnabled: true },
+      lockSuppressed: false,
+    });
+    mockGetLast.mockResolvedValue(
+      makeResponse(NOTIFICATION_IDS.dailyExpenseReminder),
+    );
+
+    render(<RootLayout />);
+
+    // Flush all pending microtasks so the promise resolves and
+    // handleResponse sets pendingNavigation — but push must not fire yet
+    await act(async () => {});
+    expect(mockPush).not.toHaveBeenCalled();
+
+    // Simulate user unlocking the app
+    await act(async () => {
+      mockOnUnlock?.();
+    });
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/expense-form");
+    });
   });
 });

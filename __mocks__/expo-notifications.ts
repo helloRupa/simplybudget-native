@@ -32,3 +32,4 @@ export const setNotificationHandler = jest.fn();
 export const addNotificationResponseReceivedListener = jest
   .fn()
   .mockReturnValue({ remove: jest.fn() });
+export const getLastNotificationResponseAsync = jest.fn().mockResolvedValue(null);

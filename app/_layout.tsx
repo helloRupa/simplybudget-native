@@ -65,24 +65,31 @@ function RootLayoutNav() {
 
   // Handle notification taps — navigate to the relevant screen
   useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        const id = response.notification.request.identifier;
-        let destination: string | null = null;
-        if (id === NOTIFICATION_IDS.dailyExpenseReminder) {
-          destination = "/expense-form";
-        } else if (id === NOTIFICATION_IDS.weeklyBackupReminder) {
-          destination = "/(tabs)/settings";
-        }
-        if (!destination) return;
+    function handleResponse(response: Notifications.NotificationResponse) {
+      const id = response.notification.request.identifier;
+      let destination: string | null = null;
+      if (id === NOTIFICATION_IDS.dailyExpenseReminder) {
+        destination = "/expense-form";
+      } else if (id === NOTIFICATION_IDS.weeklyBackupReminder) {
+        destination = "/(tabs)/settings";
+      }
+      if (!destination) return;
 
-        if (isAuthenticatedRef.current) {
-          router.push(destination as Parameters<typeof router.push>[0]);
-        } else {
-          pendingNavigation.current = destination;
-        }
-      },
-    );
+      if (isAuthenticatedRef.current) {
+        router.push(destination as Parameters<typeof router.push>[0]);
+      } else {
+        pendingNavigation.current = destination;
+      }
+    }
+
+    // On Android, tapping a notification that cold-starts the app does not fire
+    // addNotificationResponseReceivedListener. Retrieve the stored response instead.
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (response) handleResponse(response);
+    });
+
+    const subscription =
+      Notifications.addNotificationResponseReceivedListener(handleResponse);
     return () => subscription.remove();
   }, [router]);
 

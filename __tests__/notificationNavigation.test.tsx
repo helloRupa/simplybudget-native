@@ -108,7 +108,7 @@ describe("cold-start notification navigation", () => {
     );
     render(<RootLayout />);
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/expense-form");
+      expect(mockPush).toHaveBeenCalledWith("/(tabs)/expenses");
     });
   });
 
@@ -156,7 +156,7 @@ describe("warm-start notification navigation", () => {
     });
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/expense-form");
+      expect(mockPush).toHaveBeenCalledWith("/(tabs)/expenses");
     });
   });
 });
@@ -209,7 +209,7 @@ describe("notification navigation with lock enabled", () => {
     });
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/expense-form");
+      expect(mockPush).toHaveBeenCalledWith("/(tabs)/expenses");
     });
   });
 });

@@ -78,7 +78,7 @@ function RootLayoutNav() {
       const id = response.notification.request.identifier;
       let destination: string | null = null;
       if (id === NOTIFICATION_IDS.dailyExpenseReminder) {
-        destination = "/expense-form";
+        destination = "/(tabs)/expenses";
       } else if (id === NOTIFICATION_IDS.weeklyBackupReminder) {
         destination = "/(tabs)/settings";
       }

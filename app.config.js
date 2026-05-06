@@ -38,6 +38,7 @@ module.exports = {
     },
     plugins: [
       './plugins/withModularHeaders',
+      './plugins/withAdiRegistration',
       'expo-router',
       [
         'expo-splash-screen',

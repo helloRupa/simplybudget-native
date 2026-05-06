@@ -34,6 +34,12 @@ function renderExpenses() {
   );
 }
 
+function daysAgo(n: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString().slice(0, 10);
+}
+
 // Seed expenses via the context hook before rendering the screen
 function seedExpenses() {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -46,19 +52,19 @@ function seedExpenses() {
       amount: 10,
       category: "Food",
       description: "Coffee",
-      date: "2026-04-01",
+      date: daysAgo(15),
     });
     result.current.addExpense({
       amount: 50,
       category: "Transportation",
       description: "Taxi",
-      date: "2026-04-05",
+      date: daysAgo(10),
     });
     result.current.addExpense({
       amount: 200,
       category: "Bills",
       description: "Electric",
-      date: "2026-04-08",
+      date: daysAgo(5),
     });
   });
 }

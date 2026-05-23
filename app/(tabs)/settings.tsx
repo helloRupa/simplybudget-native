@@ -48,6 +48,7 @@ export default function SettingsScreen() {
     setNotifyDailyExpense,
     setNotifyWeeklyBackup,
     setCrashlyticsEnabled,
+    setOnboardingComplete,
     importData,
     t,
     tc,
@@ -471,6 +472,20 @@ export default function SettingsScreen() {
             accessibilityRole="button"
           >
             <Text style={styles.devButtonText}>Test Crashlytics (force crash)</Text>
+          </Pressable>
+        )}
+
+        {/* Dev: reset onboarding */}
+        {__DEV__ && (
+          <Pressable
+            style={styles.devButton}
+            onPress={() => {
+              setOnboardingComplete(false);
+              setToast({ message: "Onboarding reset — restart the app.", type: "success" });
+            }}
+            accessibilityRole="button"
+          >
+            <Text style={styles.devButtonText}>Reset onboarding</Text>
           </Pressable>
         )}
 

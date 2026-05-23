@@ -39,6 +39,7 @@ export const MOCK_STATE: State = {
   notifyDailyExpense: false,
   notifyWeeklyBackup: false,
   crashlyticsEnabled: false,
+  onboardingComplete: true,
 
   weeklyBudget: 100, // current week's budget
 

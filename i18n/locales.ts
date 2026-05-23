@@ -195,6 +195,21 @@ const en = {
   aboutVersion: "Version",
   noChartData: "No data to display",
   everythingElse: "Everything else",
+
+  // Onboarding
+  onboardingWelcomeBody: "Take control of your spending. Set a weekly budget, track every expense, and see exactly where your money goes.",
+  onboardingDashboardTitle: "Your finances at a glance",
+  onboardingDashboardBody: "See your weekly budget, how much you've spent, and charts that break down your spending by category and month.",
+  onboardingExpensesTitle: "Log what you spend",
+  onboardingExpensesBody: "Add expenses as you go — pick a category, add an optional note, and your dashboard updates instantly. Tap the Expenses tab, then the + button to add one.",
+  onboardingRecurringTitle: "Set it and forget it",
+  onboardingRecurringBody: "Got bills or subscriptions? Add them as recurring expenses and they'll be factored into your budget automatically. Find them under Settings.",
+  onboardingBudgetTitle: "Start with a number",
+  onboardingBudgetBody: "Everything in SimplyBudget is measured against your weekly budget. Set it once and your dashboard will tell you exactly how you're tracking — week by week.",
+  onboardingSetBudget: "Set Budget",
+  onboardingNext: "Next",
+  onboardingBack: "Back",
+  onboardingSkip: "Skip",
 };
 
 const es: typeof en = {
@@ -362,6 +377,21 @@ const es: typeof en = {
   aboutVersion: "Versión",
   noChartData: "No hay datos para mostrar",
   everythingElse: "Todo lo demás",
+
+  // Onboarding
+  onboardingWelcomeBody: "Toma el control de tus gastos. Establece un presupuesto semanal, registra cada gasto y ve exactamente a dónde va tu dinero.",
+  onboardingDashboardTitle: "Tus finanzas de un vistazo",
+  onboardingDashboardBody: "Ve tu presupuesto semanal, cuánto has gastado y gráficos que desglosan tus gastos por categoría y mes.",
+  onboardingExpensesTitle: "Registra lo que gastas",
+  onboardingExpensesBody: "Agrega gastos sobre la marcha — elige una categoría, agrega una nota opcional y tu panel se actualiza al instante. Toca la pestaña Gastos y luego el botón + para agregar uno.",
+  onboardingRecurringTitle: "Configúralo y olvídalo",
+  onboardingRecurringBody: "¿Tienes facturas o suscripciones? Agrégalas como gastos recurrentes y se tendrán en cuenta en tu presupuesto automáticamente. Encuéntralos en Ajustes.",
+  onboardingBudgetTitle: "Empieza con un número",
+  onboardingBudgetBody: "Todo en SimplyBudget se mide contra tu presupuesto semanal. Configúralo una vez y tu panel te dirá exactamente cómo vas, semana a semana.",
+  onboardingSetBudget: "Establecer presupuesto",
+  onboardingNext: "Siguiente",
+  onboardingBack: "Atrás",
+  onboardingSkip: "Omitir",
 };
 
 const fr: typeof en = {
@@ -530,6 +560,21 @@ const fr: typeof en = {
   aboutVersion: "Version",
   noChartData: "Aucune donnée à afficher",
   everythingElse: "Tout le reste",
+
+  // Onboarding
+  onboardingWelcomeBody: "Prenez le contrôle de vos dépenses. Définissez un budget hebdomadaire, suivez chaque dépense et voyez exactement où va votre argent.",
+  onboardingDashboardTitle: "Vos finances en un coup d'œil",
+  onboardingDashboardBody: "Consultez votre budget hebdomadaire, vos dépenses et des graphiques qui détaillent vos dépenses par catégorie et par mois.",
+  onboardingExpensesTitle: "Enregistrez vos dépenses",
+  onboardingExpensesBody: "Ajoutez des dépenses au fil de la journée — choisissez une catégorie, ajoutez une note optionnelle et votre tableau de bord se met à jour instantanément. Appuyez sur l'onglet Dépenses, puis sur le bouton + pour en ajouter une.",
+  onboardingRecurringTitle: "Configurez et oubliez",
+  onboardingRecurringBody: "Vous avez des factures ou des abonnements ? Ajoutez-les comme dépenses récurrentes et ils seront pris en compte dans votre budget automatiquement. Retrouvez-les dans Paramètres.",
+  onboardingBudgetTitle: "Commencez avec un chiffre",
+  onboardingBudgetBody: "Tout dans SimplyBudget est mesuré par rapport à votre budget hebdomadaire. Définissez-le une fois et votre tableau de bord vous indiquera exactement comment vous vous en sortez, semaine après semaine.",
+  onboardingSetBudget: "Définir le budget",
+  onboardingNext: "Suivant",
+  onboardingBack: "Retour",
+  onboardingSkip: "Ignorer",
 };
 
 export const locales: Record<LocaleKey, typeof en> = { en, es, fr };

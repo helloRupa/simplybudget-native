@@ -133,5 +133,6 @@ export async function pickAndParseBackup(): Promise<State> {
     notifyDailyExpense: false, // never inherit from backup — notification prefs are per-device
     notifyWeeklyBackup: false, // never inherit from backup — notification prefs are per-device
     crashlyticsEnabled: false, // never inherit from backup — consent is a per-device setting
+    onboardingComplete: true, // already completed onboarding to reach the import feature
   };
 }

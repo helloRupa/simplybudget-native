@@ -216,6 +216,7 @@ const PREFERENCES_DEFAULTS: Preferences = {
   notifyDailyExpense: false,
   notifyWeeklyBackup: false,
   crashlyticsEnabled: false,
+  onboardingComplete: false,
 };
 
 export function getPreferences(db: SQLiteDatabase): Preferences {
@@ -228,8 +229,9 @@ export function getPreferences(db: SQLiteDatabase): Preferences {
     notifyDailyExpense: number;
     notifyWeeklyBackup: number;
     crashlyticsEnabled: number;
+    onboardingComplete: number;
   }>(
-    "SELECT weeklyBudget, firstUseDate, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup, crashlyticsEnabled FROM preferences WHERE id = 1"
+    "SELECT weeklyBudget, firstUseDate, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup, crashlyticsEnabled, onboardingComplete FROM preferences WHERE id = 1"
   );
   if (!row) return { ...PREFERENCES_DEFAULTS };
   return {
@@ -241,6 +243,7 @@ export function getPreferences(db: SQLiteDatabase): Preferences {
     notifyDailyExpense: row.notifyDailyExpense === 1,
     notifyWeeklyBackup: row.notifyWeeklyBackup === 1,
     crashlyticsEnabled: row.crashlyticsEnabled === 1,
+    onboardingComplete: row.onboardingComplete === 1,
   };
 }
 
@@ -249,8 +252,8 @@ export function setPreferences(
   prefs: Preferences
 ): void {
   db.runSync(
-    `INSERT INTO preferences (id, weeklyBudget, firstUseDate, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup, crashlyticsEnabled)
-     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO preferences (id, weeklyBudget, firstUseDate, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup, crashlyticsEnabled, onboardingComplete)
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET
        weeklyBudget = excluded.weeklyBudget,
        firstUseDate = excluded.firstUseDate,
@@ -259,7 +262,8 @@ export function setPreferences(
        lockEnabled = excluded.lockEnabled,
        notifyDailyExpense = excluded.notifyDailyExpense,
        notifyWeeklyBackup = excluded.notifyWeeklyBackup,
-       crashlyticsEnabled = excluded.crashlyticsEnabled`,
+       crashlyticsEnabled = excluded.crashlyticsEnabled,
+       onboardingComplete = excluded.onboardingComplete`,
     prefs.weeklyBudget,
     prefs.firstUseDate,
     prefs.locale,
@@ -267,6 +271,7 @@ export function setPreferences(
     prefs.lockEnabled ? 1 : 0,
     prefs.notifyDailyExpense ? 1 : 0,
     prefs.notifyWeeklyBackup ? 1 : 0,
-    prefs.crashlyticsEnabled ? 1 : 0
+    prefs.crashlyticsEnabled ? 1 : 0,
+    prefs.onboardingComplete ? 1 : 0
   );
 }

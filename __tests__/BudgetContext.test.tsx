@@ -11,7 +11,7 @@
 import { BudgetProvider, useBudget } from "@/context/BudgetContext";
 import type { Category, Expense } from "@/types";
 import { _setDatabase, initDatabase } from "@/utils/database";
-import { setPreferences } from "@/utils/storage";
+import { getPreferences, setPreferences } from "@/utils/storage";
 import { act, renderHook } from "@testing-library/react-native";
 import { getLocales } from "expo-localization";
 import { openDatabaseSync } from "expo-sqlite";
@@ -372,6 +372,50 @@ describe("BudgetProvider — locale and currency", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Onboarding
+// ---------------------------------------------------------------------------
+
+describe("BudgetProvider — setOnboardingComplete", () => {
+  // Keep a DB reference so we can read preferences back directly after
+  // the context action, confirming the write reached the database.
+  let db: ReturnType<typeof makeDb>;
+
+  beforeEach(() => {
+    db = makeDb();
+    _setDatabase(db);
+  });
+
+  it("onboardingComplete defaults to false on a fresh install", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    expect(result.current.state.onboardingComplete).toBe(false);
+  });
+
+  it("setOnboardingComplete(true) updates state", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    act(() => {
+      result.current.setOnboardingComplete(true);
+    });
+    expect(result.current.state.onboardingComplete).toBe(true);
+  });
+
+  it("setOnboardingComplete(true) persists to the database", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    act(() => {
+      result.current.setOnboardingComplete(true);
+    });
+    expect(getPreferences(db).onboardingComplete).toBe(true);
+  });
+
+  it("setOnboardingComplete(false) can revert the flag", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    act(() => { result.current.setOnboardingComplete(true); });
+    act(() => { result.current.setOnboardingComplete(false); });
+    expect(result.current.state.onboardingComplete).toBe(false);
+    expect(getPreferences(db).onboardingComplete).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Recurring expenses
 // ---------------------------------------------------------------------------
 
@@ -499,6 +543,7 @@ describe("BudgetProvider — importData", () => {
         notifyDailyExpense: false,
         notifyWeeklyBackup: false,
         crashlyticsEnabled: false,
+        onboardingComplete: true,
       });
     });
 
@@ -546,6 +591,7 @@ describe("BudgetProvider — importData", () => {
         notifyDailyExpense: false,
         notifyWeeklyBackup: false,
         crashlyticsEnabled: false,
+        onboardingComplete: true,
       });
     });
 
@@ -652,6 +698,7 @@ describe("BudgetProvider — first-launch device detection", () => {
       notifyDailyExpense: false,
       notifyWeeklyBackup: false,
       crashlyticsEnabled: false,
+      onboardingComplete: true,
     });
     _setDatabase(db);
 

@@ -54,6 +54,7 @@ export interface Preferences {
   notifyDailyExpense: boolean;
   notifyWeeklyBackup: boolean;
   crashlyticsEnabled: boolean;
+  onboardingComplete: boolean;
 }
 
 export interface Category {

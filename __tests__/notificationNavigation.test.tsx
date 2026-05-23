@@ -15,8 +15,9 @@ import { NOTIFICATION_IDS } from "@/utils/notifications";
 const mockPush = jest.fn();
 const mockUseBudget = jest.fn(() => ({
   isLoaded: true,
-  state: { lockEnabled: false },
+  state: { lockEnabled: false, onboardingComplete: true },
   lockSuppressed: false,
+  setOnboardingComplete: jest.fn(),
 }));
 let mockOnUnlock: (() => void) | null = null;
 
@@ -95,8 +96,9 @@ beforeEach(() => {
   mockAddListener.mockReturnValue({ remove: jest.fn() });
   mockUseBudget.mockReturnValue({
     isLoaded: true,
-    state: { lockEnabled: false },
+    state: { lockEnabled: false, onboardingComplete: true },
     lockSuppressed: false,
+    setOnboardingComplete: jest.fn(),
   });
   mockOnUnlock = null;
 });
@@ -189,8 +191,9 @@ describe("notification navigation with lock enabled", () => {
   it("queues navigation and fires after unlock on cold-start", async () => {
     mockUseBudget.mockReturnValue({
       isLoaded: true,
-      state: { lockEnabled: true },
+      state: { lockEnabled: true, onboardingComplete: true },
       lockSuppressed: false,
+      setOnboardingComplete: jest.fn(),
     });
     mockGetLast.mockResolvedValue(
       makeResponse(NOTIFICATION_IDS.dailyExpenseReminder),

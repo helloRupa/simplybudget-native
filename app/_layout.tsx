@@ -1,5 +1,6 @@
 import AppName from "@/components/AppName";
 import LockScreen from "@/components/LockScreen";
+import Onboarding from "@/components/Onboarding";
 import { colors } from "@/constants/colors";
 import { BudgetProvider, useBudget } from "@/context/BudgetContext";
 import { shouldReLock } from "@/utils/lockTimer";
@@ -25,7 +26,7 @@ initCrashlytics();
 
 function RootLayoutNav() {
   const router = useRouter();
-  const { isLoaded, state, lockSuppressed } = useBudget();
+  const { isLoaded, state, lockSuppressed, setOnboardingComplete } = useBudget();
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -192,6 +193,12 @@ function RootLayoutNav() {
       </Stack>
       {!isAuthenticated && (
         <LockScreen onUnlock={() => setIsAuthenticated(true)} />
+      )}
+      {isAuthenticated && !state.onboardingComplete && (
+        <Onboarding
+          onComplete={() => setOnboardingComplete(true)}
+          onGoToSettings={() => router.push("/(tabs)/settings")}
+        />
       )}
     </>
   );

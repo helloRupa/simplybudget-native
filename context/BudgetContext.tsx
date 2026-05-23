@@ -69,6 +69,7 @@ export interface State {
   notifyDailyExpense: boolean;
   notifyWeeklyBackup: boolean;
   crashlyticsEnabled: boolean;
+  onboardingComplete: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -93,6 +94,7 @@ type Action =
   | { type: "SET_NOTIFY_DAILY_EXPENSE"; payload: boolean }
   | { type: "SET_NOTIFY_WEEKLY_BACKUP"; payload: boolean }
   | { type: "SET_CRASHLYTICS_ENABLED"; payload: boolean }
+  | { type: "SET_ONBOARDING_COMPLETE"; payload: boolean }
   | { type: "ADD_RECURRING_EXPENSE"; payload: RecurringExpense }
   | { type: "UPDATE_RECURRING_EXPENSE"; payload: RecurringExpense }
   | { type: "DELETE_RECURRING_EXPENSE"; payload: string };
@@ -148,6 +150,8 @@ function reducer(state: State, action: Action): State {
       return { ...state, notifyWeeklyBackup: action.payload };
     case "SET_CRASHLYTICS_ENABLED":
       return { ...state, crashlyticsEnabled: action.payload };
+    case "SET_ONBOARDING_COMPLETE":
+      return { ...state, onboardingComplete: action.payload };
     case "ADD_RECURRING_EXPENSE":
       return {
         ...state,
@@ -191,6 +195,7 @@ interface BudgetContextValue {
   setNotifyDailyExpense: (enabled: boolean) => void;
   setNotifyWeeklyBackup: (enabled: boolean) => void;
   setCrashlyticsEnabled: (enabled: boolean) => void;
+  setOnboardingComplete: (complete: boolean) => void;
   importData: (data: State) => void;
   addRecurringExpense: (
     expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
@@ -235,6 +240,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     notifyDailyExpense: false,
     notifyWeeklyBackup: false,
     crashlyticsEnabled: false,
+    onboardingComplete: false,
   });
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -297,6 +303,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       notifyDailyExpense: prefs.notifyDailyExpense,
       notifyWeeklyBackup: prefs.notifyWeeklyBackup,
       crashlyticsEnabled: prefs.crashlyticsEnabled,
+      onboardingComplete: prefs.onboardingComplete,
     };
 
     // Seed budget history on first launch (no history yet)
@@ -530,6 +537,15 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     [db],
   );
 
+  const setOnboardingComplete = useCallback(
+    (complete: boolean) => {
+      const prefs = getPreferences(db);
+      setPreferences(db, { ...prefs, onboardingComplete: complete });
+      dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: complete });
+    },
+    [db],
+  );
+
   const addRecurringExpense = useCallback(
     (
       expense: Omit<RecurringExpense, "id" | "createdAt" | "lastGeneratedDate">,
@@ -601,6 +617,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
           notifyDailyExpense: notifyDailyExpenseRef.current, // device setting — not restored from backup
           notifyWeeklyBackup: notifyWeeklyBackupRef.current, // device setting — not restored from backup
           crashlyticsEnabled: crashlyticsEnabledRef.current, // device setting — not restored from backup
+          onboardingComplete: true, // already completed onboarding to reach Settings
         });
       });
       dispatch({
@@ -611,6 +628,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
           notifyDailyExpense: notifyDailyExpenseRef.current,
           notifyWeeklyBackup: notifyWeeklyBackupRef.current,
           crashlyticsEnabled: crashlyticsEnabledRef.current,
+          onboardingComplete: true,
         },
       });
     },
@@ -665,6 +683,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         setNotifyDailyExpense,
         setNotifyWeeklyBackup,
         setCrashlyticsEnabled,
+        setOnboardingComplete,
         importData,
         addRecurringExpense,
         updateRecurringExpense,

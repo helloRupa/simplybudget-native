@@ -26,7 +26,7 @@ export function _setDatabase(db: SQLite.SQLiteDatabase | null): void {
 
 export function initDatabase(db: SQLite.SQLiteDatabase): void {
   const tableInfo = db.getFirstSync<{ strict: number } | null>(
-    "SELECT strict FROM pragma_table_list WHERE name = 'expenses'"
+    "SELECT strict FROM pragma_table_list WHERE name = 'expenses'",
   );
   const needsRecreate = tableInfo === null || tableInfo.strict === 0;
 
@@ -90,9 +90,21 @@ export function initDatabase(db: SQLite.SQLiteDatabase): void {
       lockEnabled INTEGER NOT NULL DEFAULT 0,
       notifyDailyExpense INTEGER NOT NULL DEFAULT 0,
       notifyWeeklyBackup INTEGER NOT NULL DEFAULT 0,
-      crashlyticsEnabled INTEGER NOT NULL DEFAULT 0
+      crashlyticsEnabled INTEGER NOT NULL DEFAULT 0,
+      onboardingComplete INTEGER NOT NULL DEFAULT 0
     ) STRICT;
   `);
+
+  // Migration: add onboardingComplete for existing installs that predate this column
+  const hasOnboardingCol = db.getFirstSync<{ count: number }>(
+    "SELECT COUNT(*) as count FROM pragma_table_info('preferences') WHERE name = 'onboardingComplete'",
+  );
+
+  if (!hasOnboardingCol || hasOnboardingCol.count === 0) {
+    db.execSync(
+      "ALTER TABLE preferences ADD COLUMN onboardingComplete INTEGER NOT NULL DEFAULT 0",
+    );
+  }
 
   seedDefaultCategories(db);
 }
@@ -102,7 +114,7 @@ function seedDefaultCategories(db: SQLite.SQLiteDatabase): void {
     db.runSync(
       "INSERT OR IGNORE INTO categories (name, color) VALUES (?, ?)",
       cat.name,
-      cat.color
+      cat.color,
     );
   }
 }

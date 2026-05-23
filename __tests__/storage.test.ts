@@ -359,6 +359,7 @@ const testPrefs: Preferences = {
   notifyDailyExpense: false,
   notifyWeeklyBackup: false,
   crashlyticsEnabled: false,
+  onboardingComplete: false,
 };
 
 describe("preferences", () => {
@@ -384,6 +385,12 @@ describe("preferences", () => {
     const result = getPreferences(db);
     expect(result.weeklyBudget).toBe(999);
     expect(result.currency).toBe("EUR");
+  });
+
+  it("saves and retrieves onboardingComplete: true", () => {
+    const db = makeDb();
+    setPreferences(db, { ...testPrefs, onboardingComplete: true });
+    expect(getPreferences(db).onboardingComplete).toBe(true);
   });
 
   it("enforces single-row constraint (only one preferences row)", () => {

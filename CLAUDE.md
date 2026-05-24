@@ -50,6 +50,7 @@ npx expo install        # Install Expo-compatible packages (use instead of npm i
 - AsyncStorage is NOT used — all data (including preferences like locale, currency, weeklyBudget, firstUseDate) lives in expo-sqlite
 - For charts/graphs, use `react-native-gifted-charts` or `victory-native`
 - For data tables, use `react-native-table-component` or a FlatList-based approach
+- After adding or modifying code, remove any imports, variables, or parameters that are no longer used
 
 ## Navigation Pattern
 

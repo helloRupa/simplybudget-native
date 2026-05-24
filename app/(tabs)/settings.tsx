@@ -3,6 +3,7 @@ import {
   Alert,
   Keyboard,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -13,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
+import * as StoreReview from "expo-store-review";
 import * as WebBrowser from "expo-web-browser";
 import { Ionicons } from "@expo/vector-icons";
 import { useBudget } from "@/context/BudgetContext";
@@ -163,6 +165,19 @@ export default function SettingsScreen() {
     } catch (err) {
       recordNonFatalError(err as Error, CrashlyticsContext.HandleExportBackupFailed);
       setToast({ message: t("backupImportFailed"), type: "error" });
+    }
+  }
+
+  async function handleRateApp() {
+    const available = await StoreReview.isAvailableAsync();
+    if (available) {
+      await StoreReview.requestReview();
+    } else {
+      // TODO: add iOS App Store fallback once app is published on iOS:
+      // https://apps.apple.com/app/id<APPLE_APP_ID>
+      await Linking.openURL(
+        "https://play.google.com/store/apps/details?id=io.github.helloRupa.simplybudget"
+      );
     }
   }
 
@@ -502,6 +517,22 @@ export default function SettingsScreen() {
             color={colors.teal}
           />
           <Text style={styles.aboutText}>{t("privacyPolicy")}</Text>
+          <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+        </Pressable>
+
+        {/* Rate the App */}
+        <Pressable
+          style={styles.aboutRow}
+          onPress={handleRateApp}
+          accessibilityLabel={t("rateApp")}
+          accessibilityRole="button"
+        >
+          <Ionicons
+            name="star-outline"
+            size={20}
+            color={colors.teal}
+          />
+          <Text style={styles.aboutText}>{t("rateApp")}</Text>
           <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
         </Pressable>
 

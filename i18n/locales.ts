@@ -186,6 +186,7 @@ const en = {
   crashReportingUnavailable: "Crash reporting is unavailable on this device.",
 
   // About
+  rateApp: "Rate the App",
   privacyPolicy: "Privacy Policy",
   about: "About",
   aboutDescription:
@@ -368,6 +369,7 @@ const es: typeof en = {
   crashReportingEnabled: "Informes de fallos activados.",
   crashReportingDisabled: "Informes de fallos desactivados.",
   crashReportingUnavailable: "Los informes de fallos no están disponibles en este dispositivo.",
+  rateApp: "Valorar la App",
   privacyPolicy: "Política de Privacidad",
   about: "Acerca de",
   aboutDescription:
@@ -551,6 +553,7 @@ const fr: typeof en = {
   crashReportingEnabled: "Rapports de plantage activés.",
   crashReportingDisabled: "Rapports de plantage désactivés.",
   crashReportingUnavailable: "Les rapports de plantage ne sont pas disponibles sur cet appareil.",
+  rateApp: "Évaluer l'application",
   privacyPolicy: "Politique de Confidentialité",
   about: "À propos",
   aboutDescription:

@@ -3,6 +3,7 @@
  */
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react-native";
+import { Linking } from "react-native";
 import { openDatabaseSync } from "expo-sqlite";
 import { initDatabase, _setDatabase } from "@/utils/database";
 import { BudgetProvider } from "@/context/BudgetContext";
@@ -11,6 +12,14 @@ import SettingsScreen from "@/app/(tabs)/settings";
 jest.mock("expo-router", () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
+
+const mockIsAvailableAsync = jest.fn().mockResolvedValue(true);
+const mockRequestReview = jest.fn().mockResolvedValue(undefined);
+jest.mock("expo-store-review", () => ({
+  isAvailableAsync: (...args: unknown[]) => mockIsAvailableAsync(...args),
+  requestReview: (...args: unknown[]) => mockRequestReview(...args),
+}));
+
 
 // exportToCSV and backup utils touch native APIs — mock them
 jest.mock("@/utils/csv", () => ({ exportToCSV: jest.fn() }));
@@ -59,6 +68,7 @@ afterEach(() => {
   _setDatabase(null);
   jest.clearAllMocks();
   mockRequestNotificationPermissions.mockResolvedValue(true);
+  mockIsAvailableAsync.mockResolvedValue(true);
 });
 
 // ---------------------------------------------------------------------------
@@ -294,5 +304,39 @@ describe("SettingsScreen — notifications", () => {
     fireEvent(dailySwitch, "valueChange", false);
     await screen.findByText("Daily Expense Reminder");
     expect(mockRequestNotificationPermissions).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Rate the App
+// ---------------------------------------------------------------------------
+
+describe("SettingsScreen — rate the app", () => {
+  it("renders the Rate the App button", () => {
+    renderSettings();
+    expect(screen.getByText("Rate the App")).toBeTruthy();
+  });
+
+  it("calls requestReview when the native dialog is available", async () => {
+    mockIsAvailableAsync.mockResolvedValue(true);
+    renderSettings();
+    fireEvent.press(screen.getByText("Rate the App"));
+    await screen.findByText("Rate the App"); // wait for async handler
+    expect(mockRequestReview).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens the Play Store URL when the native dialog is unavailable", async () => {
+    mockIsAvailableAsync.mockResolvedValue(false);
+    const openURLSpy = jest
+      .spyOn(Linking, "openURL")
+      .mockResolvedValue(undefined);
+    renderSettings();
+    fireEvent.press(screen.getByText("Rate the App"));
+    await screen.findByText("Rate the App");
+    expect(mockRequestReview).not.toHaveBeenCalled();
+    expect(openURLSpy).toHaveBeenCalledWith(
+      "https://play.google.com/store/apps/details?id=io.github.helloRupa.simplybudget"
+    );
+    openURLSpy.mockRestore();
   });
 });

@@ -15,7 +15,8 @@
       "Bash(git -C /Users/rupa/Desktop/codeProjects/SimplyBudgetNative status)",
       "Bash(git -C /Users/rupa/Desktop/codeProjects/SimplyBudgetNative diff)",
       "Bash(npx jest *)",
-      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('jest',{}\\), indent=2\\)\\)\")"
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('jest',{}\\), indent=2\\)\\)\")",
+      "Bash(awk -F: '{print $2}')"
     ]
   }
 }

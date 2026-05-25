@@ -36,7 +36,7 @@ Add a short informative line to the last onboarding slide mentioning that the bu
 
 ### 5. Add Settings row
 
-Add a "Budget start day" row to Settings with a day picker (Sunday–Saturday). Include a warning blurb that changing this will shift historical week boundaries and may affect existing calculations.
+Add a "Budget start day" row to Settings with a day picker (Sunday–Saturday). Include a warning blurb that changing this will shift historical week boundaries and may affect existing calculations. Mention that users can add a one-off expense (with a negative amount for a credit or positive for a debit) to manually account for any difference in the transition week.
 
 ### 6. Implement the change handler
 
@@ -44,11 +44,11 @@ When the user saves a new `weekStartDay` in Settings:
 
 1. Compute new `firstUseDate` as the immediately preceding date matching the chosen weekday:
    ```ts
-   startOfWeek(parseISO(currentFirstUseDate), { weekStartsOn: newDay })
+   startOfWeek(parseISO(currentFirstUseDate), { weekStartsOn: newDay });
    ```
 2. Rewrite every `budget_history` `startDate` by applying the same function to each entry:
    ```ts
-   startOfWeek(parseISO(entry.startDate), { weekStartsOn: newDay })
+   startOfWeek(parseISO(entry.startDate), { weekStartsOn: newDay });
    ```
    No collision risk — the table enforces one entry per week start via `ON CONFLICT DO UPDATE`, so there is always at most one entry per week.
 3. Write updated `firstUseDate` and `weekStartDay` to preferences in the same operation.
@@ -70,13 +70,13 @@ Add i18n keys for the Settings row label, the day names (or use `Intl.DateTimeFo
 
 ## Files likely touched
 
-| File | Change |
-|---|---|
-| `utils/dates.ts` | Add `weekStartsOn` param to `getWeekRange`, `getWeekRanges` |
-| `utils/database.ts` | Migration: add `weekStartDay` column |
-| `utils/storage.ts` | Read/write `weekStartDay`; add function to rewrite `budget_history` startDates |
-| `context/BudgetContext.tsx` | Load + expose `weekStartDay`; implement change handler |
-| `app/(tabs)/settings.tsx` | New "Budget start day" row with picker and warning |
-| Onboarding slide component | Add informative text line |
-| `i18n/locales.ts` | New translation keys |
-| `__tests__/` | Update date utils tests; add shift logic tests |
+| File                        | Change                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| `utils/dates.ts`            | Add `weekStartsOn` param to `getWeekRange`, `getWeekRanges`                    |
+| `utils/database.ts`         | Migration: add `weekStartDay` column                                           |
+| `utils/storage.ts`          | Read/write `weekStartDay`; add function to rewrite `budget_history` startDates |
+| `context/BudgetContext.tsx` | Load + expose `weekStartDay`; implement change handler                         |
+| `app/(tabs)/settings.tsx`   | New "Budget start day" row with picker and warning                             |
+| Onboarding slide component  | Add informative text line                                                      |
+| `i18n/locales.ts`           | New translation keys                                                           |
+| `__tests__/`                | Update date utils tests; add shift logic tests                                 |

@@ -140,6 +140,7 @@ export default function ExpenseFormScreen() {
             onChange={setCategory}
             placeholder={t("selectCategory")}
             error={errors.category}
+            hint={t("categoryHint")}
           />
         </View>
 

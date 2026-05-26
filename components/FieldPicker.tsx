@@ -24,6 +24,7 @@ interface FieldPickerProps {
   onChange: (value: string) => void;
   placeholder?: string;
   error?: string;
+  hint?: string;
 }
 
 export default function FieldPicker({
@@ -33,6 +34,7 @@ export default function FieldPicker({
   onChange,
   placeholder,
   error,
+  hint,
 }: FieldPickerProps) {
   const [visible, setVisible] = useState(false);
   const selected = options.find((o) => o.value === value);
@@ -40,6 +42,7 @@ export default function FieldPicker({
   return (
     <View>
       <Text style={styles.label}>{label}</Text>
+      {hint ? <Text style={styles.hint}>{hint}</Text> : null}
       <Pressable
         style={[styles.trigger, error ? styles.triggerError : null]}
         onPress={() => setVisible(true)}
@@ -121,6 +124,12 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
   },
   error: { ...sharedStyles.inlineError },
+  hint: {
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    fontFamily: fonts.regular,
+    marginBottom: 6,
+  },
   backdrop: {
     flex: 1,
     backgroundColor: colors.overlay,

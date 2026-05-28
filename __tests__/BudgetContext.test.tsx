@@ -15,6 +15,7 @@ import { getPreferences, setPreferences } from "@/utils/storage";
 import { act, renderHook } from "@testing-library/react-native";
 import { getLocales } from "expo-localization";
 import { openDatabaseSync } from "expo-sqlite";
+import { getDay, parseISO } from "date-fns";
 import React from "react";
 
 const mockGetLocales = getLocales as jest.MockedFunction<typeof getLocales>;
@@ -372,6 +373,121 @@ describe("BudgetProvider — locale and currency", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Week start day
+// ---------------------------------------------------------------------------
+
+describe("BudgetProvider — setWeekStartDay", () => {
+  // Keep a DB reference so we can spy on the transaction and read prefs back.
+  let db: ReturnType<typeof makeDb>;
+
+  beforeEach(() => {
+    db = makeDb();
+    _setDatabase(db);
+  });
+
+  it("defaults to Monday (1) from the device calendar mock", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    expect(result.current.state.weekStartDay).toBe(1);
+  });
+
+  it("is a no-op when the day is unchanged (no transaction, no state change)", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    const firstUseBefore = result.current.state.firstUseDate;
+    const txSpy = jest.spyOn(db, "withTransactionSync");
+
+    act(() => {
+      result.current.setWeekStartDay(result.current.state.weekStartDay);
+    });
+
+    expect(txSpy).not.toHaveBeenCalled();
+    expect(result.current.state.firstUseDate).toBe(firstUseBefore);
+    txSpy.mockRestore();
+  });
+
+  it("changes weekStartDay and lands firstUseDate + history on the new weekday", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+
+    act(() => {
+      result.current.setWeekStartDay(0); // Sunday
+    });
+
+    expect(result.current.state.weekStartDay).toBe(0);
+    expect(getDay(parseISO(result.current.state.firstUseDate))).toBe(0);
+    result.current.state.budgetHistory.forEach((b) =>
+      expect(getDay(parseISO(b.startDate))).toBe(0),
+    );
+  });
+
+  it("persists the new weekStartDay and firstUseDate to the database", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+
+    act(() => {
+      result.current.setWeekStartDay(0);
+    });
+
+    const prefs = getPreferences(db);
+    expect(prefs.weekStartDay).toBe(0);
+    expect(prefs.firstUseDate).toBe(result.current.state.firstUseDate);
+  });
+
+  it("wraps the shift + persist in a single transaction", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    const txSpy = jest.spyOn(db, "withTransactionSync");
+
+    act(() => {
+      result.current.setWeekStartDay(0);
+    });
+
+    expect(txSpy).toHaveBeenCalledTimes(1);
+    txSpy.mockRestore();
+  });
+
+  it("round trip Mon → Sun → Mon restores firstUseDate and budget history", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    const originalFirstUse = result.current.state.firstUseDate;
+    const originalHistory = result.current.state.budgetHistory.map(
+      (b) => b.startDate,
+    );
+
+    act(() => {
+      result.current.setWeekStartDay(0);
+    });
+    act(() => {
+      result.current.setWeekStartDay(1);
+    });
+
+    expect(result.current.state.weekStartDay).toBe(1);
+    expect(result.current.state.firstUseDate).toBe(originalFirstUse);
+    expect(result.current.state.budgetHistory.map((b) => b.startDate)).toEqual(
+      originalHistory,
+    );
+  });
+
+  it("expense guard keeps firstUseDate on or before the earliest expense", () => {
+    const { result } = renderHook(() => useBudget(), { wrapper });
+    const monday = result.current.state.firstUseDate; // a Monday
+
+    act(() => {
+      result.current.addExpense({
+        amount: 10,
+        category: "Food",
+        description: "",
+        date: monday,
+      });
+    });
+
+    act(() => {
+      result.current.setWeekStartDay(2); // Tuesday
+    });
+
+    // Naive Tuesday candidate would be after the Monday expense; the guard
+    // pulls firstUseDate back a week so it never lands after existing data.
+    expect(result.current.state.firstUseDate <= monday).toBe(true);
+    expect(getDay(parseISO(result.current.state.firstUseDate))).toBe(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Onboarding
 // ---------------------------------------------------------------------------
 
@@ -537,6 +653,7 @@ describe("BudgetProvider — importData", () => {
         budgetHistory: [{ startDate: "2026-03-30", amount: 300 }],
         weeklyBudget: 300,
         firstUseDate: "2026-03-30",
+        weekStartDay: 1,
         locale: "en",
         currency: "EUR",
         lockEnabled: false,
@@ -585,6 +702,7 @@ describe("BudgetProvider — importData", () => {
         budgetHistory: [{ startDate: "2026-03-30", amount: 300 }],
         weeklyBudget: 300,
         firstUseDate: "2026-03-30",
+        weekStartDay: 1,
         locale: "en",
         currency: "USD",
         lockEnabled: false,
@@ -692,6 +810,7 @@ describe("BudgetProvider — first-launch device detection", () => {
     setPreferences(db, {
       weeklyBudget: 200,
       firstUseDate: "2026-04-06",
+      weekStartDay: 1,
       locale: "en-US",
       currency: "USD",
       lockEnabled: false,

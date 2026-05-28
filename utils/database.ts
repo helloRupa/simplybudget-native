@@ -91,7 +91,8 @@ export function initDatabase(db: SQLite.SQLiteDatabase): void {
       notifyDailyExpense INTEGER NOT NULL DEFAULT 0,
       notifyWeeklyBackup INTEGER NOT NULL DEFAULT 0,
       crashlyticsEnabled INTEGER NOT NULL DEFAULT 0,
-      onboardingComplete INTEGER NOT NULL DEFAULT 0
+      onboardingComplete INTEGER NOT NULL DEFAULT 0,
+      weekStartDay INTEGER NOT NULL DEFAULT 1 CHECK (weekStartDay BETWEEN 0 AND 6)
     ) STRICT;
   `);
 
@@ -103,6 +104,19 @@ export function initDatabase(db: SQLite.SQLiteDatabase): void {
   if (!hasOnboardingCol || hasOnboardingCol.count === 0) {
     db.execSync(
       "ALTER TABLE preferences ADD COLUMN onboardingComplete INTEGER NOT NULL DEFAULT 0",
+    );
+  }
+
+  // Migration: add weekStartDay for existing installs that predate this column.
+  // Default 1 (Monday) matches the previously hardcoded week start, so existing
+  // users are unaffected.
+  const hasWeekStartDayCol = db.getFirstSync<{ count: number }>(
+    "SELECT COUNT(*) as count FROM pragma_table_info('preferences') WHERE name = 'weekStartDay'",
+  );
+
+  if (!hasWeekStartDayCol || hasWeekStartDayCol.count === 0) {
+    db.execSync(
+      "ALTER TABLE preferences ADD COLUMN weekStartDay INTEGER NOT NULL DEFAULT 1 CHECK (weekStartDay BETWEEN 0 AND 6)",
     );
   }
 

@@ -4,6 +4,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { Expense, RecurringExpense, WeeklyBudget, Category } from "@/types";
 import { LocaleKey } from "@/i18n/locales";
 import { State } from "@/context/BudgetContext";
+import type { Day } from "date-fns";
 
 const BACKUP_VERSION = 1;
 
@@ -15,6 +16,7 @@ interface BackupFile {
     weeklyBudget: number;
     categories: unknown[];
     firstUseDate: string;
+    weekStartDay?: number;
     locale: string;
     currency: string;
     recurringExpenses: RecurringExpense[];
@@ -120,11 +122,20 @@ export async function pickAndParseBackup(): Promise<State> {
       ? "fr"
       : "en";
 
+  // Backups predating the week-start feature default to Monday (1).
+  const weekStartDay: Day =
+    typeof data.weekStartDay === "number" &&
+    data.weekStartDay >= 0 &&
+    data.weekStartDay <= 6
+      ? (data.weekStartDay as Day)
+      : 1;
+
   return {
     expenses: data.expenses,
     weeklyBudget: data.weeklyBudget,
     categories,
     firstUseDate: data.firstUseDate,
+    weekStartDay,
     locale,
     currency: data.currency ?? "USD",
     recurringExpenses: data.recurringExpenses ?? [],

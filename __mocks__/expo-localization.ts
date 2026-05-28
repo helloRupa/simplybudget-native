@@ -18,3 +18,18 @@ export const getLocales = jest.fn(() => [
     uses24HourClock: false,
   },
 ]);
+
+/**
+ * Returns a single calendar with firstWeekday in CLDR convention (1=Sunday ..
+ * 7=Saturday). Defaults to 2 (Monday) so the date-fns conversion lands on 1
+ * (Monday), matching the app's historical hardcoded week start. Individual
+ * tests can override with mockReturnValue to simulate other devices.
+ */
+export const getCalendars = jest.fn(() => [
+  {
+    calendar: "gregory",
+    timeZone: "America/New_York",
+    uses24hourClock: false,
+    firstWeekday: 2,
+  },
+]);

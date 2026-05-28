@@ -87,6 +87,22 @@ const en = {
   backupImportFailed: "Failed to import backup.",
   importConfirm: "This will replace all your current data. Are you sure?",
 
+  // Budget Start Day
+  budgetStartDay: "Budget Start Day",
+  experimental: "Experimental",
+  setBudgetStartDay: "Set Budget Start Day",
+  budgetStartDayCurrent: "Currently starts on",
+  budgetStartDayPickerLabel: "Day your budget week starts on",
+  budgetStartDayWarningBackup:
+    "Back up or export your budget history before continuing, in case anything goes wrong.",
+  budgetStartDayWarningShift:
+    "Changing the start day shifts your historical week boundaries and may affect existing calculations.",
+  budgetStartDayWarningAdjust:
+    "Afterward, you can add a one-off expense (negative for a credit, positive for a debit) to account for any difference in the transition week.",
+  budgetStartDayConfirmTitle: "Change budget start day?",
+  budgetStartDayUpdated: "Budget start day updated!",
+  ok: "OK",
+
   // Validation
   amountRequired: "Amount is required.",
   amountPositive: "Amount must be greater than zero.",
@@ -208,6 +224,7 @@ const en = {
   onboardingRecurringBody: "Got bills or subscriptions? Add them as recurring expenses and they'll be factored into your budget automatically. Find them under Settings.",
   onboardingBudgetTitle: "Start with a number",
   onboardingBudgetBody: "Everything in SimplyBudget is measured against your weekly budget. Set it once and your dashboard will tell you exactly how you're tracking — week by week.",
+  onboardingBudgetStartDayHint: "Tip: you can choose which day your budget week starts on in Settings.",
   onboardingSetBudget: "Set Budget",
   onboardingNext: "Next",
   onboardingBack: "Back",
@@ -283,6 +300,22 @@ const es: typeof en = {
   backupImported: "¡Respaldo importado exitosamente!",
   backupImportFailed: "Error al importar el respaldo.",
   importConfirm: "Esto reemplazará todos tus datos actuales. ¿Estás seguro?",
+
+  // Budget Start Day
+  budgetStartDay: "Día de Inicio del Presupuesto",
+  experimental: "Experimental",
+  setBudgetStartDay: "Establecer Día de Inicio",
+  budgetStartDayCurrent: "Actualmente comienza el",
+  budgetStartDayPickerLabel: "Día en que comienza tu semana de presupuesto",
+  budgetStartDayWarningBackup:
+    "Respalda o exporta tu historial de presupuesto antes de continuar, por si algo sale mal.",
+  budgetStartDayWarningShift:
+    "Cambiar el día de inicio desplazará los límites de tus semanas históricas y puede afectar los cálculos existentes.",
+  budgetStartDayWarningAdjust:
+    "Después, puedes agregar un gasto único (negativo para un crédito, positivo para un débito) para tener en cuenta cualquier diferencia en la semana de transición.",
+  budgetStartDayConfirmTitle: "¿Cambiar el día de inicio del presupuesto?",
+  budgetStartDayUpdated: "¡Día de inicio del presupuesto actualizado!",
+  ok: "Aceptar",
   amountRequired: "El monto es requerido.",
   amountPositive: "El monto debe ser mayor que cero.",
   amountNonZero: "El monto no puede ser cero.",
@@ -392,6 +425,7 @@ const es: typeof en = {
   onboardingRecurringBody: "¿Tienes facturas o suscripciones? Agrégalas como gastos recurrentes y se tendrán en cuenta en tu presupuesto automáticamente. Encuéntralos en Ajustes.",
   onboardingBudgetTitle: "Empieza con un número",
   onboardingBudgetBody: "Todo en SimplyBudget se mide contra tu presupuesto semanal. Configúralo una vez y tu panel te dirá exactamente cómo vas, semana a semana.",
+  onboardingBudgetStartDayHint: "Consejo: puedes elegir en qué día comienza tu semana de presupuesto en Ajustes.",
   onboardingSetBudget: "Establecer presupuesto",
   onboardingNext: "Siguiente",
   onboardingBack: "Atrás",
@@ -468,6 +502,22 @@ const fr: typeof en = {
   backupImported: "Sauvegarde importée avec succès!",
   backupImportFailed: "Échec de l'importation de la sauvegarde.",
   importConfirm: "Cela remplacera toutes vos données actuelles. Êtes-vous sûr?",
+
+  // Budget Start Day
+  budgetStartDay: "Jour de Début du Budget",
+  experimental: "Expérimental",
+  setBudgetStartDay: "Définir le Jour de Début",
+  budgetStartDayCurrent: "Commence actuellement le",
+  budgetStartDayPickerLabel: "Jour où commence votre semaine de budget",
+  budgetStartDayWarningBackup:
+    "Sauvegardez ou exportez votre historique de budget avant de continuer, au cas où.",
+  budgetStartDayWarningShift:
+    "Changer le jour de début décalera les limites de vos semaines historiques et peut affecter les calculs existants.",
+  budgetStartDayWarningAdjust:
+    "Ensuite, vous pouvez ajouter une dépense ponctuelle (négative pour un crédit, positive pour un débit) pour tenir compte de toute différence dans la semaine de transition.",
+  budgetStartDayConfirmTitle: "Changer le jour de début du budget ?",
+  budgetStartDayUpdated: "Jour de début du budget mis à jour !",
+  ok: "OK",
   amountRequired: "Le montant est requis.",
   amountPositive: "Le montant doit être supérieur à zéro.",
   amountNonZero: "Le montant ne peut pas être zéro.",
@@ -577,6 +627,7 @@ const fr: typeof en = {
   onboardingRecurringBody: "Vous avez des factures ou des abonnements ? Ajoutez-les comme dépenses récurrentes et ils seront pris en compte dans votre budget automatiquement. Retrouvez-les dans Paramètres.",
   onboardingBudgetTitle: "Commencez avec un chiffre",
   onboardingBudgetBody: "Tout dans SimplyBudget est mesuré par rapport à votre budget hebdomadaire. Définissez-le une fois et votre tableau de bord vous indiquera exactement comment vous vous en sortez, semaine après semaine.",
+  onboardingBudgetStartDayHint: "Astuce : vous pouvez choisir le jour où commence votre semaine de budget dans Paramètres.",
   onboardingSetBudget: "Définir le budget",
   onboardingNext: "Suivant",
   onboardingBack: "Retour",

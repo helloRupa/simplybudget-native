@@ -1,3 +1,5 @@
+import type { Day } from "date-fns";
+
 export interface Expense {
   id: string;
   amount: number;
@@ -27,7 +29,7 @@ export interface RecurringExpense {
 
 export interface WeeklyBudget {
   amount: number;
-  startDate: string; // ISO date of the Monday that begins this budget week
+  startDate: string; // ISO date of the weekday that begins this budget week
 }
 
 export interface FilterState {
@@ -48,6 +50,7 @@ export interface SortState {
 export interface Preferences {
   weeklyBudget: number;
   firstUseDate: string; // ISO date YYYY-MM-DD
+  weekStartDay: Day; // 0=Sunday..6=Saturday — day the budget week begins on
   locale: string;
   currency: string;
   lockEnabled: boolean;

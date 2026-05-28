@@ -6,6 +6,7 @@ import type {
   RecurringExpense,
 } from "@/types";
 import { getWeekRange, toISODate } from "@/utils/dates";
+import type { Day } from "date-fns";
 
 // ---------------------------------------------------------------------------
 // Expenses
@@ -210,6 +211,7 @@ export function clearAllData(db: SQLiteDatabase): void {
 const PREFERENCES_DEFAULTS: Preferences = {
   weeklyBudget: 200,
   firstUseDate: toISODate(getWeekRange().start),
+  weekStartDay: 1,
   locale: "en-US",
   currency: "USD",
   lockEnabled: false,
@@ -223,6 +225,7 @@ export function getPreferences(db: SQLiteDatabase): Preferences {
   const row = db.getFirstSync<{
     weeklyBudget: number;
     firstUseDate: string;
+    weekStartDay: number;
     locale: string;
     currency: string;
     lockEnabled: number;
@@ -231,12 +234,13 @@ export function getPreferences(db: SQLiteDatabase): Preferences {
     crashlyticsEnabled: number;
     onboardingComplete: number;
   }>(
-    "SELECT weeklyBudget, firstUseDate, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup, crashlyticsEnabled, onboardingComplete FROM preferences WHERE id = 1"
+    "SELECT weeklyBudget, firstUseDate, weekStartDay, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup, crashlyticsEnabled, onboardingComplete FROM preferences WHERE id = 1"
   );
   if (!row) return { ...PREFERENCES_DEFAULTS };
   return {
     weeklyBudget: row.weeklyBudget,
     firstUseDate: row.firstUseDate,
+    weekStartDay: row.weekStartDay as Day,
     locale: row.locale,
     currency: row.currency,
     lockEnabled: row.lockEnabled === 1,
@@ -252,11 +256,12 @@ export function setPreferences(
   prefs: Preferences
 ): void {
   db.runSync(
-    `INSERT INTO preferences (id, weeklyBudget, firstUseDate, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup, crashlyticsEnabled, onboardingComplete)
-     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO preferences (id, weeklyBudget, firstUseDate, weekStartDay, locale, currency, lockEnabled, notifyDailyExpense, notifyWeeklyBackup, crashlyticsEnabled, onboardingComplete)
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET
        weeklyBudget = excluded.weeklyBudget,
        firstUseDate = excluded.firstUseDate,
+       weekStartDay = excluded.weekStartDay,
        locale = excluded.locale,
        currency = excluded.currency,
        lockEnabled = excluded.lockEnabled,
@@ -266,6 +271,7 @@ export function setPreferences(
        onboardingComplete = excluded.onboardingComplete`,
     prefs.weeklyBudget,
     prefs.firstUseDate,
+    prefs.weekStartDay,
     prefs.locale,
     prefs.currency,
     prefs.lockEnabled ? 1 : 0,
@@ -274,4 +280,34 @@ export function setPreferences(
     prefs.crashlyticsEnabled ? 1 : 0,
     prefs.onboardingComplete ? 1 : 0
   );
+}
+
+// ---------------------------------------------------------------------------
+// Week start day shift
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns the earliest expense date (YYYY-MM-DD), or null when there are none.
+ * Used as the anchor for the firstUseDate invariant when shifting the week
+ * start day: firstUseDate must never fall after a user's first expense.
+ */
+export function getEarliestExpenseDate(db: SQLiteDatabase): string | null {
+  const row = db.getFirstSync<{ minDate: string | null }>(
+    "SELECT MIN(date) as minDate FROM expenses"
+  );
+  return row?.minDate ?? null;
+}
+
+/**
+ * Shifts every budget_history.startDate by the same number of days. Because all
+ * rows shared the old weekday they all land on the new weekday, preserving the
+ * 7-day spacing — so no startDate primary-key collisions are possible.
+ */
+export function shiftBudgetHistory(
+  db: SQLiteDatabase,
+  deltaDays: number
+): void {
+  if (deltaDays === 0) return;
+  const modifier = `${deltaDays >= 0 ? "+" : ""}${deltaDays} days`;
+  db.runSync("UPDATE budget_history SET startDate = date(startDate, ?)", modifier);
 }

@@ -7,10 +7,20 @@
 import {
   getDeviceCurrencyCode,
   getDeviceLocaleKey,
+  getDeviceWeekStartDay,
 } from "@/utils/deviceLocale";
-import { getLocales } from "expo-localization";
+import { getCalendars, getLocales } from "expo-localization";
 
 const mockGetLocales = getLocales as jest.MockedFunction<typeof getLocales>;
+const mockGetCalendars = getCalendars as jest.MockedFunction<
+  typeof getCalendars
+>;
+
+function mockFirstWeekday(firstWeekday: number | null | undefined) {
+  mockGetCalendars.mockReturnValue([
+    { firstWeekday } as ReturnType<typeof getCalendars>[number],
+  ]);
+}
 
 function mockDevice(languageCode: string | null, currencyCode: string | null) {
   mockGetLocales.mockReturnValue([
@@ -20,6 +30,7 @@ function mockDevice(languageCode: string | null, currencyCode: string | null) {
 
 afterEach(() => {
   mockGetLocales.mockClear();
+  mockGetCalendars.mockClear();
 });
 
 // ---------------------------------------------------------------------------
@@ -106,5 +117,36 @@ describe("getDeviceCurrencyCode", () => {
   it("handles empty locale list gracefully", () => {
     mockGetLocales.mockReturnValue([]);
     expect(getDeviceCurrencyCode()).toBe("USD");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getDeviceWeekStartDay
+// ---------------------------------------------------------------------------
+
+describe("getDeviceWeekStartDay", () => {
+  it("converts CLDR Sunday (1) to date-fns Sunday (0)", () => {
+    mockFirstWeekday(1);
+    expect(getDeviceWeekStartDay()).toBe(0);
+  });
+
+  it("converts CLDR Monday (2) to date-fns Monday (1)", () => {
+    mockFirstWeekday(2);
+    expect(getDeviceWeekStartDay()).toBe(1);
+  });
+
+  it("converts CLDR Saturday (7) to date-fns Saturday (6)", () => {
+    mockFirstWeekday(7);
+    expect(getDeviceWeekStartDay()).toBe(6);
+  });
+
+  it("falls back to Monday (1) when firstWeekday is missing", () => {
+    mockFirstWeekday(undefined);
+    expect(getDeviceWeekStartDay()).toBe(1);
+  });
+
+  it("falls back to Monday (1) when the calendar list is empty", () => {
+    mockGetCalendars.mockReturnValue([]);
+    expect(getDeviceWeekStartDay()).toBe(1);
   });
 });

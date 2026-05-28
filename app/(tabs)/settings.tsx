@@ -263,6 +263,32 @@ export default function SettingsScreen() {
           </Text>
         </View>
 
+        {/* Budget Start Day */}
+        <View style={styles.section}>
+          <View style={styles.sectionTitleRow}>
+            <Text style={styles.sectionTitle}>{t("budgetStartDay")}</Text>
+            <View style={styles.experimentalBadge}>
+              <Text style={styles.experimentalBadgeText}>
+                {t("experimental")}
+              </Text>
+            </View>
+          </View>
+          <Pressable
+            style={styles.navRow}
+            onPress={() => {
+              logToCrashlytics(CrashlyticsLog.NavigatedToBudgetStartDay);
+              router.push("/budget-start-day");
+            }}
+          >
+            <Text style={styles.navRowText}>{t("setBudgetStartDay")}</Text>
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={colors.textMuted}
+            />
+          </Pressable>
+        </View>
+
         {/* Currency */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("currency")}</Text>
@@ -585,6 +611,26 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: fontSize.xl,
     fontFamily: fonts.semiBold,
+  },
+  sectionTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  experimentalBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.full,
+    backgroundColor: colors.amberSubtle,
+    borderWidth: 1,
+    borderColor: colors.amberBorder,
+  },
+  experimentalBadgeText: {
+    color: colors.amber,
+    fontSize: fontSize.sm,
+    fontFamily: fonts.semiBold,
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
   },
   // Budget
   budgetRow: {

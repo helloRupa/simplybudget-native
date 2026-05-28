@@ -1,6 +1,9 @@
 import { WeeklyBudget } from "@/types";
 import {
+  addDays,
   addWeeks,
+  Day,
+  differenceInCalendarDays,
   endOfMonth,
   endOfWeek,
   format,
@@ -8,11 +11,12 @@ import {
   parseISO,
   startOfMonth,
   startOfWeek,
+  subDays,
 } from "date-fns";
 
-export function getWeekRange(date: Date = new Date()) {
-  const start = startOfWeek(date, { weekStartsOn: 1 }); // Monday
-  const end = endOfWeek(date, { weekStartsOn: 1 }); // Sunday
+export function getWeekRange(date: Date = new Date(), weekStartsOn: Day = 1) {
+  const start = startOfWeek(date, { weekStartsOn });
+  const end = endOfWeek(date, { weekStartsOn });
   return { start, end };
 }
 
@@ -77,19 +81,57 @@ export function getBudgetForWeek(
 export function getTotalBudgeted(
   firstUseDate: string,
   budgetHistory: WeeklyBudget[],
+  weekStartsOn: Day = 1,
 ): number {
-  const weekRanges = getWeekRanges(firstUseDate);
+  const weekRanges = getWeekRanges(firstUseDate, weekStartsOn);
   return weekRanges.reduce(
     (sum, week) => sum + getBudgetForWeek(week.start, budgetHistory),
     0,
   );
 }
 
+/**
+ * Computes the new firstUseDate when the budget week start day changes.
+ *
+ * Picks the `newWeekStartDay` weekday closest to `currentFirstUseDate` (forward
+ * or backward, fewer days wins; on a tie, backward is preferred). Then applies
+ * the expense guard: if the earliest expense falls strictly before the
+ * candidate, the candidate is shifted back one week so firstUseDate never lands
+ * after a user's first expense. A single 7-day shift is always sufficient
+ * because the candidate is within ±3 days of the (already-valid) current
+ * firstUseDate.
+ *
+ * Strict `<` (not `<=`) is deliberate: an expense exactly on the candidate
+ * belongs to the first week (no shift), which also preserves round-trip closure
+ * (e.g. Mon → Sun → Mon with an expense on Mon returns to Mon).
+ */
+export function computeShiftedFirstUseDate(
+  currentFirstUseDate: string,
+  newWeekStartDay: Day,
+  earliestExpense: string | null,
+): string {
+  const current = parseISO(currentFirstUseDate);
+  const back = startOfWeek(current, { weekStartsOn: newWeekStartDay });
+  const fwd = addDays(back, 7);
+  const dBack = differenceInCalendarDays(current, back);
+  const dFwd = differenceInCalendarDays(fwd, current);
+  const candidate = dBack <= dFwd ? back : fwd;
+
+  const candidateStr = toISODate(candidate);
+  const guarded =
+    earliestExpense !== null && earliestExpense < candidateStr
+      ? subDays(candidate, 7)
+      : candidate;
+
+  return toISODate(guarded);
+}
+
 export function getWeekRanges(
   firstUseDate: string,
+  weekStartsOn: Day = 1,
 ): { start: Date; end: Date }[] {
   try {
-    const startDate = startOfWeek(parseISO(firstUseDate), { weekStartsOn: 1 });
+    const startDate = startOfWeek(parseISO(firstUseDate), { weekStartsOn });
     const now = new Date();
     const weeks: { start: Date; end: Date }[] = [];
     let current = startDate;
@@ -97,7 +139,7 @@ export function getWeekRanges(
     while (current <= now) {
       weeks.push({
         start: current,
-        end: endOfWeek(current, { weekStartsOn: 1 }),
+        end: endOfWeek(current, { weekStartsOn }),
       });
       current = addWeeks(current, 1);
     }

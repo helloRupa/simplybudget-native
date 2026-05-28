@@ -45,6 +45,8 @@ export const CrashlyticsLog = {
   BackupExportSucceeded: "Backup export succeeded",
   BackupImportSucceeded: "Backup import succeeded",
   NavigatedToRecurringExpenses: "Navigated to recurring expenses",
+  NavigatedToBudgetStartDay: "Navigated to budget start day",
+  BudgetStartDayChanged: "Budget start day changed",
 } as const;
 
 type CrashlyticsLogValue = (typeof CrashlyticsLog)[keyof typeof CrashlyticsLog];

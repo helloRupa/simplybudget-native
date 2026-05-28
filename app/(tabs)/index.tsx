@@ -204,7 +204,10 @@ export default function DashboardScreen() {
   const { state, t, tc, fc, fd, currencySymbol, intlLocale } = useBudget();
 
   const stats = useMemo(() => {
-    const { start: weekStart, end: weekEnd } = getWeekRange();
+    const { start: weekStart, end: weekEnd } = getWeekRange(
+      new Date(),
+      state.weekStartDay,
+    );
     const { start: monthStart, end: monthEnd } = getMonthRange();
 
     const expensesInRange = (start: Date, end: Date) =>
@@ -225,8 +228,12 @@ export default function DashboardScreen() {
     const totalSpent = state.expenses.reduce((sum, e) => sum + e.amount, 0);
 
     const now = new Date();
-    const weekRanges = getWeekRanges(state.firstUseDate);
-    const totalBudgeted = getTotalBudgeted(state.firstUseDate, state.budgetHistory);
+    const weekRanges = getWeekRanges(state.firstUseDate, state.weekStartDay);
+    const totalBudgeted = getTotalBudgeted(
+      state.firstUseDate,
+      state.budgetHistory,
+      state.weekStartDay,
+    );
     const totalSpentToDate = state.expenses
       .filter((e) => {
         try {

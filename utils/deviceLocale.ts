@@ -1,7 +1,8 @@
 import type { LocaleKey } from "@/i18n/locales";
 import { SUPPORTED_CURRENCIES } from "@/utils/constants";
 import type { CurrencyCode } from "@/utils/constants";
-import { getLocales } from "expo-localization";
+import { getCalendars, getLocales } from "expo-localization";
+import type { Day } from "date-fns";
 
 /**
  * Returns the closest supported LocaleKey for the device's preferred language,
@@ -21,4 +22,15 @@ export function getDeviceLocaleKey(): LocaleKey {
 export function getDeviceCurrencyCode(): CurrencyCode {
   const code = getLocales()[0]?.currencyCode ?? "";
   return code in SUPPORTED_CURRENCIES ? (code as CurrencyCode) : "USD";
+}
+
+/**
+ * Returns the device's preferred first day of the week as a date-fns Day (0=Sun
+ * .. 6=Sat). expo-localization reports CLDR firstWeekday (1=Sun .. 7=Sat), so we
+ * convert with (firstWeekday - 1) % 7. Falls back to 1 (Monday) if unavailable.
+ */
+export function getDeviceWeekStartDay(): Day {
+  const firstWeekday = getCalendars()[0]?.firstWeekday;
+  if (typeof firstWeekday !== "number") return 1;
+  return ((firstWeekday - 1) % 7) as Day;
 }

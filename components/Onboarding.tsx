@@ -79,6 +79,9 @@ export default function Onboarding({ onComplete, onGoToSettings }: OnboardingPro
         <Ionicons name={slide.icon} size={72} color={colors.teal} style={styles.icon} />
         <Text style={styles.title}>{t(slide.titleKey)}</Text>
         <Text style={styles.body}>{t(slide.bodyKey)}</Text>
+        {isLast && (
+          <Text style={styles.hint}>{t("onboardingBudgetStartDayHint")}</Text>
+        )}
       </View>
 
       <View style={styles.footer}>
@@ -154,6 +157,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     textAlign: "center",
     lineHeight: 26,
+  },
+  hint: {
+    color: colors.textMuted,
+    fontSize: fontSize.lg,
+    fontFamily: fonts.regular,
+    textAlign: "center",
+    lineHeight: 20,
   },
   footer: {
     gap: 24,

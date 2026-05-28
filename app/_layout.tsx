@@ -190,6 +190,10 @@ function RootLayoutNav() {
           name="recurring-expenses"
           options={{ title: "Recurring Expenses" }}
         />
+        <Stack.Screen
+          name="budget-start-day"
+          options={{ title: "Budget Start Day" }}
+        />
       </Stack>
       {!isAuthenticated && (
         <LockScreen onUnlock={() => setIsAuthenticated(true)} />

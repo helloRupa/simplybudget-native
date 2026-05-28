@@ -11,6 +11,7 @@ import {
   deleteRecurringExpense,
   getBudgetHistory,
   getCategories,
+  getEarliestExpenseDate,
   getExpenses,
   getPreferences,
   getRecurringExpenses,
@@ -19,9 +20,11 @@ import {
   saveExpense,
   saveRecurringExpense,
   setPreferences,
+  shiftBudgetHistory,
   updateLastGeneratedDate,
 } from "@/utils/storage";
 import type { Expense, Preferences, RecurringExpense } from "@/types";
+import { getDay, parseISO } from "date-fns";
 
 function makeDb(): SQLiteDatabase {
   const db = openDatabaseSync("test.db");
@@ -309,6 +312,74 @@ describe("budget history", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Week start day shift
+// ---------------------------------------------------------------------------
+
+describe("getEarliestExpenseDate", () => {
+  it("returns null when there are no expenses", () => {
+    const db = makeDb();
+    expect(getEarliestExpenseDate(db)).toBeNull();
+  });
+
+  it("returns the minimum date regardless of insertion order", () => {
+    const db = makeDb();
+    saveExpense(db, { ...expense2, id: "e-a", date: "2026-04-10" });
+    saveExpense(db, { ...expense1, id: "e-b", date: "2026-04-02" });
+    saveExpense(db, { ...expense1, id: "e-c", date: "2026-04-06" });
+    expect(getEarliestExpenseDate(db)).toBe("2026-04-02");
+  });
+});
+
+describe("shiftBudgetHistory", () => {
+  // 2026-04-06, -13, -20 are all Mondays
+  function seedMondays(db: SQLiteDatabase) {
+    saveBudgetHistory(db, "2026-04-06", 100);
+    saveBudgetHistory(db, "2026-04-13", 150);
+    saveBudgetHistory(db, "2026-04-20", 200);
+  }
+
+  it("shifts every row by the same delta, preserving 7-day spacing and amounts", () => {
+    const db = makeDb();
+    seedMondays(db);
+    shiftBudgetHistory(db, -1); // Monday → Sunday
+
+    const rows = getBudgetHistory(db); // DESC by startDate
+    expect(rows.map((r) => r.startDate)).toEqual([
+      "2026-04-19",
+      "2026-04-12",
+      "2026-04-05",
+    ]);
+    // all land on the new weekday (Sunday)
+    rows.forEach((r) => expect(getDay(parseISO(r.startDate))).toBe(0));
+    // amounts unaffected
+    expect(rows.find((r) => r.startDate === "2026-04-19")?.amount).toBe(200);
+  });
+
+  it("is a no-op when delta is 0", () => {
+    const db = makeDb();
+    seedMondays(db);
+    shiftBudgetHistory(db, 0);
+    expect(getBudgetHistory(db).map((r) => r.startDate)).toEqual([
+      "2026-04-20",
+      "2026-04-13",
+      "2026-04-06",
+    ]);
+  });
+
+  it("round trips: shifting -1 then +1 restores the original dates", () => {
+    const db = makeDb();
+    seedMondays(db);
+    shiftBudgetHistory(db, -1);
+    shiftBudgetHistory(db, 1);
+    expect(getBudgetHistory(db).map((r) => r.startDate)).toEqual([
+      "2026-04-20",
+      "2026-04-13",
+      "2026-04-06",
+    ]);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Categories
 // ---------------------------------------------------------------------------
 
@@ -353,6 +424,7 @@ describe("categories", () => {
 const testPrefs: Preferences = {
   weeklyBudget: 300,
   firstUseDate: "2026-01-01",
+  weekStartDay: 1,
   locale: "en-GB",
   currency: "GBP",
   lockEnabled: false,

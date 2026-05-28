@@ -8,7 +8,12 @@ import {
 import { Category, Expense, RecurringExpense, WeeklyBudget } from "@/types";
 import { formatCurrency, getCurrencySymbol } from "@/utils/currency";
 import { getDatabase } from "@/utils/database";
-import { formatDate, getWeekRange, toISODate } from "@/utils/dates";
+import {
+  computeShiftedFirstUseDate,
+  formatDate,
+  getWeekRange,
+  toISODate,
+} from "@/utils/dates";
 import { MOCK_STATE } from "@/utils/mockData";
 import { generatePendingExpenses } from "@/utils/recurring";
 import {
@@ -26,6 +31,7 @@ import {
   deleteRecurringExpense as dbDeleteRecurringExpense,
   getBudgetHistory,
   getCategories,
+  getEarliestExpenseDate,
   getExpenses,
   getPreferences,
   getRecurringExpenses,
@@ -34,10 +40,16 @@ import {
   saveExpense,
   saveRecurringExpense,
   setPreferences,
+  shiftBudgetHistory,
   updateLastGeneratedDate,
 } from "@/utils/storage";
 import * as Crypto from "expo-crypto";
-import { getDeviceCurrencyCode, getDeviceLocaleKey } from "@/utils/deviceLocale";
+import {
+  getDeviceCurrencyCode,
+  getDeviceLocaleKey,
+  getDeviceWeekStartDay,
+} from "@/utils/deviceLocale";
+import { addDays, differenceInCalendarDays, parseISO, type Day } from "date-fns";
 import React, {
   createContext,
   useCallback,
@@ -61,6 +73,7 @@ export interface State {
   weeklyBudget: number;
   categories: Category[];
   firstUseDate: string;
+  weekStartDay: Day;
   locale: LocaleKey;
   currency: string;
   recurringExpenses: RecurringExpense[];
@@ -90,6 +103,14 @@ type Action =
   | { type: "DELETE_CATEGORY"; payload: string }
   | { type: "SET_LOCALE"; payload: LocaleKey }
   | { type: "SET_CURRENCY"; payload: string }
+  | {
+      type: "SET_WEEK_START_DAY";
+      payload: {
+        weekStartDay: Day;
+        firstUseDate: string;
+        budgetHistory: WeeklyBudget[];
+      };
+    }
   | { type: "SET_LOCK_ENABLED"; payload: boolean }
   | { type: "SET_NOTIFY_DAILY_EXPENSE"; payload: boolean }
   | { type: "SET_NOTIFY_WEEKLY_BACKUP"; payload: boolean }
@@ -142,6 +163,13 @@ function reducer(state: State, action: Action): State {
       return { ...state, locale: action.payload };
     case "SET_CURRENCY":
       return { ...state, currency: action.payload };
+    case "SET_WEEK_START_DAY":
+      return {
+        ...state,
+        weekStartDay: action.payload.weekStartDay,
+        firstUseDate: action.payload.firstUseDate,
+        budgetHistory: action.payload.budgetHistory,
+      };
     case "SET_LOCK_ENABLED":
       return { ...state, lockEnabled: action.payload };
     case "SET_NOTIFY_DAILY_EXPENSE":
@@ -189,6 +217,7 @@ interface BudgetContextValue {
   deleteCategory: (name: string) => void;
   setLocale: (locale: LocaleKey) => void;
   setCurrency: (currency: string) => void;
+  setWeekStartDay: (day: Day) => void;
   setLockEnabled: (enabled: boolean) => void;
   lockSuppressed: boolean;
   setLockSuppressed: (suppressed: boolean) => void;
@@ -232,6 +261,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     weeklyBudget: 200,
     categories: [],
     firstUseDate: toISODate(getWeekRange().start),
+    weekStartDay: 1,
     locale: "en",
     currency: "USD",
     recurringExpenses: [],
@@ -269,18 +299,25 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
     const rawPrefs = getPreferences(db);
     const prefs = isFirstLaunch
-      ? {
-          ...rawPrefs,
-          locale: LOCALE_TO_INTL[getDeviceLocaleKey()],
-          currency: getDeviceCurrencyCode(),
-        }
+      ? (() => {
+          const weekStartDay = getDeviceWeekStartDay();
+          return {
+            ...rawPrefs,
+            locale: LOCALE_TO_INTL[getDeviceLocaleKey()],
+            currency: getDeviceCurrencyCode(),
+            weekStartDay,
+            // Re-anchor firstUseDate to the start of the current week for the
+            // device's week-start convention (rawPrefs default assumed Monday).
+            firstUseDate: toISODate(getWeekRange(new Date(), weekStartDay).start),
+          };
+        })()
       : rawPrefs;
 
     if (isFirstLaunch) {
       setPreferences(db, prefs);
     }
 
-    const weekStart = toISODate(getWeekRange().start);
+    const weekStart = toISODate(getWeekRange(new Date(), prefs.weekStartDay).start);
     const firstUseDate = prefs.firstUseDate;
 
     // Determine locale key from stored locale string
@@ -297,6 +334,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       budgetHistory,
       weeklyBudget: prefs.weeklyBudget,
       firstUseDate,
+      weekStartDay: prefs.weekStartDay,
       locale: localeKey,
       currency: prefs.currency,
       lockEnabled: prefs.lockEnabled,
@@ -410,10 +448,12 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
   const setWeeklyBudget = useCallback(
     (amount: number) => {
-      const weekStart = toISODate(getWeekRange().start);
-      saveBudgetHistory(db, weekStart, amount);
       // preferences weeklyBudget is kept in sync for quick reads
       const prefs = getPreferences(db);
+      const weekStart = toISODate(
+        getWeekRange(new Date(), prefs.weekStartDay).start,
+      );
+      saveBudgetHistory(db, weekStart, amount);
       setPreferences(db, { ...prefs, weeklyBudget: amount });
       dispatch({ type: "SET_WEEKLY_BUDGET", payload: { amount, weekStart } });
     },
@@ -478,6 +518,56 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
       dispatch({ type: "SET_CURRENCY", payload: currency });
     },
     [db],
+  );
+
+  const setWeekStartDay = useCallback(
+    (newDay: Day) => {
+      const prefs = getPreferences(db);
+      // No-op when unchanged — avoids a pointless transaction and re-render.
+      if (newDay === prefs.weekStartDay) return;
+
+      const currentFirstUseDate = prefs.firstUseDate;
+      const earliestExpense = getEarliestExpenseDate(db);
+      const newFirstUseDate = computeShiftedFirstUseDate(
+        currentFirstUseDate,
+        newDay,
+        earliestExpense,
+      );
+      const deltaDays = differenceInCalendarDays(
+        parseISO(newFirstUseDate),
+        parseISO(currentFirstUseDate),
+      );
+
+      // Shift budget_history and persist preferences atomically so a crash
+      // mid-write cannot leave the data half-shifted.
+      db.withTransactionSync(() => {
+        shiftBudgetHistory(db, deltaDays);
+        setPreferences(db, {
+          ...prefs,
+          firstUseDate: newFirstUseDate,
+          weekStartDay: newDay,
+        });
+      });
+
+      // Mirror the same uniform delta onto the in-memory history.
+      const shiftedHistory =
+        deltaDays === 0
+          ? state.budgetHistory
+          : state.budgetHistory.map((b) => ({
+              ...b,
+              startDate: toISODate(addDays(parseISO(b.startDate), deltaDays)),
+            }));
+
+      dispatch({
+        type: "SET_WEEK_START_DAY",
+        payload: {
+          weekStartDay: newDay,
+          firstUseDate: newFirstUseDate,
+          budgetHistory: shiftedHistory,
+        },
+      });
+    },
+    [db, state.budgetHistory],
   );
 
   const setLockEnabled = useCallback(
@@ -611,6 +701,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         setPreferences(db, {
           weeklyBudget: data.weeklyBudget,
           firstUseDate: data.firstUseDate,
+          weekStartDay: data.weekStartDay,
           locale: LOCALE_TO_INTL[data.locale],
           currency: data.currency,
           lockEnabled: lockEnabledRef.current, // device setting — not restored from backup
@@ -677,6 +768,7 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
         deleteCategory,
         setLocale,
         setCurrency,
+        setWeekStartDay,
         setLockEnabled,
         lockSuppressed,
         setLockSuppressed,

@@ -169,15 +169,19 @@ export default function SettingsScreen() {
   }
 
   async function handleRateApp() {
+    if (Platform.OS === "android") {
+      await Linking.openURL(
+        "https://play.google.com/store/apps/details?id=io.github.helloRupa.simplybudget"
+      );
+      return;
+    }
+    // iOS: use in-app review prompt when available, otherwise open App Store
+    // TODO: replace <APPLE_APP_ID> once published on iOS
     const available = await StoreReview.isAvailableAsync();
     if (available) {
       await StoreReview.requestReview();
     } else {
-      // TODO: add iOS App Store fallback once app is published on iOS:
-      // https://apps.apple.com/app/id<APPLE_APP_ID>
-      await Linking.openURL(
-        "https://play.google.com/store/apps/details?id=io.github.helloRupa.simplybudget"
-      );
+      await Linking.openURL("https://apps.apple.com/app/id<APPLE_APP_ID>");
     }
   }
 

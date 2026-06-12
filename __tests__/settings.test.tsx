@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react-native";
-import { Linking } from "react-native";
+import { Linking, Platform } from "react-native";
 import { openDatabaseSync } from "expo-sqlite";
 import { initDatabase, _setDatabase } from "@/utils/database";
 import { BudgetProvider } from "@/context/BudgetContext";
@@ -325,8 +325,9 @@ describe("SettingsScreen — rate the app", () => {
     expect(mockRequestReview).toHaveBeenCalledTimes(1);
   });
 
-  it("opens the Play Store URL when the native dialog is unavailable", async () => {
-    mockIsAvailableAsync.mockResolvedValue(false);
+  it("opens the Play Store URL on Android", async () => {
+    const originalOS = Platform.OS;
+    (Platform as { OS: string }).OS = "android";
     const openURLSpy = jest
       .spyOn(Linking, "openURL")
       .mockResolvedValue(undefined);
@@ -338,5 +339,6 @@ describe("SettingsScreen — rate the app", () => {
       "https://play.google.com/store/apps/details?id=io.github.helloRupa.simplybudget"
     );
     openURLSpy.mockRestore();
+    (Platform as { OS: string }).OS = originalOS;
   });
 });
